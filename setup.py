@@ -13,6 +13,7 @@ sfd_libraries=['m']
 sfd_c= Extension('sfd_c',
                  sources=sfd_c_src,
                  libraries=sfd_libraries,
+                 extra_compile_args=['-DLITTLE_ENDIAN'],
                  include_dirs=['mwdust/util/SFD_CodeC'])
 
 ext_modules=[sfd_c]
