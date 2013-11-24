@@ -29,6 +29,7 @@ setup(name='mwdust',
       package_dir = {'mwdust/': ''},
       packages=['mwdust',
                 'mwdust/util'],
+      package_data={'mwdust/util':['extCurves/extinction.tbl']},
       install_requires=['numpy','scipy','matplotlib'],
       ext_modules=ext_modules
       )
