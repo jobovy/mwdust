@@ -1,0 +1,44 @@
+\Coordinates = 180. 0. gal (   86.404890000    28.936160000 equ J2000)
+\E(B-V)_SFD_1998 =     1.418 (mag)
+\SandF: Schlafly and Finkbeiner 2011 (ApJ 737, 103)
+\SFD: Schlegel et al. 1998 (ApJ 500, 525)
+\ Filter_name
+\ ___ Name of filter
+\ LamEff
+\ ___ Effective wavelength of filter (in microns) as defined in SandF
+\ A_over_E_B_V_SandF
+\ ___ Ratio of SandF band extinction to SandF E(B-V)
+\ A_SandF
+\ ___ Band extinction (mags) for SandF
+\ A_over_E_B_V_SFD
+\ ___ Ratio of SFD band extinction to SandF E(B-V)
+\ A_SFD
+\ ___ Band extinction (mags) for SFD
+|Filter_name         |LamEff      |A_over_E_B_V_SandF      |A_SandF                 |A_over_E_B_V_SFD        |A_SFD                   |
+|char                |float       |float                   |float                   |float                   |float                   |
+|                    |microns     |                        |mags                    |                        |mags                    |
+ CTIO U               0.3734       4.107                    5.824                    4.968                     7.045                    
+ CTIO B               0.4309       3.641                    5.164                    4.325                     6.134                    
+ CTIO V               0.5517       2.682                    3.804                    3.240                     4.595                    
+ CTIO R               0.6520       2.119                    3.005                    2.634                     3.735                    
+ CTIO I               0.8007       1.516                    2.150                    1.962                     2.782                    
+ DSS-II g             0.4621       3.381                    4.795                    3.907                     5.541                    
+ DSS-II r             0.6546       2.088                    2.961                    2.649                     3.757                    
+ DSS-II i             0.8111       1.487                    2.109                    1.893                     2.685                    
+ SDSS u               0.3587       4.239                    6.012                    5.155                     7.311                    
+ SDSS g               0.4717       3.303                    4.684                    3.793                     5.379                    
+ SDSS r               0.6165       2.285                    3.241                    2.751                     3.901                    
+ SDSS i               0.7476       1.698                    2.408                    2.086                     2.958                    
+ SDSS z               0.8923       1.263                    1.791                    1.479                     2.097                    
+ UKIRT J              1.248        0.709                    1.005                    0.902                     1.279                    
+ UKIRT H              1.659        0.449                    0.637                    0.576                     0.817                    
+ UKIRT K              2.190        0.302                    0.428                    0.367                     0.520                    
+ 2MASS J              1.23         0.723                    1.025                    0.937                     1.329                    
+ 2MASS H              1.64         0.460                    0.652                    0.591                     0.838                    
+ 2MASS Ks             2.16         0.310                    0.440                    0.382                     0.542                    
+ IRAC-1               3.52         0.178                    0.252                    0.220                     0.312                    
+ IRAC-2               4.46         0.148                    0.210                    0.183                     0.260                    
+ IRAC-3               5.66         0.130                    0.184                    0.162                     0.230                    
+ IRAC-4               7.68         0.122                    0.173                    0.151                     0.214                    
+ WISE-1               3.32         0.189                    0.268                    0.234                     0.332                    
+ WISE-2               4.57         0.146                    0.207                    0.180                     0.255                    
