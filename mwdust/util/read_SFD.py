@@ -26,7 +26,22 @@ ebvFileN= os.path.join(dust_dir,'maps','SFD_dust_4096_ngp.fits')
 ebvFileS= os.path.join(dust_dir,'maps','SFD_dust_4096_sgp.fits')
 
 def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
-    """I'll write documentation later"""
+    """
+    NAME:
+       read_SFD_EBV
+    PURPOSE:
+       read an E(B-V) value from the Schlegel, Finkbeiner, & Davis (1998) maps
+    INPUT:
+       glon - Galactic longitude (deg), can be an array
+       glat - Galactic latitude (deg), can be an array
+       interp= (True) if True, interpolate using the nearest pixels
+       noloop= (False) if True, don't loop through the glons
+       verbose= (False) if True, be verbose
+    OUTPUT:
+       array of E(B-V) from Schlegel, Finkbeiner, & Davis (1998)
+    HISTORY:
+       2013-11-23 - Written - Bovy (IAS)
+    """
     #Parse input
     if isinstance(glon,(int,float,numpy.float32,numpy.float64)):
         glon= numpy.array([glon])
