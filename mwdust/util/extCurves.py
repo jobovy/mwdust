@@ -20,7 +20,19 @@ def _read_extCurves():
 _read_extCurves()
 
 def aebv(filter,sf10=True):
-    """Return A_filter / E(B-V)"""
+    """
+    NAME:
+       aebv
+    PURPOSE:
+       return A_filter / E(B-V), necessary to turn SFD E(B-V) into total extinctions
+    INPUT:
+       filter - filter to use (e.g., '2MASS Ks')
+       sf10= (True) if True, use the values from Schlafly & Finkbeiner 2010, which use an updated extinction law, source spectrum, and recalibrated SFD map
+    OUTPUT:
+       A_filter / E(B-V)
+    HISTORY:
+       2013-11-24 - Written - Bovy (IAS)
+    """
     if sf10:
         if not avebvsf.has_key(filter):
             raise ValueError("Requested filter is not supported")
