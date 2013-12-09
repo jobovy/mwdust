@@ -7,7 +7,7 @@ before_install:
  - sudo apt-get install -qq python-numpy python-scipy python-matplotlib
 # command to install dependencies
 install:
- - python setup.py install
+ - python setup.py install --no-downloads
 script: true
 notifications:
   email:
