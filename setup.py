@@ -8,8 +8,10 @@ import glob
 longDescription= ""
 
 #Download Drimmel data first
+_DOWNLOAD_DRIMMEL= False
 _DRIMMEL_URL= 'ftp://ftp.oato.inaf.it/astrometria/extinction/data-for.tar.gz'
-if sys.argv[1] in ('build','install','bdist','bdist_egg'):
+if _DOWNLOAD_DRIMMEL \
+        and sys.argv[1] in ('build','install','bdist','bdist_egg'):
     if not os.path.exists('mwdust/util/drimmeldata/data-for.tar.gz'):
         try:
             subprocess.check_call(['wget','%s' % _DRIMMEL_URL,
