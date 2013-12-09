@@ -1,3 +1,4 @@
+import os
 from setuptools import setup
 from distutils.core import Extension
 import sys
@@ -5,6 +6,23 @@ import subprocess
 import glob
 
 longDescription= ""
+
+#Download Drimmel data first
+_DRIMMEL_URL= 'ftp://ftp.oato.inaf.it/astrometria/extinction/data-for.tar.gz'
+if sys.argv[1] in ('build','install','bdist','bdist_egg'):
+    if not os.path.exists('mwdust/util/drimmeldata/data-for.tar.gz'):
+        try:
+            subprocess.check_call(['wget','%s' % _DRIMMEL_URL,
+                                   '-O','mwdust/util/drimmeldata/data-for.tar.gz'])
+        except subprocess.CalledProcessError:
+            print "Downloading Drimmel dust-map data from %s failed ..." % _DRIMMEL_URL
+            raise
+        try:
+            subprocess.check_call(['tar','xvzf',
+                                   'mwdust/util/drimmeldata/data-for.tar.gz',
+                                   '-C','mwdust/util/drimmeldata/'])
+        except subprocess.CalledProcessError:
+            print "Untarring Drimmel dust-map data failed ..."
 
 #SFD  extension
 sfd_c_src= glob.glob('mwdust/util/SFD_CodeC/*.c')
@@ -29,7 +47,9 @@ setup(name='mwdust',
       package_dir = {'mwdust/': ''},
       packages=['mwdust',
                 'mwdust/util'],
-      package_data={'mwdust/util':['extCurves/extinction.tbl']},
-      install_requires=['numpy','scipy','matplotlib','asciitable'],
+      package_data={'mwdust/util':['extCurves/extinction.tbl',
+                                   'drimmeldata/*.dat']},
+      install_requires=['numpy','scipy','matplotlib','asciitable',
+                        'fortranfile'],
       ext_modules=ext_modules
       )
