@@ -38,3 +38,8 @@ nosetests.xml
 
 #Temporary files
 *~
+
+#Data files
+av*.dat
+data-for.tar.gz
+rf_allsky.dat
