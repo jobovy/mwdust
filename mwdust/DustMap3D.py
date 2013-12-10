@@ -36,6 +36,7 @@ class DustMap3D:
         """
         if True: #(l,b,d)
             try:
-                return self._evaluate(*args)
+                return self._evaluate(*args,**kwargs)
             except AttributeError:
+                raise
                 raise NotImplementedError("'_evaluate' for this DustMap3D not implemented yet")
