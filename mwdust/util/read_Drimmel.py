@@ -1,4 +1,6 @@
 import os, os.path
+import numpy
+import struct
 import fortranfile
 _DRIMMELDIR= os.path.join(os.path.dirname(os.path.realpath(__file__)),
                           'drimmeldata')
@@ -18,9 +20,36 @@ def readDrimmelAll():
             nx, ny, nz= 101, 201, 51
         elif 'avdloc' in filename:
             nx, ny, nz= 31, 31, 51
-        print filename, nx, ny, nz
-        if 'rf_allsky' in filename:
-            out[filename.split('.')[0]]= f.readReals()
+        if not 'rf_allsky' in filename:
+            out[filename.split('.')[0]]=\
+                f.readReals(prec='f').reshape((nz,ny,nx)).T
         else:
-            out[filename.split('.')[0]]= f.readReals().reshape((nz,ny,nx)).T
+            #Need to do more work to read this file
+            rec= f._read_exactly(4) #Read the header
+            rec= f._read_exactly(4*393216)
+            num = len(rec)/struct.calcsize('i')
+            out_rf_pixnum= numpy.array(struct.unpack(f.ENDIAN+str(num)+'i',
+                                                     rec),dtype='int')
+            rec= f._read_exactly(4*393216)
+            num = len(rec)/struct.calcsize('i')
+            out_rf_comp= numpy.array(struct.unpack(f.ENDIAN+str(num)+'i',
+                                                   rec),dtype='int')
+            rec= f._read_exactly(4*393216)
+            num = len(rec)/struct.calcsize('f')
+            out_rf_glon= numpy.array(struct.unpack(f.ENDIAN+str(num)+'f',
+                                                   rec),dtype=numpy.float32)
+            rec= f._read_exactly(4*393216)
+            num = len(rec)/struct.calcsize('f')
+            out_rf_glat= numpy.array(struct.unpack(f.ENDIAN+str(num)+'f',
+                                                   rec),dtype=numpy.float32)
+            rec= f._read_exactly(4*393216)
+            num = len(rec)/struct.calcsize('f')
+            out_rf= numpy.array(struct.unpack(f.ENDIAN+str(num)+'f',
+                                              rec),dtype=numpy.float32)
+            out['rf_pixnum']= out_rf_pixnum
+            out['rf_comp']= out_rf_comp
+            out['rf_glon']= out_rf_glon
+            out['rf_glat']= out_rf_glat
+            out['rf']= out_rf
+        f.close()
     return out
