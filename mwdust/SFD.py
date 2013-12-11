@@ -3,6 +3,7 @@
 #   SFD: Schlegel, Finkbeiner, & Davis (1998) dust map (2D)
 #
 ###############################################################################
+import numpy
 from mwdust.util.read_SFD import read_SFD_EBV
 from mwdust.util.extCurves import aebv
 from DustMap3D import DustMap3D
@@ -48,6 +49,6 @@ class SFD(DustMap3D):
         tebv= read_SFD_EBV(l,b,interp=self._interp,
                            noloop=self._noloop,verbose=False)
         if self._filter is None:
-            return tebv
+            return tebv*numpy.ones_like(d)
         else:
-            return tebv*aebv(self._filter,sf10=self._sf10)
+            return tebv*aebv(self._filter,sf10=self._sf10)*numpy.ones_like(d)
