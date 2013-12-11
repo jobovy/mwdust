@@ -67,8 +67,6 @@ class Drimmel03(DustMap3D):
         HISTORY:
            2013-12-10 - Started - Bovy (IAS)
         """
-        if isinstance(d,(int,float,numpy.float32,numpy.float64)):
-            d= numpy.array([d])
         if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
             raise NotImplementedError("array input for l and b for Drimmel dust map not implemented")
 
