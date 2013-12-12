@@ -5,6 +5,7 @@
 ###############################################################################
 import os, os.path
 import sys
+import numpy
 import asciitable
 from mwdust.util.extCurves import aebv
 from DustMap3D import DustMap3D
@@ -40,5 +41,42 @@ class Marshall06(DustMap3D):
                                             fill_values=[('', '-999')])
         sys.stdout.write('\r'+_ERASESTR+'\r')
         sys.stdout.flush()
+        #Sort the data on l and then b
+        negIndx= self._marshalldata['GLON'] > 180.
+        self._marshalldata['GLON'][negIndx]= self._marshalldata['GLON'][negIndx]-360.
+        sortIndx= numpy.arange(len(self._marshalldata))
+        keyArray= (self._marshalldata['GLON']+self._marshalldata['GLAT']/100.).data
+        sortIndx= sorted(sortIndx,key=lambda x: keyArray[x])
+        self._marshalldata= self._marshalldata[sortIndx]
+        self._dl= 0.25
+        self._db= 0.25
         return None
 
+    def _evaluate(self,l,b,d,norescale=False):
+        """
+        NAME:
+           _evaluate
+        PURPOSE:
+           evaluate the dust-map
+        INPUT:
+           l- Galactic longitude (deg)
+           b- Galactic latitude (deg)
+           d- distance (kpc) can be array
+        OUTPUT:
+           extinction
+        HISTORY:
+           2013-12-12 - Started - Bovy (IAS)
+        """
+        if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
+            raise NotImplementedError("array input for l and b for Drimmel dust map not implemented")
+        #Find correct entry
+        lbIndx= self._lbIndx(l,b)
+        return None
+
+    def _lbIndx(self,l,b):
+        """Return the index in the _marshalldata array corresponding to this (l,b)"""
+        if l <= -100.125 or l >= 100.125 or b <= -10.125 or b >= 10.125:
+            raise IndexError("Given (l,b) pair not within the region covered by the Marshall et al. (2006) dust map")
+        lIndx= int(round((l+100.)/self._dl))
+        bIndx= int(round((b+10.)/self._db))
+        return lIndx*81+bIndx
