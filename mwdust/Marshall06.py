@@ -52,7 +52,7 @@ class Marshall06(DustMap3D):
         self._db= 0.25
         return None
 
-    def _evaluate(self,l,b,d,norescale=False):
+    def _evaluate(self,l,b,d):
         """
         NAME:
            _evaluate
@@ -69,9 +69,36 @@ class Marshall06(DustMap3D):
         """
         if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
             raise NotImplementedError("array input for l and b for Drimmel dust map not implemented")
+        return None
+
+    def lbData(self,l,b):
+        """
+        NAME:
+           lbData
+        PURPOSE:
+           return the Marshall et al. (2006) data corresponding to a given
+           line of sight
+        INPUT:
+           l- Galactic longitude (deg)
+           b- Galactic latitude (deg)
+        OUTPUT:
+        HISTORY:
+           2013-12-13 - Written - Bovy (IAS)
+        """
         #Find correct entry
         lbIndx= self._lbIndx(l,b)
-        return None
+        #Build output array
+        out= numpy.recarray((self._marshalldata[lbIndx]['nb'],),
+                            dtype=[('dist', 'f8'),
+                                   ('e_dist', 'f8'),
+                                   ('aks', 'f8'),
+                                   ('e_aks','f8')])
+        for ii in range(self._marshalldata[lbIndx]['nb']):
+            out[ii]['dist']= self._marshalldata[lbIndx]['r%i' % (ii+1)]
+            out[ii]['e_dist']= self._marshalldata[lbIndx]['e_r%i' % (ii+1)]
+            out[ii]['aks']= self._marshalldata[lbIndx]['ext%i' % (ii+1)]
+            out[ii]['e_aks']= self._marshalldata[lbIndx]['e_ext%i' % (ii+1)]
+        return out
 
     def _lbIndx(self,l,b):
         """Return the index in the _marshalldata array corresponding to this (l,b)"""
