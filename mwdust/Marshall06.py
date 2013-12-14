@@ -6,6 +6,7 @@
 import os, os.path
 import sys
 import numpy
+from scipy import interpolate
 import asciitable
 from mwdust.util.extCurves import aebv
 from DustMap3D import DustMap3D
@@ -50,6 +51,7 @@ class Marshall06(DustMap3D):
         self._marshalldata= self._marshalldata[sortIndx]
         self._dl= 0.25
         self._db= 0.25
+        self._intps= numpy.zeros(len(self._marshalldata),dtype='object') #array to cache interpolated extinctions
         return None
 
     def _evaluate(self,l,b,d):
@@ -69,7 +71,22 @@ class Marshall06(DustMap3D):
         """
         if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
             raise NotImplementedError("array input for l and b for Drimmel dust map not implemented")
-        return None
+        lbIndx= self._lbIndx(l,b)
+        if self._intps[lbIndx] != 0:
+            out= self._intps[lbIndx](d)
+        else:
+            tlbData= self.lbData(l,b)
+            interpData=\
+                interpolate.InterpolatedUnivariateSpline(tlbData['dist'],
+                                                         tlbData['aks'],
+                                                         k=1)
+            out= interpData(d)
+            self._intps[lbIndx]= interpData
+        if self._filter is None:
+            return out/aebv('2MASS Ks',sf10=self._sf10)
+        else:
+            return out/aebv('2MASS Ks',sf10=self._sf10)\
+                *aebv(self._filter,sf10=self._sf10)
 
     def lbData(self,l,b):
         """
@@ -88,16 +105,20 @@ class Marshall06(DustMap3D):
         #Find correct entry
         lbIndx= self._lbIndx(l,b)
         #Build output array
-        out= numpy.recarray((self._marshalldata[lbIndx]['nb'],),
+        out= numpy.recarray((self._marshalldata[lbIndx]['nb']+1,),
                             dtype=[('dist', 'f8'),
                                    ('e_dist', 'f8'),
                                    ('aks', 'f8'),
                                    ('e_aks','f8')])
-        for ii in range(self._marshalldata[lbIndx]['nb']):
-            out[ii]['dist']= self._marshalldata[lbIndx]['r%i' % (ii+1)]
-            out[ii]['e_dist']= self._marshalldata[lbIndx]['e_r%i' % (ii+1)]
-            out[ii]['aks']= self._marshalldata[lbIndx]['ext%i' % (ii+1)]
-            out[ii]['e_aks']= self._marshalldata[lbIndx]['e_ext%i' % (ii+1)]
+        out[0]['dist']= 0.
+        out[0]['e_dist']= 0.
+        out[0]['aks']= 0.
+        out[0]['e_aks']= 0.
+        for ii in range(1,self._marshalldata[lbIndx]['nb']+1):
+            out[ii]['dist']= self._marshalldata[lbIndx]['r%i' % (ii)]
+            out[ii]['e_dist']= self._marshalldata[lbIndx]['e_r%i' % (ii)]
+            out[ii]['aks']= self._marshalldata[lbIndx]['ext%i' % (ii)]
+            out[ii]['e_aks']= self._marshalldata[lbIndx]['e_ext%i' % (ii)]
         return out
 
     def _lbIndx(self,l,b):
