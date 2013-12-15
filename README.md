@@ -6,7 +6,7 @@ mwdust
 [![Build Status](https://travis-ci.org/jobovy/mwdust.png?branch=master)](https://travis-ci.org/jobovy/mwdust)
 
 Acknowledgements
-=================
+-----------------
 
 When making use of this code in a publication, please cite Bovy et
 al. (2014, in preparation). Also cite the relevant papers for the dust
