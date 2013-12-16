@@ -10,6 +10,12 @@ from scipy import interpolate
 import asciitable
 from mwdust.util.extCurves import aebv
 from DustMap3D import DustMap3D
+try:
+    from galpy.util import bovy_plot
+    _BOVY_PLOT_LOADED= True
+except ImportError:
+    _BOVY_PLOT_LOADED= False
+from matplotlib import pyplot
 _marshalldir= os.path.join(os.getenv('DUST_DIR'),'marshall06')
 _ERASESTR= "                                                                                "
 class Marshall06(DustMap3D):
@@ -75,7 +81,7 @@ class Marshall06(DustMap3D):
         if self._intps[lbIndx] != 0:
             out= self._intps[lbIndx](d)
         else:
-            tlbData= self.lbData(l,b)
+            tlbData= self.lbData(l,b,addBC=True)
             interpData=\
                 interpolate.InterpolatedUnivariateSpline(tlbData['dist'],
                                                          tlbData['aks'],
@@ -88,7 +94,7 @@ class Marshall06(DustMap3D):
             return out/aebv('2MASS Ks',sf10=self._sf10)\
                 *aebv(self._filter,sf10=self._sf10)
 
-    def lbData(self,l,b):
+    def lbData(self,l,b,addBC=False):
         """
         NAME:
            lbData
@@ -98,6 +104,7 @@ class Marshall06(DustMap3D):
         INPUT:
            l- Galactic longitude (deg)
            b- Galactic latitude (deg)
+           addBC= (False) if True, add boundary conditions (extinction is zero at zero distance; extinction is constant after last data point)
         OUTPUT:
         HISTORY:
            2013-12-13 - Written - Bovy (IAS)
@@ -105,20 +112,62 @@ class Marshall06(DustMap3D):
         #Find correct entry
         lbIndx= self._lbIndx(l,b)
         #Build output array
-        out= numpy.recarray((self._marshalldata[lbIndx]['nb']+1,),
+        out= numpy.recarray((self._marshalldata[lbIndx]['nb']+2*addBC,),
                             dtype=[('dist', 'f8'),
                                    ('e_dist', 'f8'),
                                    ('aks', 'f8'),
                                    ('e_aks','f8')])
-        out[0]['dist']= 0.
-        out[0]['e_dist']= 0.
-        out[0]['aks']= 0.
-        out[0]['e_aks']= 0.
-        for ii in range(1,self._marshalldata[lbIndx]['nb']+1):
-            out[ii]['dist']= self._marshalldata[lbIndx]['r%i' % (ii)]
-            out[ii]['e_dist']= self._marshalldata[lbIndx]['e_r%i' % (ii)]
-            out[ii]['aks']= self._marshalldata[lbIndx]['ext%i' % (ii)]
-            out[ii]['e_aks']= self._marshalldata[lbIndx]['e_ext%i' % (ii)]
+        if addBC:
+            #Add boundary conditions
+            out[0]['dist']= 0.
+            out[0]['e_dist']= 0.
+            out[0]['aks']= 0.
+            out[0]['e_aks']= 0.
+            out[-1]['dist']= 30.
+            out[-1]['e_dist']= 0.
+            out[-1]['aks']= self._marshalldata[lbIndx]['ext%i' % (self._marshalldata[lbIndx]['nb'])]
+            out[-1]['e_aks']=  self._marshalldata[lbIndx]['e_ext%i' % (self._marshalldata[lbIndx]['nb'])]
+        for ii in range(self._marshalldata[lbIndx]['nb']):
+            out[ii+addBC]['dist']= self._marshalldata[lbIndx]['r%i' % (ii+1)]
+            out[ii+addBC]['e_dist']= self._marshalldata[lbIndx]['e_r%i' % (ii+1)]
+            out[ii+addBC]['aks']= self._marshalldata[lbIndx]['ext%i' % (ii+1)]
+            out[ii+addBC]['e_aks']= self._marshalldata[lbIndx]['e_ext%i' % (ii+1)]
+        return out
+
+    def plotData(self,l,b,*args,**kwargs):
+        """
+        NAME:
+           plotData
+        PURPOSE:
+           plot the Marshall et al. (2006) extinction values 
+           along a given line of sight as a function of 
+           distance
+        INPUT:
+           l,b - Galactic longitude and latitude (degree)
+           bovy_plot.bovy_plot args and kwargs
+        OUTPUT:
+           plot to output device
+        HISTORY:
+           2013-12-15 - Written - Bovy (IAS)
+        """
+        if not _BOVY_PLOT_LOADED:
+            raise NotImplementedError("galpy.util.bovy_plot could not be loaded, so there is no plotting; might have to install galpy (http://github.com/jobovy/galpy) for plotting")
+        #First get the data
+        tdata= self.lbData(l,b)
+        #Filter
+        if self._filter is None:
+            filterFac= 1./aebv('2MASS Ks',sf10=self._sf10)
+        else:
+            filterFac= 1./aebv('2MASS Ks',sf10=self._sf10)\
+                *aebv(self._filter,sf10=self._sf10)
+        #Plot
+        out= bovy_plot.bovy_plot(tdata['dist'],tdata['aks']*filterFac,
+                            *args,**kwargs)
+        #uncertainties
+        pyplot.errorbar(tdata['dist'],tdata['aks']*filterFac,
+                        xerr=tdata['e_dist'],
+                        yerr=tdata['e_aks']*filterFac,
+                        ls='none',marker=None,color='k')
         return out
 
     def _lbIndx(self,l,b):
