@@ -51,7 +51,8 @@ class Drimmel03(DustMap3D):
         self._dx_ori2, self._dy_ori2, self._dz_ori2= 0.02, 0.02, 0.02
         return None
 
-    def _evaluate(self,l,b,d,norescale=False):
+    def _evaluate(self,l,b,d,norescale=False,
+                  _fd=1.,_fs=1.,_fo=1.):
         """
         NAME:
            _evaluate
@@ -62,6 +63,7 @@ class Drimmel03(DustMap3D):
            b- Galactic latitude (deg)
            d- distance (kpc) can be array
            norescale= (False) if True, don't apply re-scalings
+           _fd, _fs, _fo= (1.) amplitudes of the different components
         OUTPUT:
            extinction
         HISTORY:
@@ -181,7 +183,7 @@ class Drimmel03(DustMap3D):
                                               cval=0.)[globIndx]
         
         #Return
-        out=rfdisk*avdisk+rfspir*avspir+rfori*avori
+        out=_fd*rfdisk*avdisk+_fs*rfspir*avspir+_fo*rfori*avori
         if self._filter is None:
             return out/3.09 #From Rieke & Lebovksy (1985)
         else:
