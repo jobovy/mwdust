@@ -6,6 +6,7 @@
 import copy
 import numpy
 from scipy.ndimage import map_coordinates
+from scipy import optimize
 from mwdust.util.extCurves import aebv
 from mwdust.util import read_Drimmel
 from DustMap3D import DustMap3D
@@ -190,6 +191,47 @@ class Drimmel03(DustMap3D):
             return out/3.09\
                 *aebv(self._filter,sf10=self._sf10)
 
+    def fit(self,l,b,dist,ext,e_ext):
+        """
+        NAME:
+           fit
+        PURPOSE:
+           fit the amplitudes of the disk, spiral, and Orion parts of the
+           Drimmel map to other data
+        INPUT:
+           l,b- Galactic longitude and latitude in degree
+           dist - distance in kpc
+           ext - extinction at dist
+           e_ext - error in extinction
+        OUTPUT:
+           (fd,fs,fo,dist_stretch) amplitudes of disk, spiral, and Orion parts
+           and a 'distance stretch' applied to the model
+           (applied as self(l,b,dist*dist_stretch))
+        HISTORY:
+           2013-12-16 - Written - Bovy (IAS)
+        """
+        #Fit consists of 
+        #a) overall amplitude A
+        #b) relative amplitude fd/A, fs/A
+        #c) distance stretch
+        pars= numpy.array([0.,numpy.log(1./3.),numpy.log(1./3.),0.])
+        pars=\
+            optimize.fmin_powell(_fitFunc,pars,args=(self,l,b,dist,ext,e_ext))
+        amp= numpy.exp(pars[0])
+        fd= amp*numpy.exp(pars[1])
+        fs= amp*numpy.exp(pars[2])
+        fo= amp*(1.-fd-fs)
+        return (fd,fs,fo,numpy.exp(pars[3]))
+        
+def _fitFunc(pars,drim,l,b,dist,ext,e_ext):
+    amp= numpy.exp(pars[0])
+    fd= amp*numpy.exp(pars[1])
+    fs= amp*numpy.exp(pars[2])
+    fo= amp*(1.-fd-fs)
+    dist_stretch= numpy.exp(pars[3])
+    model_ext= drim(l,b,dist*dist_stretch,_fd=fd,_fs=fs,_fo=fo)
+    return 0.5*numpy.sum((model_ext-ext)**2./e_ext**2.)
+    
 def cos_sphere_dist(sintheta,costheta,
                     sinphi,cosphi,
                     sintheta_o,costheta_o,
