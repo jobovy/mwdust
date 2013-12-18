@@ -9,6 +9,7 @@ from scipy.ndimage import map_coordinates
 from scipy import optimize
 from mwdust.util.extCurves import aebv
 from mwdust.util import read_Drimmel
+from mwdust.util.tools import cos_sphere_dist
 from DustMap3D import DustMap3D
 _DEGTORAD= numpy.pi/180.
 class Drimmel03(DustMap3D):
@@ -232,27 +233,3 @@ def _fitFunc(pars,drim,l,b,dist,ext,e_ext):
     model_ext= drim(l,b,dist*dist_stretch,_fd=fd,_fs=fs,_fo=fo)
     return 0.5*numpy.sum((model_ext-ext)**2./e_ext**2.)
     
-def cos_sphere_dist(sintheta,costheta,
-                    sinphi,cosphi,
-                    sintheta_o,costheta_o,
-                    sinphi_o,cosphi_o):
-    """
-    NAME:
-       cos_sphere_dist
-    PURPOSE:
-       computes the cosine of the spherical distance between two
-       points on the sphere
-    INPUT:
-       theta  - polar angle [0,pi]
-       phi    - azimuth [0,2pi]
-       theta  - polar angle of center of the disk
-       phi_0  - azimuth of the center of the disk
-    OUTPUT:
-       spherical distance
-    HISTORY:
-       2010-04-29 -Written - Bovy (NYU)
-    """
-    return (sintheta*sintheta_o
-            *(cosphi_o*cosphi+
-              sinphi_o*sinphi)+
-            costheta_o*costheta)
