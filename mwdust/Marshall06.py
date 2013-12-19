@@ -94,6 +94,24 @@ class Marshall06(DustMap3D):
             return out/aebv('2MASS Ks',sf10=self._sf10)\
                 *aebv(self._filter,sf10=self._sf10)
 
+    def dmax(self,l,b):
+        """
+        NAME:
+           dmax
+        PURPOSE:
+           return the maximum distance for which there is Marshall et al. 
+           (2006) data
+        INPUT:
+           l- Galactic longitude (deg)
+           b- Galactic latitude (deg)
+        OUTPUT:
+           maximum distance in kpc
+        HISTORY:
+           2013-12-19 - Started - Bovy (IAS)
+        """
+        tlbData= self.lbData(l,b,addBC=False)
+        return tlbData['dist'][-1]
+
     def lbData(self,l,b,addBC=False):
         """
         NAME:
