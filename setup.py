@@ -13,16 +13,18 @@ except ValueError:
     _DOWNLOAD_SFD= True
     _DOWNLOAD_DRIMMEL= True
     _DOWNLOAD_MARSHALL= True
+    _DOWNLOAD_GREEN= True
 else:
     del sys.argv[downloads_pos]
     _DOWNLOAD_SFD= False
     _DOWNLOAD_DRIMMEL= False
     _DOWNLOAD_MARSHALL= False
+    _DOWNLOAD_GREEN= False
 
 #Download SFD maps
 _SFD_URL_NGP= 'http://www.astro.princeton.edu/~schlegel/dust/dustpub/maps/SFD_dust_4096_ngp.fits'
 _SFD_URL_SGP= 'http://www.astro.princeton.edu/~schlegel/dust/dustpub/maps/SFD_dust_4096_sgp.fits'
-if _DOWNLOAD_SFD and sys.argv[1] in ('install'):
+if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
     else:
@@ -69,7 +71,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install'):
 #Download Drimmel data
 _DRIMMEL_URL= 'ftp://ftp.oato.inaf.it/astrometria/extinction/data-for.tar.gz'
 if _DOWNLOAD_DRIMMEL \
-        and sys.argv[1] in ('build','install','bdist','bdist_egg'):
+        and sys.argv[1] in ('build','install','develop','bdist','bdist_egg'):
     if not os.path.exists('mwdust/util/drimmeldata/data-for.tar.gz'):
         print '\033[1m'+'Downloading Drimmel et al. (2003) dust maps ...'+'\033[0m'
         try:
@@ -86,7 +88,7 @@ if _DOWNLOAD_DRIMMEL \
 
 #Download Marshall data
 _MARSHALL_URL= 'ftp://cdsarc.u-strasbg.fr/pub/cats/J/A%2BA/453/635'
-if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install'):
+if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
     else:
@@ -142,6 +144,41 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install'):
             except subprocess.CalledProcessError:
                 print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
             
+#Download Green et al. PanSTARRS data
+_GREEN_URL= 'http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5'
+if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
+    if os.getenv('DUST_DIR') is None:
+        raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
+    else:
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),
+                                           'green15')):
+            os.mkdir(os.path.join(os.getenv('DUST_DIR'),'green15'))
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green15')])
+            except subprocess.CalledProcessError:
+                print '\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m'
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green15',
+                                           'dust-map-3d.h5')):
+            print '\033[1m'+'Downloading Green et al. (2015) dust maps ...'+'\033[0m'
+            try:
+                subprocess.check_call(['wget',
+                                       _GREEN_URL,
+                                       '-O',
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green15',
+                                                    'dust-map-3d.h5')])
+            except subprocess.CalledProcessError:
+                print '\033[1m'+"Downloading Green dust-map data from %s failed ..." % _GREEN_URL +'\033[0m'
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green15',
+                                                    'dust-map-3d.h5')])
+            except subprocess.CalledProcessError:
+                print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
+            
 #SFD  extension
 sfd_c_src= glob.glob('mwdust/util/SFD_CodeC/*.c')
 
@@ -168,6 +205,6 @@ setup(name='mwdust',
       package_data={'mwdust/util':['extCurves/extinction.tbl',
                                    'drimmeldata/*.dat']},
       install_requires=['numpy','scipy','matplotlib','asciitable',
-                        'fortranfile'],
+                        'fortranfile','h5py','healpy'],
       ext_modules=ext_modules
       )
