@@ -14,7 +14,8 @@ _DEGTORAD= numpy.pi/180.
 _greendir= os.path.join(os.getenv('DUST_DIR'),'green15')
 class Green15(DustMap3D):
     """extinction model from Green et al. (2015)"""
-    def __init__(self,filter=None,sf10=True,load_samples=False):
+    def __init__(self,filter=None,sf10=True,load_samples=False,
+                 interpk=1):
         """
         NAME:
            __init__
@@ -24,6 +25,7 @@ class Green15(DustMap3D):
            filter= filter to return the extinction in
            sf10= (True) if True, use the Schlafly & Finkbeiner calibrations
            load_samples= (False) if True, also load the samples
+           interpk= (1) interpolation order
         OUTPUT:
            object
         HISTORY:
@@ -46,8 +48,10 @@ class Green15(DustMap3D):
         nlevels= int(numpy.log2(self._maxnside//self._minnside))+1
         self._nsides= [self._maxnside//2**ii for ii in range(nlevels)]
         self._indexArray= numpy.arange(len(self._pix_info['healpix_index']))
+        # For the interpolation
         self._intps= numpy.zeros(len(self._pix_info['healpix_index']),
                                  dtype='object') #array to cache interpolated extinctions
+        self._interpk= interpk
         return None
 
     def _evaluate(self,l,b,d):
@@ -75,7 +79,7 @@ class Green15(DustMap3D):
             interpData=\
                 interpolate.InterpolatedUnivariateSpline(self._distmods,
                                                          self._best_fit[lbIndx],
-                                                         k=1)
+                                                         k=self._interpk)
             out= interpData(distmod)
             self._intps[lbIndx]= interpData
         if self._filter is None:
