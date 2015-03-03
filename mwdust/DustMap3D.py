@@ -60,6 +60,7 @@ class DustMap3D:
         INPUT:
            l,b - Galactic longitude and latitude (degree)
            range= distance range in kpc
+           distmod= (False) if True, plot as a function of distance modulus (range is distmod range)
            bovy_plot.bovy_plot args and kwargs
         OUTPUT:
            plot to output device
@@ -68,9 +69,10 @@ class DustMap3D:
         """
         if not _BOVY_PLOT_LOADED:
             raise NotImplementedError("galpy.util.bovy_plot could not be loaded, so there is no plotting; might have to install galpy (http://github.com/jobovy/galpy) for plotting")
-        if kwargs.has_key('range'):
-            range= kwargs['range']
-            kwargs.pop('range')
+        distmod= kwargs.pop('distmod',False)
+        range= kwargs.pop('range',None)
+        if range is None and distmod:
+            range= [4.,19.]
         else:
             range= [0.,12.]
         if kwargs.has_key('nds'):
@@ -80,8 +82,17 @@ class DustMap3D:
             nds= 101
         #First evaluate the dust map
         ds= numpy.linspace(range[0],range[1],nds)
-        adust= self(l,b,ds)
+        if distmod:
+            adust= self(l,b,10.**(ds/5.-2.))
+        else:
+            adust= self(l,b,ds)
         #Add labels
-        kwargs['xlabel']= r'$D\,(\mathrm{kpc})$'
-        kwargs['ylabel']= r'$A_{%s}\,(\mathrm{mag})$' % (self._filter.split(' ')[-1])
+        if distmod:
+            kwargs['xlabel']= r'$\mathrm{Distance\ modulus}$'
+        else:
+            kwargs['xlabel']= r'$D\,(\mathrm{kpc})$'
+        if not self._filter is None:
+            kwargs['ylabel']= r'$A_{%s}\,(\mathrm{mag})$' % (self._filter.split(' ')[-1])
+        else:
+            kwargs['ylabel']= r'$E(B-V)\,(\mathrm{mag})$'
         return bovy_plot.bovy_plot(ds,adust,*args,**kwargs)
