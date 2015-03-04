@@ -34,13 +34,13 @@ class Green15(DustMap3D):
         DustMap3D.__init__(self,filter=filter)
         self._sf10= sf10
         #Read the map
-        greendata= h5py.File(os.path.join(_greendir,'dust-map-3d.h5'),
-                                   'r')
-        self._pix_info= greendata['/pixel_info'][:]
-        if load_samples:
-            self._samples= greendata['/samples'][:]
-        self._best_fit= greendata['/best_fit'][:]
-        self._GR= greendata['/GRDiagnostic'][:]
+        with h5py.File(os.path.join(_greendir,'dust-map-3d.h5'),'r') \
+                as greendata:
+            self._pix_info= greendata['/pixel_info'][:]
+            if load_samples:
+                self._samples= greendata['/samples'][:]
+            self._best_fit= greendata['/best_fit'][:]
+            self._GR= greendata['/GRDiagnostic'][:]
         # Utilities
         self._distmods= numpy.linspace(4.,19.,31)
         self._minnside= numpy.amin(self._pix_info['nside'])
