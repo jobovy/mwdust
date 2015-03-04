@@ -5,6 +5,13 @@ mwdust
 
 [![Build Status](https://travis-ci.org/jobovy/mwdust.png?branch=master)](https://travis-ci.org/jobovy/mwdust)
 
+Installation
+-------------
+
+The installation automatically downloads the relevant dust data. You
+might have to define an environment variable SUDO_USER if not
+installing with sudo.
+
 Acknowledgements
 -----------------
 
