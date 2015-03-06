@@ -87,6 +87,59 @@ class Green15(DustMap3D):
         else:
             return out*aebv(self._filter,sf10=self._sf10)
 
+    def dust_vals_disk(self,lcen,bcen,dist,radius):
+        """
+        NAME:
+           dust_vals_disk
+        PURPOSE:
+           return the distribution of extinction within a small disk as samples
+        INPUT:
+           lcen, bcen - Galactic longitude and latitude of the center of the disk (deg)
+           dist - distance in kpc
+           radius - radius of the disk (deg)
+        OUTPUT:
+           (pixarea,extinction) - arrays of pixel-area in sq rad and extinction value
+        HISTORY:
+           2015-03-06 - Written - Bovy (IAS)
+        """
+        # Convert the disk center to a HEALPIX vector
+        vec= healpy.pixelfunc.ang2vec((90.-bcen)*_DEGTORAD,lcen*_DEGTORAD)
+        distmod= 5.*numpy.log10(dist)+10.
+        # Query the HEALPIX map for pixels that lie within the disk
+        pixarea= []
+        extinction= []
+        for nside in self._nsides:
+            # Find the pixels at this resolution that fall within the disk
+            ipixs= healpy.query_disc(nside,vec,radius*_DEGTORAD,
+                                    inclusive=False,nest=True)
+            # Get indices of all pixels within the disk at current nside level
+            nsideindx= self._pix_info['nside'] == nside
+            # Loop through the pixels in the (small) disk
+            tout= []
+            print len(ipixs)
+            for ii,ipix in enumerate(ipixs):
+                if ii % 1000 == 0: print nside, ii
+                lbIndx= self._indexArray[nsideindx*(ipix == self._pix_info['healpix_index'])]
+                if numpy.sum(lbIndx) == 0: continue
+                if self._intps[lbIndx] != 0:
+                    tout.append(self._intps[lbIndx][0](distmod))
+                else:
+                    interpData=\
+                        interpolate.InterpolatedUnivariateSpline(self._distmods,
+                                                                 self._best_fit[lbIndx],
+                                                                 k=self._interpk)
+                    tout.append(interpData(distmod))
+                    self._intps[lbIndx]= interpData
+            tarea= healpy.pixelfunc.nside2pixarea(nside)
+            tarea= [tarea for ii in range(len(tout))]
+            pixarea.extend(tarea)
+            extinction.extend(tout)
+        pixarea= numpy.array(pixarea)
+        extinction= numpy.array(extinction)
+        if not self._filter is None:
+            extinction= extinction*aebv(self._filter,sf10=self._sf10)        
+        return (pixarea,extinction)
+
     def _lbIndx(self,l,b):
         """Return the index in the _greendata array corresponding to this (l,b)"""
         for nside in self._nsides:
