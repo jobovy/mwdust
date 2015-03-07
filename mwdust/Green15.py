@@ -114,12 +114,13 @@ class Green15(DustMap3D):
                                     inclusive=False,nest=True)
             # Get indices of all pixels within the disk at current nside level
             nsideindx= self._pix_info['nside'] == nside
+            potenIndxs= self._indexArray[nsideindx]
+            nsidepix= self._pix_info['healpix_index'][nsideindx]
             # Loop through the pixels in the (small) disk
             tout= []
-            print len(ipixs)
             for ii,ipix in enumerate(ipixs):
                 if ii % 1000 == 0: print nside, ii
-                lbIndx= self._indexArray[nsideindx*(ipix == self._pix_info['healpix_index'])]
+                lbIndx= potenIndxs[ipix == nsidepix]
                 if numpy.sum(lbIndx) == 0: continue
                 if self._intps[lbIndx] != 0:
                     tout.append(self._intps[lbIndx][0](distmod))
