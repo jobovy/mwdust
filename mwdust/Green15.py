@@ -119,7 +119,6 @@ class Green15(DustMap3D):
             # Loop through the pixels in the (small) disk
             tout= []
             for ii,ipix in enumerate(ipixs):
-                if ii % 1000 == 0: print nside, ii
                 lbIndx= potenIndxs[ipix == nsidepix]
                 if numpy.sum(lbIndx) == 0: continue
                 if self._intps[lbIndx] != 0:
