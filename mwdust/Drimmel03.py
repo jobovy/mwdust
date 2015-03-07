@@ -7,6 +7,7 @@ import copy
 import numpy
 from scipy.ndimage import map_coordinates
 from scipy import optimize
+import healpy
 from mwdust.util.extCurves import aebv
 from mwdust.util import read_Drimmel
 from mwdust.util.tools import cos_sphere_dist
@@ -191,6 +192,42 @@ class Drimmel03(DustMap3D):
         else:
             return out/3.09\
                 *aebv(self._filter,sf10=self._sf10)
+
+    def dust_vals_disk(self,lcen,bcen,dist,radius):
+        """
+        NAME:
+           dust_vals_disk
+        PURPOSE:
+           return the distribution of extinction within a small disk as samples
+        INPUT:
+           lcen, bcen - Galactic longitude and latitude of the center of the disk (deg)
+           dist - distance in kpc
+           radius - radius of the disk (deg)
+        OUTPUT:
+           (pixarea,extinction) - arrays of pixel-area in sq rad and extinction value
+        HISTORY:
+           2015-03-07 - Written - Bovy (IAS)
+        """
+        # Convert the disk center to a HEALPIX vector
+        vec= healpy.pixelfunc.ang2vec((90.-bcen)*_DEGTORAD,lcen*_DEGTORAD)
+        # We pixelize the map with a HEALPIX grid with nside=256, to somewhat
+        # oversample the Drimmel resolution
+        nside= 256
+        # Find the pixels at this resolution that fall within the disk
+        ipixs= healpy.query_disc(nside,vec,radius*_DEGTORAD,
+                                 inclusive=False,nest=False)
+        # Query the HEALPIX map for pixels that lie within the disk
+        pixarea= healpy.pixelfunc.nside2pixarea(nside)+numpy.zeros(len(ipixs))
+        extinction= []
+        for ii, ipix in enumerate(ipixs):
+            # Get glon and glat
+            b9, l= healpy.pixelfunc.pix2ang(nside,ipix,nest=False)
+            b= 90.-b9/_DEGTORAD
+            l/= _DEGTORAD
+            # Now evaluate
+            extinction.append(self._evaluate(l,b,dist))
+        extinction= numpy.array(extinction)
+        return (pixarea,extinction)
 
     def fit(self,l,b,dist,ext,e_ext):
         """
