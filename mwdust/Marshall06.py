@@ -9,6 +9,7 @@ import numpy
 from scipy import interpolate
 import asciitable
 from mwdust.util.extCurves import aebv
+from mwdust.util.tools import cos_sphere_dist
 from DustMap3D import DustMap3D
 try:
     from galpy.util import bovy_plot
@@ -16,6 +17,7 @@ try:
 except ImportError:
     _BOVY_PLOT_LOADED= False
 from matplotlib import pyplot
+_DEGTORAD= numpy.pi/180.
 _marshalldir= os.path.join(os.getenv('DUST_DIR'),'marshall06')
 _ERASESTR= "                                                                                "
 class Marshall06(DustMap3D):
@@ -94,6 +96,50 @@ class Marshall06(DustMap3D):
             return out/aebv('2MASS Ks',sf10=self._sf10)\
                 *aebv(self._filter,sf10=self._sf10)
 
+    def dust_vals_disk(self,lcen,bcen,dist,radius):
+        """
+        NAME:
+           dust_vals_disk
+        PURPOSE:
+           return the distribution of extinction within a small disk as samples
+        INPUT:
+           lcen, bcen - Galactic longitude and latitude of the center of the disk (deg)
+           dist - distance in kpc
+           radius - radius of the disk (deg)
+        OUTPUT:
+           (pixarea,extinction) - arrays of pixel-area in sq rad and extinction value
+        HISTORY:
+           2015-03-07 - Written - Bovy (IAS)
+        """
+        # Find all of the (l,b) of the pixels within radius of (lcen,bcen)
+        lmin= round((lcen-radius-self._dl)/self._dl)*self._dl
+        lmax= round((lcen+radius+self._dl)/self._dl)*self._dl
+        bmin= round((bcen-radius-self._db)/self._db)*self._db
+        bmax= round((bcen+radius+self._db)/self._db)*self._db
+        ls= numpy.arange(lmin,lmax+self._dl,self._dl)
+        bs= numpy.arange(bmin,bmax+self._db,self._db)
+        ll,bb= numpy.meshgrid(ls,bs,indexing='ij')
+        ll= ll.flatten()
+        bb= bb.flatten()
+        indx= cos_sphere_dist(numpy.sin((90.-bb)*_DEGTORAD),
+                              numpy.cos((90.-bb)*_DEGTORAD),
+                              numpy.sin(ll*_DEGTORAD),
+                              numpy.cos(ll*_DEGTORAD),
+                              numpy.sin((90.-bcen)*_DEGTORAD),
+                              numpy.cos((90.-bcen)*_DEGTORAD),
+                              numpy.sin(lcen*_DEGTORAD),
+                              numpy.cos(lcen*_DEGTORAD)) \
+                              < numpy.cos(radius*_DEGTORAD)
+        ll= ll[indx]
+        bb= bb[indx]
+        # Now get the extinctions for these pixels
+        pixarea= self._dl*self._db*_DEGTORAD**2.+numpy.zeros(numpy.sum(indx))
+        extinction= []
+        for l,b in zip(ll,bb):
+            extinction.append(self._evaluate(l,b,dist))
+        extinction= numpy.array(extinction)
+        return (pixarea,extinction)
+               
     def dmax(self,l,b):
         """
         NAME:
