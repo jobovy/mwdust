@@ -13,12 +13,14 @@ except ValueError:
     _DOWNLOAD_SFD= True
     _DOWNLOAD_DRIMMEL= True
     _DOWNLOAD_MARSHALL= True
+    _DOWNLOAD_SALE= True
     _DOWNLOAD_GREEN= True
 else:
     del sys.argv[downloads_pos]
     _DOWNLOAD_SFD= False
     _DOWNLOAD_DRIMMEL= False
     _DOWNLOAD_MARSHALL= False
+    _DOWNLOAD_SALE= False
     _DOWNLOAD_GREEN= False
 
 #Download SFD maps
@@ -143,6 +145,94 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                                                     'ReadMe')])
             except subprocess.CalledProcessError:
                 print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
+            
+#Download Sale data, currently unavailable from CDS
+_SALE_CDS= False
+if _SALE_CDS:
+    _SALE_URL= 'ftp://cdsarc.u-strasbg.fr/pub/cats/J/MNRAS/443/2907'
+else:
+    _SALE_URL= 'http://www.iphas.org/data/extinction/Amap.tar.gz'
+if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
+    if os.getenv('DUST_DIR') is None:
+        raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
+    else:
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),
+                                           'sale14')):
+            os.mkdir(os.path.join(os.getenv('DUST_DIR'),'sale14'))
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'sale14')])
+            except subprocess.CalledProcessError:
+                print '\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m'
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                                'table1.dat')):
+            print '\033[1m'+'Downloading Sale et al. (2014) dust maps ...'+'\033[0m'
+            if _SALE_CDS:
+                try:
+                    subprocess.check_call(['wget',
+                                           '%s/table1.dat.gz' % _SALE_URL,
+                                           '-O',
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'table1.dat.gz')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Downloading Sale dust-map data from %s/table1.dat.gz failed ..." % _SALE_URL +'\033[0m'
+                try:
+                    subprocess.check_call(['gunzip',
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'table1.dat.gz')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Gunzipping Sale et al. dust-map data failed ..."+'\033[0m'
+                try:
+                    subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'table1.dat')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
+                #Also download the ReadMe file
+                try:
+                    subprocess.check_call(['wget','%s/ReadMe' % _SALE_URL,
+                                           '-O',
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'ReadMe')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Downloading Sale dust-map ReadMe from %s/ReadMe failed ..." % _SALE_URL+'\033[0m'
+                try:
+                    subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'ReadMe')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
+            else:
+                try:
+                    subprocess.check_call(['wget',
+                                           _SALE_URL,
+                                           '-O',
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'Amap.tar.gz')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Downloading Sale dust-map data from %s failed ..." % _SALE_URL +'\033[0m'
+                try:
+                    subprocess.check_call(['tar','xvzf',
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14',
+                                                        'Amap.tar.gz'),
+                                           '-C',
+                                           os.path.join(os.getenv('DUST_DIR'),
+                                                        'sale14')])
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Gunzipping Sale et al. dust-map data failed ..."+'\033[0m'
+                try:
+                    os.remove(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                           'Amap.tar.gz'))
+                except subprocess.CalledProcessError:
+                    print '\033[1m'+"Removing Sale et al. dust-map tarred data failed ..."+'\033[0m'
             
 #Download Green et al. PanSTARRS data
 _GREEN_URL= 'http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5'
