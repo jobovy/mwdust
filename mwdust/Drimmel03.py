@@ -189,8 +189,8 @@ class Drimmel03(DustMap3D):
         out=_fd*rfdisk*avdisk+_fs*rfspir*avspir+_fo*rfori*avori
         if self._filter is None:
             return out/3.09 #From Rieke & Lebovksy (1985)
-        else:
-            return out/3.09\
+        else: # if sf10, first put ebv on SFD scale
+            return out/3.09/((1-self._sf10)+self._sf10*0.78)\
                 *aebv(self._filter,sf10=self._sf10)
 
     def dust_vals_disk(self,lcen,bcen,dist,radius):
