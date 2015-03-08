@@ -16,8 +16,8 @@ def cos_sphere_dist(sintheta,costheta,
     INPUT:
        theta  - polar angle [0,pi]
        phi    - azimuth [0,2pi]
-       theta  - polar angle of center of the disk
-       phi_0  - azimuth of the center of the disk
+       theta_o  - polar angle of center of the disk
+       phi_o  - azimuth of the center of the disk
     OUTPUT:
        spherical distance
     HISTORY:
