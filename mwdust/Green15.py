@@ -54,6 +54,26 @@ class Green15(DustMap3D):
         self._interpk= interpk
         return None
 
+    def substitute_sample(self,samplenum):
+        """
+        NAME:
+           substitute_sample
+        PURPOSE:
+           substitute a sample for the best fit to get the extinction from a sample with the same tools; need to have setup the instance with load_samples=True
+        INPUT:
+           samplenum - sample's index to load
+        OUTPUT:
+           (none; just resets the instance to use the sample rather than the best fit; one cannot go back to the best fit after this))
+        HISTORY:
+           2015-03-08 - Written - Bovy (IAS)
+        """
+        # Substitute the sample
+        self._best_fit= self._samples[:,samplenum,:]
+        # Reset the cache
+        self._intps= numpy.zeros(len(self._pix_info['healpix_index']),
+                                 dtype='object') #array to cache interpolated extinctions
+        return None
+
     def _evaluate(self,l,b,d):
         """
         NAME:
