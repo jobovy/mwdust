@@ -24,3 +24,9 @@ map that you use:
 * **mwdust.Drimmel03**: [Drimmel et al. (2003)](http://adsabs.harvard.edu/abs/2003A%26A...409..205D)
 
 * **mwdust.Marshall06**: [Marshall et al. (2006)](http://adsabs.harvard.edu/abs/2006A%26A...453..635M)
+
+* **mwdust.Sale14**: [Sale et al. (2014)](http://adsabs.harvard.edu/abs/2014MNRAS.443.2907S)
+
+* **mwdust.Green15**: [Green et al. (2015)](http://adsabs.harvard.edu/abs/????)
+
+* **mwdust.Zero**: [Bovy et al. (2015)](http://adsabs.harvard.edu/abs/????) :smirk:
