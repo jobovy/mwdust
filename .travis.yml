@@ -4,7 +4,8 @@ python:
 virtualenv:
   system_site_packages: true
 before_install:
- - sudo apt-get install -qq python-numpy python-scipy python-matplotlib python-healpy
+ - sudo apt-get install -qq python-numpy python-scipy python-matplotlib
+ - pip install healpy
 # command to install dependencies
 install:
  - python setup.py install --no-downloads
