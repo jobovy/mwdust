@@ -12,8 +12,8 @@ before_install:
  - conda config --set always_yes yes --set changeps1 no
  - conda update -q conda
  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib setuptools pip cython>=0.20
- - pip install healpy
  - source activate test-environment
+ - pip install healpy
 # command to install dependencies
 install:
  - python setup.py install --no-downloads
