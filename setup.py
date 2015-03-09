@@ -227,13 +227,30 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                                            os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14')])
                 except subprocess.CalledProcessError:
-                    print '\033[1m'+"Gunzipping Sale et al. dust-map data failed ..."+'\033[0m'
+                    print '\033[1m'+"Untarring/unzipping Sale et al. dust-map data failed ..."+'\033[0m'
                 try:
                     os.remove(os.path.join(os.getenv('DUST_DIR'),'sale14',
                                            'Amap.tar.gz'))
                 except subprocess.CalledProcessError:
                     print '\033[1m'+"Removing Sale et al. dust-map tarred data failed ..."+'\033[0m'
-            
+            # Fix one line in the dust map
+            with open("tmp.dat", "w") as fout:
+                with open(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                           'Amap.dat'),'r') as fin:
+                    for line in fin:
+                        if '15960.40000' in line: # bad line
+                            newline= ''
+                            for ii,word in enumerate(line.split(' ')):
+                                if ii > 0: newline+= ' '
+                                if ii > 6 and len(word) > 9:
+                                    word= '747.91400'
+                                newline+= word
+                            fout.write(newline+'\n')
+                        else:
+                            fout.write(line)
+            os.rename('tmp.dat',os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                             'Amap.dat'))
+
 #Download Green et al. PanSTARRS data
 _GREEN_URL= 'http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5'
 if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
