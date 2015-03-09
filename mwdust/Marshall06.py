@@ -129,7 +129,7 @@ class Marshall06(DustMap3D):
                               numpy.cos((90.-bcen)*_DEGTORAD),
                               numpy.sin(lcen*_DEGTORAD),
                               numpy.cos(lcen*_DEGTORAD)) \
-                              < numpy.cos(radius*_DEGTORAD)
+                              >= numpy.cos(radius*_DEGTORAD)
         ll= ll[indx]
         bb= bb[indx]
         # Now get the extinctions for these pixels
