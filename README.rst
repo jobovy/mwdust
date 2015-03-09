@@ -30,7 +30,7 @@ Dust Data
 ---------
 
 The code can automatically download all of the necessary data (use the
-installation option ``--no-downloads`` to turn this off. These data
+installation option ``--no-downloads`` to turn this off). These data
 are put in subdirectories of a directory ``DUST_DIR``, with roughly
 the following lay-out::
 
