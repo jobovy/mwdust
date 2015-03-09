@@ -53,10 +53,15 @@ class Sale14(DustMap3D):
         self._bmax= numpy.amax(self._saledata['b_max'])
         self._ndistbin= 150
         self._ds= numpy.linspace(0.05,14.95,self._ndistbin)
+        # For dust_vals
+        self._sintheta= numpy.sin((90.-self._saledata['GLAT'])*_DEGTORAD)
+        self._costheta= numpy.cos((90.-self._saledata['GLAT'])*_DEGTORAD)
+        self._sinphi= numpy.sin(self._saledata['GLON']*_DEGTORAD)
+        self._cosphi= numpy.cos(self._saledata['GLON']*_DEGTORAD)
         self._intps= numpy.zeros(len(self._saledata),dtype='object') #array to cache interpolated extinctions
         return None
 
-    def _evaluate(self,l,b,d):
+    def _evaluate(self,l,b,d,_lbIndx=None):
         """
         NAME:
            _evaluate
@@ -73,7 +78,8 @@ class Sale14(DustMap3D):
         """
         if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
             raise NotImplementedError("array input for l and b for Sale et al. (2014) dust map not implemented")
-        lbIndx= self._lbIndx(l,b)
+        if _lbIndx is None: lbIndx= self._lbIndx(l,b)
+        else: lbIndx= _lbIndx
         if self._intps[lbIndx] != 0:
             out= self._intps[lbIndx](d)
         else:
@@ -90,6 +96,42 @@ class Sale14(DustMap3D):
             return out/11./aebv('2MASS Ks',sf10=self._sf10)\
                 *aebv(self._filter,sf10=self._sf10)
 
+    def dust_vals_disk(self,lcen,bcen,dist,radius):
+        """
+        NAME:
+           dust_vals_disk
+        PURPOSE:
+           return the distribution of extinction within a small disk as samples
+        INPUT:
+           lcen, bcen - Galactic longitude and latitude of the center of the disk (deg)
+           dist - distance in kpc
+           radius - radius of the disk (deg)
+        OUTPUT:
+           (pixarea,extinction) - arrays of pixel-area in sq rad and extinction value
+        HISTORY:
+           2015-03-07 - Written - Bovy (IAS)
+        """
+        # Find all of the (l,b) of the pixels within radius of (lcen,bcen)
+        indx= cos_sphere_dist(self._sintheta,self._costheta,
+                              self._sinphi,self._cosphi,
+                              numpy.sin((90.-bcen)*_DEGTORAD),
+                              numpy.cos((90.-bcen)*_DEGTORAD),
+                              numpy.sin(lcen*_DEGTORAD),
+                              numpy.cos(lcen*_DEGTORAD)) \
+                              >= numpy.cos(radius*_DEGTORAD)
+        ll= self._saledata['GLON'][indx]
+        bb= self._saledata['GLAT'][indx]
+        # Now get the extinctions for these pixels
+        pixarea= []
+        extinction= []
+        for l,b in zip(ll,bb):
+            lbIndx= self._lbIndx(l,b)
+            extinction.append(self._evaluate(l,b,dist,_lbIndx=lbIndx))
+            pixarea.append(self._dl[lbIndx]*self._db[lbIndx]*_DEGTORAD**2.)
+        pixarea= numpy.array(pixarea)
+        extinction= numpy.array(extinction)
+        return (pixarea,extinction)
+               
     def dmax(self,l,b):
         """
         NAME:
