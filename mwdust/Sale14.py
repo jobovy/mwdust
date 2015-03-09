@@ -88,7 +88,6 @@ class Sale14(DustMap3D):
             return out/11./aebv('2MASS Ks',sf10=self._sf10)
         else: # if sf10, first put ebv on SFD scale
             return out/11./aebv('2MASS Ks',sf10=self._sf10)\
-                /((1-self._sf10)+self._sf10*0.78)\
                 *aebv(self._filter,sf10=self._sf10)
 
     def dmax(self,l,b):
