@@ -23,7 +23,7 @@ or
 ``python setup.py install --prefix=/some/directory/``
 
 The installation automatically downloads the relevant dust data. You
-might have to define an environment variable SUDO_USER if not
+might have to define an environment variable ``SUDO_USER`` if not
 installing with sudo.
 
 Dust Data
@@ -47,7 +47,7 @@ the following lay-out::
           Amap.dat
           ReadMe
 
-The data for the Drimmel et al. (2003) is installed in the code
+The data for the Drimmel et al. (2003) map is installed in the code
 directory, because it is not very large.
 
 Usage
@@ -61,9 +61,9 @@ All of the maps can be initialized similar to::
 
 which sets up a Drimmel et al. (2003) map for the *H*-band filter. The
 maps can be evaluate for a given Galactic longitude *l*, Galactic
-latitude *b*, and an array (or scalar) of distances $D$::
+latitude *b*, and an array (or scalar) of distances *D*::
 
-	 drimmel(60.,0.,3.)
+	 drimmel(60.,0.,3.) # inputs are (l,b,D)
 	 array([ 0.42794197])
 	 drimmel(30.,3.,numpy.array([1.,2.,3.,10.]))
 	 array([ 0.24911393,  0.53050198,  0.78045575,  1.14657304])
@@ -73,12 +73,12 @@ latitude *b*, and an array (or scalar) of distances $D$::
 
 and they can be plotted as::
 
-    drimmel.plot(55.,0.5)
+    drimmel.plot(55.,0.5) # inputs are (l,b)
 
 (plot not shown). Currently only a few filters are supported; if no
 filter is supplied, *E(B-V)* is returned on the SFD scale if the
 object is initialized with ``sf10=True`` (which tells the code to use
-re-scalings from `Schlafly & Finkbeiner (2011)
+re-scalings from `Schlafly & Finkbeiner 2011
 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__). ``sf10=True``
 is the default initialization for every map, so be careful in
 interpreting the raw *E(B-V)* that come out of the code.
