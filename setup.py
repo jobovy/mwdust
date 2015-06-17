@@ -165,8 +165,10 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                                                     'sale14')])
             except subprocess.CalledProcessError:
                 print '\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m'
-        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'sale14',
-                                                'table1.dat')):
+        if not (os.path.exists(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                                'table1.dat')) 
+                or os.path.exists(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                                'Amap.dat'))):
             print '\033[1m'+'Downloading Sale et al. (2014) dust maps ...'+'\033[0m'
             if _SALE_CDS:
                 try:
