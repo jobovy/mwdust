@@ -24,8 +24,8 @@ else:
     _DOWNLOAD_GREEN= False
 
 #Download SFD maps
-_SFD_URL_NGP= 'http://www.astro.princeton.edu/~schlegel/dust/dustpub/maps/SFD_dust_4096_ngp.fits'
-_SFD_URL_SGP= 'http://www.astro.princeton.edu/~schlegel/dust/dustpub/maps/SFD_dust_4096_sgp.fits'
+_SFD_URL_NGP= 'http://www.sdss3.org/svn/repo/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
+_SFD_URL_SGP= 'http://www.sdss3.org/svn/repo/catalogs/dust/trunk/maps/SFD_dust_4096_sgp.fits'
 if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
@@ -53,7 +53,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                                                     'maps',
                                                     'SFD_dust_4096_ngp.fits')])
             except subprocess.CalledProcessError:
-                print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'               
+                print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'maps',
                                            'SFD_dust_4096_sgp.fits')):
             try:
@@ -69,7 +69,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                                                     'SFD_dust_4096_sgp.fits')])
             except subprocess.CalledProcessError:
                 print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
-               
+
 #Download Drimmel data
 _DRIMMEL_URL= 'ftp://ftp.oato.inaf.it/astrometria/extinction/data-for.tar.gz'
 if _DOWNLOAD_DRIMMEL \
@@ -145,7 +145,7 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                                                     'ReadMe')])
             except subprocess.CalledProcessError:
                 print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
-            
+
 #Download Sale data, currently unavailable from CDS
 _SALE_CDS= False
 if _SALE_CDS:
@@ -285,7 +285,7 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                                                     'dust-map-3d.h5')])
             except subprocess.CalledProcessError:
                 print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
-            
+
 #SFD  extension
 sfd_c_src= glob.glob('mwdust/util/SFD_CodeC/*.c')
 
