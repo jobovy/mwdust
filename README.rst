@@ -98,6 +98,6 @@ map that you use:
 
 * **mwdust.Sale14**: `Sale et al. (2014) <http://adsabs.harvard.edu/abs/2014MNRAS.443.2907S>`__
 
-* **mwdust.Green15**: `Green et al. (2015) <http://adsabs.harvard.edu/abs/????>`__
+* **mwdust.Green15**: `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__
 
 * **mwdust.Zero**: `Bovy et al. (2015) <http://adsabs.harvard.edu/abs/????>`__ :smirk:
