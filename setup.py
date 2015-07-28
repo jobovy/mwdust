@@ -355,7 +355,7 @@ setup(name='mwdust',
                         'fortranfile','h5py','healpy'],
       ext_modules=ext_modules,
       classifiers=[
-        "Development Status :: 6 - Mature",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
