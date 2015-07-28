@@ -35,6 +35,8 @@ are put in subdirectories of a directory ``DUST_DIR``, with roughly
 the following lay-out::
 
     $DUST_DIR/
+       combined15/
+          dust-map-3d.h5
        green15/
           dust-map-3d.h5
        maps/
@@ -99,5 +101,7 @@ map that you use:
 * **mwdust.Sale14**: `Sale et al. (2014) <http://adsabs.harvard.edu/abs/2014MNRAS.443.2907S>`__
 
 * **mwdust.Green15**: `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__
+
+* **mwdust.Combined15**: Combination of `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__, `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__, and `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__; see `Bovy et al. (2015) <http://adsabs.harvard.edu/abs/????>`__
 
 * **mwdust.Zero**: `Bovy et al. (2015) <http://adsabs.harvard.edu/abs/????>`__ :smirk:
