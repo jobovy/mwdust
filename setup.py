@@ -353,5 +353,14 @@ setup(name='mwdust',
                                    'drimmeldata/*.dat']},
       install_requires=['numpy','scipy','matplotlib','asciitable',
                         'fortranfile','h5py','healpy'],
-      ext_modules=ext_modules
+      ext_modules=ext_modules,
+      classifiers=[
+        "Development Status :: 6 - Mature",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+        "Programming Language :: C",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Scientific/Engineering :: Astronomy",
+        "Topic :: Scientific/Engineering :: Physics"]
       )
