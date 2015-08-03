@@ -94,8 +94,8 @@ interpreting the raw *E(B-V)* that come out of the code. *Only use*
 situation, so using ``sf10=False`` is never recommended.
 
 To check what bandpasses are supported on the ``sf10=True`` scale do
-(these are all the bandpasses from `Schlafly & Finkbeiner 2011
-<http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__)::
+(these are all the bandpasses from Table 6 in `Schlafly & Finkbeiner
+2011 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__)::
 
    from mwdust.util import extCurves  
    extCurves.avebvsf.keys()
