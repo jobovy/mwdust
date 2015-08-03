@@ -88,9 +88,9 @@ with ``sf10=True`` (which tells the code to use re-scalings from
 `Schlafly & Finkbeiner 2011
 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__). ``sf10=True``
 is the default initialization for every map, so be careful in
-interpreting the raw *E(B-V)* that come out of the code. *Only use
-``sf10=False`` when you have an extinction map in true E(B-V), **not**
-SFD E(B-V)*. No map currently included in this package is in this
+interpreting the raw *E(B-V)* that come out of the code. *Only use*
+``sf10=False`` *when you have an extinction map in true E(B-V)*, **not**
+*SFD E(B-V)*. No map currently included in this package is in this
 situation, so using ``sf10=False`` is never recommended.
 
 To check what bandpasses are supported on the ``sf10=True`` scale do::
