@@ -77,13 +77,50 @@ and they can be plotted as::
 
     drimmel.plot(55.,0.5) # inputs are (l,b)
 
-(plot not shown). Currently only a few filters are supported; if no
-filter is supplied, *E(B-V)* is returned on the SFD scale if the
-object is initialized with ``sf10=True`` (which tells the code to use
-re-scalings from `Schlafly & Finkbeiner 2011
+(plot not shown). 
+
+Supported bandpasses
+---------------------
+
+Currently only a few filters are supported; if no filter is supplied,
+*E(B-V)* is returned on the SFD scale if the object is initialized
+with ``sf10=True`` (which tells the code to use re-scalings from
+`Schlafly & Finkbeiner 2011
 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__). ``sf10=True``
 is the default initialization for every map, so be careful in
-interpreting the raw *E(B-V)* that come out of the code.
+interpreting the raw *E(B-V)* that come out of the code. *Only use
+``sf10=False`` when you have an extinction map in true E(B-V), **not**
+SFD E(B-V)*. No map currently included in this package is in this
+situation, so using ``sf10=False`` is never recommended.
+
+To check what bandpasses are supported on the ``sf10=True`` scale do::
+
+   from mwdust.util import extCurves  
+   extCurves.avebvsf.keys()
+
+which gives::
+
+      ['Stromgren u',
+       'Stromgren v',
+       'ACS clear',
+       'CTIO R',
+       'CTIO V',
+       'CTIO U',
+       'CTIO I',
+       ...]
+
+To check the bandpasses that are supported on the old SFD scale (``sf10=False``), do::
+
+   numpy.array(extCurves.avebv.keys())[True-numpy.isnan(extCurves.avebv.values())]
+
+which gives::
+
+      array(['CTIO R', 'CTIO V', 'CTIO U', 'CTIO I', 'CTIO B', 'DSS-II i',
+       'DSS-II g', 'WISE-1', 'WISE-2', 'DSS-II r', 'UKIRT H', 'UKIRT J',
+       'UKIRT K', 'IRAC-1', 'IRAC-2', 'IRAC-3', 'IRAC-4', '2MASS H',
+       'SDSS r', 'SDSS u', 'SDSS z', 'SDSS g', 'SDSS i', '2MASS Ks',
+       '2MASS J'], 
+      dtype='|S14'
 
 Acknowledgements
 -----------------
