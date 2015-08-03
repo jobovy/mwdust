@@ -1,5 +1,6 @@
 import re
 import os, os.path
+import numpy
 
 #A / E(B-v)
 avebv=  {}
@@ -16,6 +17,25 @@ def _read_extCurves():
         vals= re.split('\s\s+',line)
         avebv[vals[0].strip()]= float(vals[4])
         avebvsf[vals[0].strip()]= float(vals[2])    
+    # Add filters from Schlafly & Finkbeiner
+    extFile= open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                               'extCurves','apj398709t6_ascii.txt'),'r')
+    cnt= 0
+    for line in extFile:
+        print line
+        cnt+= 1
+        if cnt < 6: continue
+        if cnt > 49: break
+        vals= line.split()
+        # Each line has 2 filters
+        filter1= '%s %s' % (vals[0],vals[1])
+        if not filter1 in avebv:
+            avebv[filter1]= numpy.nan
+            avebvsf[filter1]= float(vals[4])
+        filter2= '%s %s' % (vals[7],vals[8])
+        if not filter2 in avebv:
+            avebv[filter2]= numpy.nan
+            avebvsf[filter2]= float(vals[11])
 
 _read_extCurves()
 
