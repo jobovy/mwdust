@@ -22,7 +22,6 @@ def _read_extCurves():
                                'extCurves','apj398709t6_ascii.txt'),'r')
     cnt= 0
     for line in extFile:
-        print line
         cnt+= 1
         if cnt < 6: continue
         if cnt > 49: break
