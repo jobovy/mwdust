@@ -291,9 +291,8 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                 print '\033[1m'+"Problem changing ownership of data file..."+'\033[0m'
 
 #Download the combined map of Bovy et al. (2015): Marshall+Green+Drimmel for full sky coverage
-_COMBINED_URL= 'http://TBD'
+_COMBINED_URL= 'https://zenodo.org/record/31262/files/dust-map-3d.h5'
 if _DOWNLOAD_COMBINED and sys.argv[1] in ('install','develop'):
-    print '\033[1m'+'Downloading combined dust map failed, as it is currently unavailable; contact Bovy for access ...'+'\033[0m'
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
     else:
