@@ -127,8 +127,8 @@ which gives::
 Acknowledgements
 -----------------
 
-When making use of this code in a publication, please cite Bovy et
-al. (2015a, in preparation). Also cite the relevant papers for the dust
+When making use of this code in a publication, please cite `Bovy et
+al. (2015a) <http://arxiv.org/abs/1509.06751>`__. Also cite the relevant papers for the dust
 map that you use:
 
 * **mwdust.SFD**: `Schlegel et al. (1998) <http://adsabs.harvard.edu/abs/1998ApJ...500..525S>`__
