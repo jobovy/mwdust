@@ -6,6 +6,12 @@ mwdust
 .. image:: https://travis-ci.org/jobovy/mwdust.svg?branch=master
    :target: http://travis-ci.org/jobovy/mwdust
 
+.. image:: http://img.shields.io/pypi/v/mwdust.svg
+   :target: https://pypi.python.org/pypi/mwdust/
+
+.. image:: http://img.shields.io/badge/license-New%20BSD-brightgreen.svg
+   :target: https://github.com/jobovy/mwdust/blob/master/LICENSE
+
 Installation
 -------------
 
