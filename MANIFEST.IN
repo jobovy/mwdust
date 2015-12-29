@@ -1,0 +1,5 @@
+include README.rst LICENSE HISTORY.txt AUTHORS.txt
+include mwdust/util/extCurves/extinction.tbl
+include mwdust/util/extCurves/apj398709t6_ascii.txt
+include mwdust/util/drimmeldata/*.dat
+include mwdust/util/SFD_CodeC/*.h
