@@ -5,7 +5,16 @@ import sys
 import subprocess
 import glob
 
-longDescription= ""
+long_description= ''
+previous_line= ''
+with open('README.rst') as dfile:
+    for line in dfile:
+        if not 'image' in line and not 'target' in line \
+                and not 'DETAILED' in line and not '**master**' in line \
+                and not '**development' in line \
+                and not 'DETAILED' in  previous_line:
+            long_description+= line
+        previous_line= line
 
 try:
     downloads_pos = sys.argv.index('--no-downloads')
@@ -343,7 +352,7 @@ setup(name='mwdust',
       author='Jo Bovy',
       author_email='bovy@ias.edu',
       license='New BSD',
-      long_description=longDescription,
+      long_description=long_description,
       url='https://github.com/jobovy/mwdust',
       package_dir = {'mwdust/': ''},
       packages=['mwdust',
@@ -355,7 +364,7 @@ setup(name='mwdust',
                         'fortranfile','h5py','healpy'],
       ext_modules=ext_modules,
       classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 6 - Mature",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
