@@ -15,10 +15,12 @@ before_install:
  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib setuptools pip cython>=0.20 h5py
  - source activate test-environment
  - pip install healpy
+ - pip install hypothesis
 # command to install dependencies
 install:
  - python setup.py install --no-downloads
-script: true
+script:
+ - nosetests -v -w nose/
 notifications:
   email:
     recipients:
