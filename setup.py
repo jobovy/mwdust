@@ -35,8 +35,8 @@ else:
     _DOWNLOAD_COMBINED= False
 
 #Download SFD maps
-_SFD_URL_NGP= 'http://www.sdss3.org/svn/repo/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
-_SFD_URL_SGP= 'http://www.sdss3.org/svn/repo/catalogs/dust/trunk/maps/SFD_dust_4096_sgp.fits'
+_SFD_URL_NGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
+_SFD_URL_SGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_sgp.fits'
 if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
