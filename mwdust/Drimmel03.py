@@ -7,11 +7,13 @@ import copy
 import numpy
 from scipy.ndimage import map_coordinates
 from scipy import optimize
-import healpy
+try:
+    import healpy
+except ImportError: pass
 from mwdust.util.extCurves import aebv
 from mwdust.util import read_Drimmel
 from mwdust.util.tools import cos_sphere_dist
-from DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D
 _DEGTORAD= numpy.pi/180.
 class Drimmel03(DustMap3D):
     """extinction model from Drimmel et al. 2003 2003A&A...409..205D"""

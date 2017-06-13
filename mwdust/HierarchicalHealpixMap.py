@@ -7,9 +7,11 @@
 ###############################################################################
 import numpy
 from scipy import interpolate
-import healpy
+try:
+    import healpy
+except ImportError: pass
 from mwdust.util.extCurves import aebv
-from DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D
 _DEGTORAD= numpy.pi/180.
 class HierarchicalHealpixMap(DustMap3D):
     """General class for extinction maps given as a hierarchical HEALPix 

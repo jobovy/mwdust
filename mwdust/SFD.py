@@ -6,7 +6,7 @@
 import numpy
 from mwdust.util.read_SFD import read_SFD_EBV
 from mwdust.util.extCurves import aebv
-from DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D
 class SFD(DustMap3D):
     """Schlegel, Finkbeiner, & Davis (1998) dust map (2D)"""
     def __init__(self,filter=None,sf10=True,interp=True,noloop=False):

@@ -4,7 +4,7 @@
 #
 ###############################################################################
 import numpy
-from DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D
 _DEGTORAD= numpy.pi/180.
 class Zero(DustMap3D):
     """model with zero extinction"""

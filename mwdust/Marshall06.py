@@ -10,7 +10,7 @@ from scipy import interpolate
 import asciitable
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
-from DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D
 try:
     from galpy.util import bovy_plot
     _BOVY_PLOT_LOADED= True
