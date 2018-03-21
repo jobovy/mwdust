@@ -65,23 +65,25 @@ All of the maps can be initialized similar to::
 
     import mwdust
     drimmel= mwdust.Drimmel03(filter='2MASS H')
+    combined= mwdust.Combined15(filter='2MASS H')
     sfd= mwdust.SFD(filter='2MASS H')
 
-which sets up a Drimmel et al. (2003) map for the *H*-band filter. The
-maps can be evaluate for a given Galactic longitude *l*, Galactic
-latitude *b*, and an array (or scalar) of distances *D*::
+which sets up the Drimmel et al. (2003) map, the combined Bovy et
+al. (2016) map, and the SFD map for the *H*-band filter. The maps can
+be evaluate for a given Galactic longitude *l*, Galactic latitude *b*,
+and an array (or scalar) of distances *D*::
 
 	 drimmel(60.,0.,3.) # inputs are (l,b,D)
-	 array([ 0.42794197])
-	 drimmel(30.,3.,numpy.array([1.,2.,3.,10.]))
-	 array([ 0.24911393,  0.53050198,  0.78045575,  1.14657304])
+	 array([ 0.38813341])
+	 combined(30.,3.,numpy.array([1.,2.,3.,10.]))
+	 array([ 0.22304147,  0.55687252,  0.86694602,  1.18779507])
 	 # SFD is just the constant SFD extinction
 	 sfd(30.,3.,numpy.array([1.,2.,3.]))
 	 array([ 1.19977335,  1.19977335,  1.19977335])
 
 and they can be plotted as::
 
-    drimmel.plot(55.,0.5) # inputs are (l,b)
+    combined.plot(55.,0.5) # inputs are (l,b)
 
 (plot not shown). 
 
