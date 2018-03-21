@@ -361,7 +361,7 @@ setup(name='mwdust',
                                    'extCurves/apj398709t6_ascii.txt',
                                    'drimmeldata/*.dat']},
       install_requires=['numpy','scipy','matplotlib','asciitable',
-                        'fortranfile','h5py','healpy'],
+                        'h5py','healpy'],
       ext_modules=ext_modules,
       classifiers=[
         "Development Status :: 6 - Mature",
