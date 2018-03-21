@@ -53,10 +53,10 @@ def aebv(filter,sf10=True):
        2013-11-24 - Written - Bovy (IAS)
     """
     if sf10:
-        if not avebvsf.has_key(filter):
+        if not filter in avebvsf:
             raise ValueError("Requested filter is not supported")
         return avebvsf[filter]
     else:
-        if not avebv.has_key(filter):
+        if not filter in avebv:
             raise ValueError("Requested filter is not supported")
         return avebv[filter]
