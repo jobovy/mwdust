@@ -18,6 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# Copyright 2018 Jo Bovy
+#
+# Made small changes to allow this module to be used in Python 3, but only
+# to be able to read the files used in the mwdust package. Keep the same 
+# license as above
 """Defines a file-derived class to read/write Fortran unformatted files.
 
 The assumption is that a Fortran unformatted file is being written by
@@ -47,7 +52,11 @@ integers.
 """
 
 __docformat__ = "restructuredtext en"
-
+import sys
+_PY3= sys.version > '3'
+if _PY3:
+    from io import FileIO
+    file= FileIO
 import numpy
 
 class FortranFile(file):
@@ -113,7 +122,10 @@ class FortranFile(file):
 
     def _read_exactly(self, num_bytes):
         """Read in exactly num_bytes, raising an error if it can't be done."""
-        data = ''
+        if _PY3:
+            data = b''
+        else:
+            data = ''
         while True:
             l = len(data)
             if l == num_bytes:
