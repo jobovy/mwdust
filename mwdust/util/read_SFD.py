@@ -67,8 +67,8 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
     glon= numpy.require(glon,dtype=numpy.float64,requirements=['C','W'])
     glat= numpy.require(glat,dtype=numpy.float64,requirements=['C','W'])
 
-    res= evalFunc(ctypes.c_char_p(ebvFileN),
-                     ctypes.c_char_p(ebvFileS),
+    res= evalFunc(ctypes.c_char_p(ebvFileN.encode('ascii')),
+                     ctypes.c_char_p(ebvFileS.encode('ascii')),
                      ctypes.c_long(len(glon)),
                      glon.astype(numpy.float32,order='C',copy=False),
                      glat.astype(numpy.float32,order='C',copy=False),
