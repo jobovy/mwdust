@@ -1,3 +1,5 @@
+import sys
+import distutils.sysconfig as sysconfig
 import ctypes
 import ctypes.util
 from numpy.ctypeslib import ndpointer
@@ -6,13 +8,17 @@ import numpy
 #Find and load the library
 _lib = None
 _libname = ctypes.util.find_library('sfd_c')
+PY3= sys.version > '3'
+if PY3: #pragma: no cover
+    _ext_suffix= sysconfig.get_config_var('EXT_SUFFIX')
+else:
+    _ext_suffix= sysconfig.get_config_var('SO')
 if _libname:
     _lib = ctypes.CDLL(_libname)
 if _lib is None:
-    import sys
     for path in sys.path:
         try:
-            _lib = ctypes.CDLL(os.path.join(path,'sfd_c.so'))
+            _lib = ctypes.CDLL(os.path.join(path,'sfd_c%s' % _ext_suffix))
         except OSError:
             _lib = None
         else:
