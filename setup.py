@@ -49,7 +49,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                 subprocess.check_call(['chown',os.getenv('SUDO_USER'),
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'maps')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
             print('\033[1m'+'Downloading SFD dust maps ...'+'\033[0m')
             try:
@@ -63,7 +63,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'maps',
                                                     'SFD_dust_4096_ngp.fits')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'maps',
                                            'SFD_dust_4096_sgp.fits')):
@@ -78,7 +78,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'maps',
                                                     'SFD_dust_4096_sgp.fits')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
 
 #Download Drimmel data
@@ -112,7 +112,7 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                 subprocess.check_call(['chown',os.getenv('SUDO_USER'),
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'marshall06')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'marshall06',
                                                 'table1.dat')):
@@ -138,7 +138,7 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'marshall06',
                                                     'table1.dat')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
             #Also download the ReadMe file
             try:
@@ -154,7 +154,7 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'marshall06',
                                                     'ReadMe')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
 
 #Download Sale data, currently unavailable from CDS
@@ -174,7 +174,7 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                 subprocess.check_call(['chown',os.getenv('SUDO_USER'),
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'sale14')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not (os.path.exists(os.path.join(os.getenv('DUST_DIR'),'sale14',
                                                 'table1.dat')) 
@@ -203,7 +203,7 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                                            os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14',
                                                         'table1.dat')])
-                except subprocess.CalledProcessError:
+                except (subprocess.CalledProcessError,TypeError):
                     print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
                 #Also download the ReadMe file
                 try:
@@ -219,7 +219,7 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                                            os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14',
                                                         'ReadMe')])
-                except subprocess.CalledProcessError:
+                except (subprocess.CalledProcessError,TypeError):
                     print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
             else:
                 try:
@@ -277,7 +277,7 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                 subprocess.check_call(['chown',os.getenv('SUDO_USER'),
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'green15')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green15',
                                            'dust-map-3d.h5')):
@@ -296,7 +296,7 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'green15',
                                                     'dust-map-3d.h5')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
 
 #Download the combined map of Bovy et al. (2015): Marshall+Green+Drimmel for full sky coverage
@@ -312,7 +312,7 @@ if _DOWNLOAD_COMBINED and sys.argv[1] in ('install','develop'):
                 subprocess.check_call(['chown',os.getenv('SUDO_USER'),
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'combined15')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'combined15',
                                            'dust-map-3d.h5')):
@@ -331,7 +331,7 @@ if _DOWNLOAD_COMBINED and sys.argv[1] in ('install','develop'):
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'combined15',
                                                     'dust-map-3d.h5')])
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
 
 #SFD  extension
