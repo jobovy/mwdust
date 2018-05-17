@@ -146,7 +146,7 @@ class Drimmel03(DustMap3D):
 
         #Stars beyond the local grid
         #Orion
-        globIndx= True-(numpy.fabs(X-self._xsun) < 1.)*(numpy.fabs(Y) < 2.)
+        globIndx= True^(numpy.fabs(X-self._xsun) < 1.)*(numpy.fabs(Y) < 2.)
         if numpy.sum(globIndx) > 0:
             #Orion grid is different from other global grids, so has its own dmax
             dmax= 100.
@@ -180,7 +180,7 @@ class Drimmel03(DustMap3D):
         avspir= map_coordinates(self._drimmelMaps['avspir'],
                                 [xi,yj,zk],
                                 mode='constant',cval=0.)
-        globIndx= True-(numpy.fabs(X-self._xsun) < 0.75)*(numpy.fabs(Y) < 0.75)
+        globIndx= True^(numpy.fabs(X-self._xsun) < 0.75)*(numpy.fabs(Y) < 0.75)
         if numpy.sum(globIndx) > 0:
             avdisk[globIndx]= map_coordinates(self._drimmelMaps['avdisk'],
                                               [xi,yj,zk],
