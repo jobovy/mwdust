@@ -146,7 +146,15 @@ class Drimmel03(DustMap3D):
 
         #Stars beyond the local grid
         #Orion
-        globIndx= True-(numpy.fabs(X-self._xsun) < 1.)*(numpy.fabs(Y) < 2.)
+        #change by MAvE (2018-05-15 since boolean subtraction deprecated)
+        bool_val1=numpy.fabs(X-self._xsun) < 1.
+        bool_val2=numpy.fabs(Y) < 2.
+        bool_val=bool_val1 * bool_val2
+        if bool_val:
+            globIndx= False
+        else:
+            globIndx= True
+        #globIndx= True-(numpy.fabs(X-self._xsun) < 1.)*(numpy.fabs(Y) < 2.)
         if numpy.sum(globIndx) > 0:
             #Orion grid is different from other global grids, so has its own dmax
             dmax= 100.
@@ -180,7 +188,15 @@ class Drimmel03(DustMap3D):
         avspir= map_coordinates(self._drimmelMaps['avspir'],
                                 [xi,yj,zk],
                                 mode='constant',cval=0.)
-        globIndx= True-(numpy.fabs(X-self._xsun) < 0.75)*(numpy.fabs(Y) < 0.75)
+        #change by MAvE (2018-05-15 since boolean subtraction deprecated)
+        bool_val1=numpy.fabs(X-self._xsun) < 0.75
+        bool_val2=numpy.fabs(Y) < 0.75
+        bool_val=bool_val1 * bool_val2
+        if bool_val:
+            globIndx= False
+        else:
+            globIndx= True
+        #globIndx= True-(numpy.fabs(X-self._xsun) < 0.75)*(numpy.fabs(Y) < 0.75)
         if numpy.sum(globIndx) > 0:
             avdisk[globIndx]= map_coordinates(self._drimmelMaps['avdisk'],
                                               [xi,yj,zk],
