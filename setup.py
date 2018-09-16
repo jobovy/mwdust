@@ -1,4 +1,5 @@
 import os
+import shutil
 from setuptools import setup
 from distutils.core import Extension
 import sys
@@ -261,8 +262,8 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                             fout.write(newline+'\n')
                         else:
                             fout.write(line)
-            os.rename('tmp.dat',os.path.join(os.getenv('DUST_DIR'),'sale14',
-                                             'Amap.dat'))
+            shutil.move('tmp.dat',os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                               'Amap.dat'))
 
 #Download Green et al. PanSTARRS data (alt.: http://dx.doi.org/10.7910/DVN/40C44C)
 _GREEN_URL= 'http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5'
