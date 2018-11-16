@@ -73,6 +73,12 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
     glon= numpy.require(glon,dtype=numpy.float64,requirements=['C','W'])
     glat= numpy.require(glat,dtype=numpy.float64,requirements=['C','W'])
 
+    # Check that the filename isn't too long for the SFD code
+    print(len(ebvFileN.encode('ascii')))
+    if len(ebvFileN.encode('ascii')) >= 120 \
+            or len(ebvFileS.encode('ascii')) >= 120:
+        raise RuntimeError('The path of the file that contains the SFD dust maps is too long; please shorten the path of DUST_DIR')
+
     res= evalFunc(ctypes.c_char_p(ebvFileN.encode('ascii')),
                      ctypes.c_char_p(ebvFileS.encode('ascii')),
                      ctypes.c_long(len(glon)),

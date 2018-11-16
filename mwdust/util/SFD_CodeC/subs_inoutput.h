@@ -7,7 +7,7 @@
 #define MAX_FILE_LINE_LEN 500 /* Maximum line length for data files */
 #define MAX_FILE_NAME_LEN  80
 #define IO_FOPEN_MAX       20  /* Files must be numbered 0 to IO_FOPEN_MAX-1 */
-#define IO_FORTRAN_FL      80  /* Max length of file name from a Fortran call */
+#define IO_FORTRAN_FL     120  /* Max length of file name from a Fortran call */
 #define IO_GOOD             1
 #define IO_BAD              0
 
