@@ -10,7 +10,7 @@ import h5py
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
 _combineddir= os.path.join(os.getenv('DUST_DIR'),'combined19')
-class Combined15(HierarchicalHealpixMap):
+class Combined19(HierarchicalHealpixMap):
     """extinction model obtained from a combination of Marshall et al.
     (2006), Green et al. (2019), and Drimmel et al. (2003)"""
     def __init__(self,filter=None,sf10=True,load_samples=False,

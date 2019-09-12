@@ -28,6 +28,7 @@ except ValueError:
     _DOWNLOAD_GREEN17= True
     _DOWNLOAD_GREEN19= True
     _DOWNLOAD_COMBINED= True
+    _DOWNLOAD_COMBINED19= True
 else:
     del sys.argv[downloads_pos]
     _DOWNLOAD_SFD= False
@@ -38,7 +39,7 @@ else:
     _DOWNLOAD_GREEN17= False
     _DOWNLOAD_GREEN19= False
     _DOWNLOAD_COMBINED= False
-
+    _DOWNLOAD_COMBINED19= False
 #Download SFD maps
 _SFD_URL_NGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
 _SFD_URL_SGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_sgp.fits'
@@ -306,7 +307,7 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
 
 #Download Green et al. 2018 PanSTARRS data
 _GREEN_URL= 'https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/LCYHJG/S7MP4P'
-if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
+if _DOWNLOAD_GREEN17 and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
     else:
@@ -341,7 +342,7 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
 
 #Download Green et al. 2019 PanSTARRS data
 _GREEN_URL= 'https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/2EJ9TX/1CUGA1'
-if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
+if _DOWNLOAD_GREEN19 and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
     else:
@@ -377,7 +378,7 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
 
 #Download the combined map: Marshall+Green19+Drimmel for full sky coverage
 _COMBINED_URL= 'https://keeper.mpdl.mpg.de/f/d36125ebfa2641b68263/?dl=1'
-if _DOWNLOAD_COMBINED and sys.argv[1] in ('install','develop'):
+if _DOWNLOAD_COMBINED19 and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
     else:

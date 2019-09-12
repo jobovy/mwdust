@@ -9,7 +9,7 @@ import h5py
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
 _greendir= os.path.join(os.getenv('DUST_DIR'),'green19')
-class Green15(HierarchicalHealpixMap):
+class Green19(HierarchicalHealpixMap):
     """extinction model from Green et al. (2019)"""
     def __init__(self,filter=None,sf10=True,load_samples=False,
                  interpk=1):
