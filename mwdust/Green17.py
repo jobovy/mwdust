@@ -40,7 +40,7 @@ class Green17(HierarchicalHealpixMap):
             self._best_fit= greendata['/best_fit'][:]
             self._GR= greendata['/GRDiagnostic'][:]
         # Utilities
-        self._distmods= greendata['/pixel_info'].attrs['DM_bin_edges']
+        self._distmods= numpy.linspace(4,19,31)
         self._minnside= numpy.amin(self._pix_info['nside'])
         self._maxnside= numpy.amax(self._pix_info['nside'])
         nlevels= int(numpy.log2(self._maxnside//self._minnside))+1
