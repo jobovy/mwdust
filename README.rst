@@ -169,9 +169,9 @@ map that you use:
 
 * **mwdust.Green15**: `Green et al. (2015) <https://ui.adsabs.harvard.edu/abs/2015ApJ...810...25G>`__
 
-* **mwdust.Green17**: `Green et al. (2018) <https://ui.adsabs.harvard.edu/abs/2018MNRAS.478..651G>`__
+* **mwdust.Green17**: `Green et al. (2018) <https://ui.adsabs.harvard.edu/abs/2018MNRAS.478..651G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
-* **mwdust.Green19**: `Green et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019arXiv190502734G>`__
+* **mwdust.Green19**: `Green et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019arXiv190502734G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
 * **mwdust.Combined15**: Combination of `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__ (**mwdust.Marshall06**), `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__ (**mwdust.Green15**), and `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__ (**mwdust.Green15**); see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__
 
