@@ -392,7 +392,7 @@ if _DOWNLOAD_GREEN19 and sys.argv[1] in ('install','develop'):
 
 
 #Download the combined map: Marshall+Green19+Drimmel for full sky coverage
-_COMBINED_URL= 'https://keeper.mpdl.mpg.de/f/d36125ebfa2641b68263/?dl=1'
+_COMBINED_URL= 'https://zenodo.org/record/3566060/files/combine19.h5'
 if _DOWNLOAD_COMBINED19 and sys.argv[1] in ('install','develop'):
     if os.getenv('DUST_DIR') is None:
         raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
