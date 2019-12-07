@@ -20,15 +20,29 @@ with open('README.rst') as dfile:
 try:
     downloads_pos = sys.argv.index('--no-downloads')
 except ValueError:
-    _DOWNLOAD_SFD= True
-    _DOWNLOAD_DRIMMEL= True
-    _DOWNLOAD_MARSHALL= True
-    _DOWNLOAD_SALE= True
-    _DOWNLOAD_GREEN= True
-    _DOWNLOAD_GREEN17= True
-    _DOWNLOAD_GREEN19= True
-    _DOWNLOAD_COMBINED= True
-    _DOWNLOAD_COMBINED19= True
+    try:
+        all_downloads_pos = sys.argv.index('--all-downloads')
+    except ValueError:
+        _DOWNLOAD_SFD= True
+        _DOWNLOAD_DRIMMEL= True
+        _DOWNLOAD_MARSHALL= True
+        _DOWNLOAD_SALE= False
+        _DOWNLOAD_GREEN= False
+        _DOWNLOAD_GREEN17= False
+        _DOWNLOAD_GREEN19= True
+        _DOWNLOAD_COMBINED= True
+        _DOWNLOAD_COMBINED19= True
+    else:
+        del sys.argv[all_downloads_pos]
+        _DOWNLOAD_SFD= True
+        _DOWNLOAD_DRIMMEL= True
+        _DOWNLOAD_MARSHALL= True
+        _DOWNLOAD_SALE= True
+        _DOWNLOAD_GREEN= True
+        _DOWNLOAD_GREEN17= True
+        _DOWNLOAD_GREEN19= True
+        _DOWNLOAD_COMBINED= True
+        _DOWNLOAD_COMBINED19= True
 else:
     del sys.argv[downloads_pos]
     _DOWNLOAD_SFD= False
@@ -40,6 +54,7 @@ else:
     _DOWNLOAD_GREEN19= False
     _DOWNLOAD_COMBINED= False
     _DOWNLOAD_COMBINED19= False
+
 #Download SFD maps
 _SFD_URL_NGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
 _SFD_URL_SGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_sgp.fits'
