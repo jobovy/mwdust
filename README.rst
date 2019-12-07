@@ -175,6 +175,6 @@ map that you use:
 
 * **mwdust.Combined15**: Combination of `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__ (**mwdust.Marshall06**), `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__ (**mwdust.Green15**), and `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__ (**mwdust.Green15**); see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__
 
-* **mwdust.Combined19**: Similar to **mwdust.Combined15**, but using **mwdust.Green19** instead of **mwdust.Green15*; see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__ for details on the combination (added by @jan-rybizki
+* **mwdust.Combined19**: Similar to **mwdust.Combined15**, but using **mwdust.Green19** instead of **mwdust.Green15**; see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__ for details on the combination (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
 * **mwdust.Zero**: `Bovy et al. (2015b) <http://adsabs.harvard.edu/abs/2015arXiv150905796B>`__ :smirk:
