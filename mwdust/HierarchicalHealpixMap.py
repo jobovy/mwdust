@@ -134,3 +134,66 @@ class HierarchicalHealpixMap(DustMap3D):
                 raise IndexError("Given (l,b) pair has multiple matches!")
         raise IndexError("Given (l,b) pair not within the region covered by the extinction map")
 
+    def plot_mollweide(self,d,**kwargs):
+        """
+        NAME:
+           plot_mollweide
+        PURPOSE:
+           plot the extinction across the sky in Galactic coordinates  out to a given distance using a Mollweide projection
+        INPUT:
+           d - distance in kpc (nearest distance to this in the map is plotted)
+           nside_plot= (2048) nside of the plotted map
+           healpy.visufunc.mollview kwargs
+        OUTPUT:
+           plot to output device
+        HISTORY:
+           2019-12-06 - Written - Bovy (UofT)
+        """
+        # Distance modulus
+        dm= 5.*numpy.log10(d)+10.
+        # Get factor to apply to map to obtain extinction in object's filter
+        filter_fac= aebv(self._filter,sf10=self._sf10) \
+                    if not self._filter is None else 1.
+        # Map the dust map to a common nside, first find nearest distance pixel
+        tpix= numpy.argmin(numpy.fabs(dm-self._distmods))
+        # Construct an empty map at the highest HEALPix resolution present in the map; code snippets adapted from http://argonaut.skymaps.info/usage
+        nside_max= numpy.max(self._pix_info['nside'])
+        npix= healpy.pixelfunc.nside2npix(nside_max)
+        pix_val= numpy.empty(npix,dtype='f8')
+        pix_val[:] = healpy.UNSEEN
+        # Fill the upsampled map
+        for nside in numpy.unique(self._pix_info['nside']):
+            # Get indices of all pixels at current nside level
+            indx= self._pix_info['nside'] == nside
+            # Extract A_X of each selected pixel
+            pix_val_n= filter_fac*self._best_fit[indx,tpix]
+            # Determine nested index of each selected pixel in upsampled map
+            mult_factor = (nside_max//nside)**2
+            pix_idx_n = self._pix_info['healpix_index'][indx]*mult_factor
+            # Write the selected pixels into the upsampled map
+            for offset in range(mult_factor):
+                pix_val[pix_idx_n+offset] = pix_val_n[:]
+        # If the desired nside is less than the maximum nside in the map, degrade
+        nside_plot= kwargs.get('nside_plot',2048)
+        if not nside_plot is None and nside_plot < nside_max:
+            pix_val= healpy.pixelfunc.ud_grade(pix_val,
+                                               nside_plot,pess=False,
+                                               order_in='NEST', 
+                                               order_out='NEST')
+        pix_val[pix_val == healpy.UNSEEN]= -1.
+
+        if not self._filter is None:
+            kwargs['unit']= r'$A_{%s}\,(\mathrm{mag})$' % (self._filter.split(' ')[-1])
+        else:
+            kwargs['unit']= r'$E(B-V)\,(\mathrm{mag})$'
+        kwargs['title']= kwargs.get('title',"")
+        healpy.visufunc.mollview(pix_val,
+                                 nest=True,
+                                 xsize=4000,
+                                 min=0.,
+                                 max=numpy.quantile(pix_val,0.99),
+                                 format=r'$%g$',
+                                 cmap='gist_yarg',
+                                 **kwargs)
+        return None
+        

@@ -75,11 +75,7 @@ class DustMap3D:
             range= [4.,19.]
         else:
             range= [0.,12.]
-        if kwargs.has_key('nds'):
-            nds= kwargs['nds']
-            kwargs.pop('nds')
-        else:
-            nds= 101
+        nds= kwargs.get('nds',101)
         #First evaluate the dust map
         ds= numpy.linspace(range[0],range[1],nds)
         if distmod:

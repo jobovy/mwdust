@@ -30,21 +30,34 @@ or
 
 The installation automatically downloads the relevant dust data. You
 might have to define an environment variable ``SUDO_USER`` if not
-installing with sudo.
+installing with sudo and you might have to use the ``-E`` option when
+you are installing with sudo to transfer your environment variables to
+sudo.
 
 Dust Data
 ---------
 
-The code can automatically download all of the necessary data (use the
-installation option ``--no-downloads`` to turn this off). These data
-are put in subdirectories of a directory ``DUST_DIR``, with roughly
-the following lay-out::
+The code can automatically download all of the necessary data. By
+default, only the most commonly-used dust maps are downloaded; to
+download all maps, use the ``--all-downloads`` installation option
+(you can just re-run the installation with this option to add this
+later).  The installation option ``--no-downloads`` turns all
+downloads off.
+
+The data are put in subdirectories of a directory ``DUST_DIR``, with
+roughly the following lay-out::
 
     $DUST_DIR/
        combined15/
           dust-map-3d.h5
+       combined19/
+          combine19.h5
        green15/
           dust-map-3d.h5
+       green17/
+          bayestar2017.h5
+       green19/
+          bayestar2019.h5
        maps/
           SFD_dust_4096_ngp.fits
 	  SFD_dust_4096_sgp.fits
@@ -66,12 +79,14 @@ All of the maps can be initialized similar to::
     import mwdust
     drimmel= mwdust.Drimmel03(filter='2MASS H')
     combined= mwdust.Combined15(filter='2MASS H')
+    combined19= mwdust.Combined19(filter='2MASS H')
     sfd= mwdust.SFD(filter='2MASS H')
 
 which sets up the Drimmel et al. (2003) map, the combined Bovy et
-al. (2016) map, and the SFD map for the *H*-band filter. The maps can
-be evaluate for a given Galactic longitude *l*, Galactic latitude *b*,
-and an array (or scalar) of distances *D*::
+al. (2016) map, an updated version of the combined map using the Green
+et al. (2019) Bayestar19 map, and the SFD map for the *H*-band
+filter. The maps can be evaluate for a given Galactic longitude *l*,
+Galactic latitude *b*, and an array (or scalar) of distances *D*::
 
 	 drimmel(60.,0.,3.) # inputs are (l,b,D)
 	 array([ 0.38813341])
@@ -81,11 +96,16 @@ and an array (or scalar) of distances *D*::
 	 sfd(30.,3.,numpy.array([1.,2.,3.]))
 	 array([ 1.19977335,  1.19977335,  1.19977335])
 
-and they can be plotted as::
+and they can be plotted as a function of distance at a given (l,b)::
 
     combined.plot(55.,0.5) # inputs are (l,b)
 
-(plot not shown). 
+(plot not shown). Maps that are derived from the
+``HierarchicalHealpixMap.py`` class (currently all Green-type maps and
+the combined maps) can also be plotted on the sky using a Mollweide
+projection at a given distance using::
+
+    combined.plot_mollweide(5.) # input is distance in kpc
 
 Supported bandpasses
 ---------------------
@@ -147,8 +167,14 @@ map that you use:
 
 * **mwdust.Sale14**: `Sale et al. (2014) <http://adsabs.harvard.edu/abs/2014MNRAS.443.2907S>`__
 
-* **mwdust.Green15**: `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__
+* **mwdust.Green15**: `Green et al. (2015) <https://ui.adsabs.harvard.edu/abs/2015ApJ...810...25G>`__
 
-* **mwdust.Combined15**: Combination of `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__, `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__, and `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__; see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__
+* **mwdust.Green17**: `Green et al. (2018) <https://ui.adsabs.harvard.edu/abs/2018MNRAS.478..651G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
+
+* **mwdust.Green19**: `Green et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019arXiv190502734G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
+
+* **mwdust.Combined15**: Combination of `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__ (**mwdust.Marshall06**), `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__ (**mwdust.Green15**), and `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__ (**mwdust.Green15**); see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__
+
+* **mwdust.Combined19**: Similar to **mwdust.Combined15**, but using **mwdust.Green19** instead of **mwdust.Green15**; see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__ for details on the combination (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
 * **mwdust.Zero**: `Bovy et al. (2015b) <http://adsabs.harvard.edu/abs/2015arXiv150905796B>`__ :smirk:

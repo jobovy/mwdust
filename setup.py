@@ -20,12 +20,29 @@ with open('README.rst') as dfile:
 try:
     downloads_pos = sys.argv.index('--no-downloads')
 except ValueError:
-    _DOWNLOAD_SFD= True
-    _DOWNLOAD_DRIMMEL= True
-    _DOWNLOAD_MARSHALL= True
-    _DOWNLOAD_SALE= True
-    _DOWNLOAD_GREEN= True
-    _DOWNLOAD_COMBINED= True
+    try:
+        all_downloads_pos = sys.argv.index('--all-downloads')
+    except ValueError:
+        _DOWNLOAD_SFD= True
+        _DOWNLOAD_DRIMMEL= True
+        _DOWNLOAD_MARSHALL= True
+        _DOWNLOAD_SALE= False
+        _DOWNLOAD_GREEN= False
+        _DOWNLOAD_GREEN17= False
+        _DOWNLOAD_GREEN19= True
+        _DOWNLOAD_COMBINED= True
+        _DOWNLOAD_COMBINED19= True
+    else:
+        del sys.argv[all_downloads_pos]
+        _DOWNLOAD_SFD= True
+        _DOWNLOAD_DRIMMEL= True
+        _DOWNLOAD_MARSHALL= True
+        _DOWNLOAD_SALE= True
+        _DOWNLOAD_GREEN= True
+        _DOWNLOAD_GREEN17= True
+        _DOWNLOAD_GREEN19= True
+        _DOWNLOAD_COMBINED= True
+        _DOWNLOAD_COMBINED19= True
 else:
     del sys.argv[downloads_pos]
     _DOWNLOAD_SFD= False
@@ -33,7 +50,10 @@ else:
     _DOWNLOAD_MARSHALL= False
     _DOWNLOAD_SALE= False
     _DOWNLOAD_GREEN= False
+    _DOWNLOAD_GREEN17= False
+    _DOWNLOAD_GREEN19= False
     _DOWNLOAD_COMBINED= False
+    _DOWNLOAD_COMBINED19= False
 
 #Download SFD maps
 _SFD_URL_NGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
@@ -299,6 +319,114 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                                                     'dust-map-3d.h5')])
             except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+
+#Download Green et al. 2018 PanSTARRS data
+_GREEN_URL= 'https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/LCYHJG/S7MP4P'
+if _DOWNLOAD_GREEN17 and sys.argv[1] in ('install','develop'):
+    if os.getenv('DUST_DIR') is None:
+        raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
+    else:
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),
+                                           'green17')):
+            os.mkdir(os.path.join(os.getenv('DUST_DIR'),'green17'))
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green17')])
+            except (subprocess.CalledProcessError,TypeError):
+                print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green17',
+                                           'bayestar2017.h5')):
+            print('\033[1m'+'Downloading Green et al. (2018) dust maps ...'+'\033[0m')
+            try:
+                subprocess.check_call(['wget',
+                                       _GREEN_URL,
+                                       '-O',
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green17',
+                                                    'bayestar2017.h5')])
+            except subprocess.CalledProcessError:
+                print('\033[1m'+"Downloading Green 2018 dust-map data from %s failed ..." % _GREEN_URL +'\033[0m')
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green17',
+                                                    'bayestar2017.h5')])
+            except (subprocess.CalledProcessError,TypeError):
+                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+
+#Download Green et al. 2019 PanSTARRS data
+_GREEN_URL= 'https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/2EJ9TX/1CUGA1'
+if _DOWNLOAD_GREEN19 and sys.argv[1] in ('install','develop'):
+    if os.getenv('DUST_DIR') is None:
+        raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
+    else:
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),
+                                           'green19')):
+            os.mkdir(os.path.join(os.getenv('DUST_DIR'),'green19'))
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green19')])
+            except (subprocess.CalledProcessError,TypeError):
+                print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green19',
+                                           'bayestar2019.h5')):
+            print('\033[1m'+'Downloading Green et al. (2019) dust maps ...'+'\033[0m')
+            try:
+                subprocess.check_call(['wget',
+                                       _GREEN_URL,
+                                       '-O',
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green19',
+                                                    'bayestar2019.h5')])
+            except subprocess.CalledProcessError:
+                print('\033[1m'+"Downloading Green 2019 dust-map data from %s failed ..." % _GREEN_URL +'\033[0m')
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'green19',
+                                                    'bayestar2019.h5')])
+            except (subprocess.CalledProcessError,TypeError):
+                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+
+
+#Download the combined map: Marshall+Green19+Drimmel for full sky coverage
+_COMBINED_URL= 'https://zenodo.org/record/3566060/files/combine19.h5'
+if _DOWNLOAD_COMBINED19 and sys.argv[1] in ('install','develop'):
+    if os.getenv('DUST_DIR') is None:
+        raise IOError('Please define an environment variable DUST_DIR as a top-level directory for various dust maps\nIf using sudo, you may have to run sudo -E to propagate environment variables')
+    else:
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),
+                                           'combined19')):
+            os.mkdir(os.path.join(os.getenv('DUST_DIR'),'combined19'))
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'combined19')])
+            except (subprocess.CalledProcessError,TypeError):
+                print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
+        if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'combined19',
+                                           'combine19.h5')):
+            print('\033[1m'+'Downloading combined dust map (2019) ...'+'\033[0m')
+            try:
+                subprocess.check_call(['wget',
+                                       _COMBINED_URL,
+                                       '-O',
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'combined19',
+                                                    'combine19.h5')])
+            except subprocess.CalledProcessError:
+                print('\033[1m'+"Downloading combined dust-map data from %s failed ..." % _COMBINED_URL +'\033[0m')
+            try:
+                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                       os.path.join(os.getenv('DUST_DIR'),
+                                                    'combined19',
+                                                    'combine19.h5')])
+            except (subprocess.CalledProcessError,TypeError):
+                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+
+
 
 #Download the combined map of Bovy et al. (2015): Marshall+Green+Drimmel for full sky coverage
 _COMBINED_URL= 'https://zenodo.org/record/31262/files/dust-map-3d.h5'
