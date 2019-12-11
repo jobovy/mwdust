@@ -476,7 +476,7 @@ sfd_c= Extension('sfd_c',
 ext_modules=[sfd_c]
 
 setup(name='mwdust',
-      version='1.1',
+      version='1.2.dev',
       description='Dust in the Milky Way',
       author='Jo Bovy',
       author_email='bovy@astro.utoronto.ca',
@@ -499,6 +499,7 @@ setup(name='mwdust',
         "Operating System :: OS Independent",
         "Programming Language :: C",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Astronomy",
         "Topic :: Scientific/Engineering :: Physics"]
       )
