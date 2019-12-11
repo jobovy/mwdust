@@ -1,3 +1,20 @@
+v1.1 (2019-12-10)
+==================
+
+- Full Python 3 support (added custom version of fortranfile module to
+  make it Python 3 compatible).
+
+- Add Green17 (Bayestar17) and Green19 (Bayestar19) maps from Green et
+  al. (2018) and Green et al. (2019), respectively.
+
+- Add new compbined map Combined19, similar to Combined15, but using
+  Green19 instead of Green15 (added by Jan Rybizki).
+
+- Added function to plot the sky dependence of dust maps derived from
+  HierarchicalHealpixMap (GreenX and CombinedX maps): plot_mollweide.
+
+- Update of the SFD URL to a more stable version.
+
 v1.0 (2015-12-28)
 ==================
 
