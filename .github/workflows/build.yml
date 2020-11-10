@@ -1,6 +1,9 @@
 name: Build
 
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: '0 20 * * 2'
 
 jobs:
   build:
@@ -8,12 +11,8 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8,3.9]
-        numpy-version: [1.16,1.17,1.18,1.19]
+        numpy-version: [1.18,1.19]
         exclude:
-          - python-version: 3.9
-            numpy-version: 1.16
-          - python-version: 3.9
-            numpy-version: 1.17
           - python-version: 3.9
             numpy-version: 1.18
     steps:
