@@ -5,6 +5,9 @@ mwdust
 
 .. image:: https://travis-ci.org/jobovy/mwdust.svg?branch=master
    :target: http://travis-ci.org/jobovy/mwdust
+   
+.. image:: https://github.com/jobovy/mwdust/workflows/Build/badge.svg
+   :target: https://github.com/jobovy/mwdust/actions?query=workflow%3Abuild
 
 .. image:: http://img.shields.io/pypi/v/mwdust.svg
    :target: https://pypi.python.org/pypi/mwdust/
