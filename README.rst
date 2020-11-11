@@ -3,9 +3,6 @@ mwdust
 
 **Dust in 3D in the Milky Way**
 
-.. image:: https://travis-ci.org/jobovy/mwdust.svg?branch=master
-   :target: http://travis-ci.org/jobovy/mwdust
-   
 .. image:: https://github.com/jobovy/mwdust/workflows/build/badge.svg
    :target: https://github.com/jobovy/mwdust/actions?query=workflow%3Abuild
 
