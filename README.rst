@@ -10,7 +10,7 @@ mwdust
    :target: https://pypi.python.org/pypi/mwdust/
 
 .. image:: http://img.shields.io/badge/license-New%20BSD-brightgreen.svg
-   :target: https://github.com/jobovy/mwdust/blob/master/LICENSE
+   :target: https://github.com/jobovy/mwdust/blob/main/LICENSE
 
 Installation
 -------------
