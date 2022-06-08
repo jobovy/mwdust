@@ -81,7 +81,7 @@ def download_file(url,output,desc,notest=False):
             cmd.append('--silent')
         if _TEST_DOWNLOADS:
             if notest: return None
-            cmd.extend(['--output','/dev/null','--head'])
+            cmd.extend(['--output','-','--head'])
         else:
             cmd.extend(['-o',output])
         subprocess.check_call(cmd)
