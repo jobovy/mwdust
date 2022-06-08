@@ -34,6 +34,15 @@ installing with sudo and you might have to use the ``-E`` option when
 you are installing with sudo to transfer your environment variables to
 sudo.
 
+Note that this code currently does not really work on Windows. The 
+installation command should download and otherwise work as long as 
+you have the ``gzip`` utility (e.g., through install ``7zip``), 
+but the SFD code will not be compiled (so the ``SFD`` map will not 
+be available) and because ``healpy`` is unavailable on Windows, all 
+HEALPIx-based maps (e.g., `CombinedXX`, `GreenXX`) will also not 
+work. Thus, the code is only marginally useful on Windows. Install 
+on Linux/Mac OS for full features.
+
 Dust Data
 ---------
 
