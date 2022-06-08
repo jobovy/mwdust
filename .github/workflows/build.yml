@@ -26,12 +26,20 @@ jobs:
         python -m pip install --upgrade pip wheel
         pip install numpy==${{ matrix.numpy-version }}
         pip install pyparsing==2.4.7 # For issue with six which requires pyparsing < 3
-        pip install cython # for compiliong h5py from source
+    - name: Create data directory
+      if: runner.os == 'Windows'
+      env:
+        DUST_DIR: ${{github.workspace}}/data/
+      run: New-Item -ItemType directory -Path $env:DUST_DIR
+    - name: Create data directory
+      if: runner.os != 'Windows'
+      env:
+        DUST_DIR: ${{github.workspace}}/data/
+      run: mkdir $DUST_DIR  
     - name: Test downloads
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        mkdir $DUST_DIR
         python setup.py install --test-downloads --all-downloads
     - name: Install package
       run: |
