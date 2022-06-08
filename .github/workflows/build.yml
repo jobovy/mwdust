@@ -24,6 +24,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install numpy==${{ matrix.numpy-version }}
         pip install pyparsing==2.4.7 # For issue with six which requires pyparsing < 3
+    - name: Test downloads
+      run: |
+        python setup.py install --test-downloads --all-downloads
     - name: Install package
       run: |
         python setup.py install --no-downloads
