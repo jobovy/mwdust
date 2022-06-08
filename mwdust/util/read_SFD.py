@@ -5,6 +5,8 @@ import ctypes.util
 from numpy.ctypeslib import ndpointer
 import os, os.path
 import numpy
+import platform
+WIN32= platform.system() == 'Windows'
 #Find and load the library
 _lib = None
 _libname = ctypes.util.find_library('sfd_c')
@@ -23,7 +25,7 @@ if _lib is None:
             _lib = None
         else:
             break
-if _lib is None:
+if _lib is None and not WIN32:
     raise IOError('SFD/C module not found')
 
 #MAP path names
