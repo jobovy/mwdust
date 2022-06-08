@@ -423,6 +423,11 @@ if not WIN32:
 else:
     ext_modules= None
 
+install_requires= ['numpy','scipy','matplotlib','asciitable',
+                   'h5py']
+if not WIN32:
+    install_requires.append('healpy')
+
 setup(name='mwdust',
       version='1.2.dev',
       description='Dust in the Milky Way',
@@ -437,8 +442,7 @@ setup(name='mwdust',
       package_data={'mwdust/util':['extCurves/extinction.tbl',
                                    'extCurves/apj398709t6_ascii.txt',
                                    'drimmeldata/*.dat']},
-      install_requires=['numpy','scipy','matplotlib','asciitable',
-                        'h5py'],#,'healpy'],
+      install_requires=install_requires,
       ext_modules=ext_modules,
       classifiers=[
         "Development Status :: 6 - Mature",
