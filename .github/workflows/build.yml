@@ -28,6 +28,7 @@ jobs:
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
+        mkdir $DUST_DIR
         python setup.py install --test-downloads --all-downloads
     - name: Install package
       run: |
