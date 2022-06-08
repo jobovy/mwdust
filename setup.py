@@ -5,6 +5,8 @@ from distutils.core import Extension
 import sys
 import subprocess
 import glob
+import platform
+WIN32= platform.system() == 'Windows'
 
 long_description= ''
 previous_line= ''
@@ -74,7 +76,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
             print('\033[1m'+'Downloading SFD dust maps ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',_SFD_URL_NGP,'-O',
+                subprocess.check_call(['curl','-sfL',_SFD_URL_NGP,'-o',
                                        os.path.join(os.getenv('DUST_DIR'),'maps',
                                                     'SFD_dust_4096_ngp.fits')])
             except subprocess.CalledProcessError:
@@ -89,7 +91,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'maps',
                                            'SFD_dust_4096_sgp.fits')):
             try:
-                subprocess.check_call(['wget',_SFD_URL_SGP,'-O',
+                subprocess.check_call(['curl','-sfL',_SFD_URL_SGP,'-o',
                                        os.path.join(os.getenv('DUST_DIR'),'maps',
                                                     'SFD_dust_4096_sgp.fits')])
             except subprocess.CalledProcessError:
@@ -109,8 +111,8 @@ if _DOWNLOAD_DRIMMEL \
     if not os.path.exists('mwdust/util/drimmeldata/data-for.tar.gz'):
         print('\033[1m'+'Downloading Drimmel et al. (2003) dust maps ...'+'\033[0m')
         try:
-            subprocess.check_call(['wget','%s' % _DRIMMEL_URL,
-                                   '-O','mwdust/util/drimmeldata/data-for.tar.gz'])
+            subprocess.check_call(['curl','-sfL','%s' % _DRIMMEL_URL,
+                                   '-o','mwdust/util/drimmeldata/data-for.tar.gz'])
         except subprocess.CalledProcessError:
             print("Downloading Drimmel dust-map data from %s failed ..." % _DRIMMEL_URL)
         try:
@@ -139,20 +141,21 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                                                 'table1.dat')):
             print('\033[1m'+'Downloading Marshall et al. (2006) dust maps ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',
+                subprocess.check_call(['curl','-sfL',
                                        '%s/table1.dat.gz' % _MARSHALL_URL,
-                                       '-O',
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'marshall06',
                                                     'table1.dat.gz')])
             except subprocess.CalledProcessError:
                 print('\033[1m'+"Downloading Marshall dust-map data from %s/table1.dat.gz failed ..." % _MARSHALL_URL +'\033[0m')
             try:
-                subprocess.check_call(['gunzip',
+                subprocess.check_call(['gzip','-d',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'marshall06',
-                                                    'table1.dat.gz')])
-            except subprocess.CalledProcessError:
+                                                    'table1.dat.gz')],
+                                      shell=WIN32)
+            except (subprocess.CalledProcessError,FileNotFoundError):
                 print('\033[1m'+"Gunzipping Marshall et al. dust-map data failed ..."+'\033[0m')
             try:
                 subprocess.check_call(['chown',os.getenv('SUDO_USER'),
@@ -163,8 +166,8 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
             #Also download the ReadMe file
             try:
-                subprocess.check_call(['wget','%s/ReadMe' % _MARSHALL_URL,
-                                       '-O',
+                subprocess.check_call(['curl','-sfL','%s/ReadMe' % _MARSHALL_URL,
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'marshall06',
                                                     'ReadMe')])
@@ -204,9 +207,9 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
             print('\033[1m'+'Downloading Sale et al. (2014) dust maps ...'+'\033[0m')
             if _SALE_CDS:
                 try:
-                    subprocess.check_call(['wget',
+                    subprocess.check_call(['curl','-sfL',
                                            '%s/table1.dat.gz' % _SALE_URL,
-                                           '-O',
+                                           '-o',
                                            os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14',
                                                         'table1.dat.gz')])
@@ -228,8 +231,8 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                     print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
                 #Also download the ReadMe file
                 try:
-                    subprocess.check_call(['wget','%s/ReadMe' % _SALE_URL,
-                                           '-O',
+                    subprocess.check_call(['curl','-sfL','%s/ReadMe' % _SALE_URL,
+                                           '-o',
                                            os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14',
                                                         'ReadMe')])
@@ -244,9 +247,9 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                     print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
             else:
                 try:
-                    subprocess.check_call(['wget',
+                    subprocess.check_call(['curl','-sfL',
                                            _SALE_URL,
-                                           '-O',
+                                           '-o',
                                            os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14',
                                                         'Amap.tar.gz')])
@@ -304,9 +307,9 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                                            'dust-map-3d.h5')):
             print('\033[1m'+'Downloading Green et al. (2015) dust maps ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',
+                subprocess.check_call(['curl','-sfL',
                                        _GREEN_URL,
-                                       '-O',
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'green15',
                                                     'dust-map-3d.h5')])
@@ -339,9 +342,9 @@ if _DOWNLOAD_GREEN17 and sys.argv[1] in ('install','develop'):
                                            'bayestar2017.h5')):
             print('\033[1m'+'Downloading Green et al. (2018) dust maps ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',
+                subprocess.check_call(['curl','-sfL',
                                        _GREEN_URL,
-                                       '-O',
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'green17',
                                                     'bayestar2017.h5')])
@@ -374,9 +377,9 @@ if _DOWNLOAD_GREEN19 and sys.argv[1] in ('install','develop'):
                                            'bayestar2019.h5')):
             print('\033[1m'+'Downloading Green et al. (2019) dust maps ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',
+                subprocess.check_call(['curl','-sfL',
                                        _GREEN_URL,
-                                       '-O',
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'green19',
                                                     'bayestar2019.h5')])
@@ -410,9 +413,9 @@ if _DOWNLOAD_COMBINED19 and sys.argv[1] in ('install','develop'):
                                            'combine19.h5')):
             print('\033[1m'+'Downloading combined dust map (2019) ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',
+                subprocess.check_call(['curl','-sfL',
                                        _COMBINED_URL,
-                                       '-O',
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'combined19',
                                                     'combine19.h5')])
@@ -447,9 +450,9 @@ if _DOWNLOAD_COMBINED and sys.argv[1] in ('install','develop'):
                                            'dust-map-3d.h5')):
             print('\033[1m'+'Downloading combined dust map (2015) ...'+'\033[0m')
             try:
-                subprocess.check_call(['wget',
+                subprocess.check_call(['curl','-sfL',
                                        _COMBINED_URL,
-                                       '-O',
+                                       '-o',
                                        os.path.join(os.getenv('DUST_DIR'),
                                                     'combined15',
                                                     'dust-map-3d.h5')])
@@ -473,7 +476,10 @@ sfd_c= Extension('sfd_c',
                  extra_compile_args=['-DLITTLE_ENDIAN'],
                  include_dirs=['mwdust/util/SFD_CodeC'])
 
-ext_modules=[sfd_c]
+if not WIN32:
+    ext_modules=[sfd_c]
+else:
+    ext_modules= None
 
 setup(name='mwdust',
       version='1.2.dev',
@@ -490,7 +496,7 @@ setup(name='mwdust',
                                    'extCurves/apj398709t6_ascii.txt',
                                    'drimmeldata/*.dat']},
       install_requires=['numpy','scipy','matplotlib','asciitable',
-                        'h5py','healpy'],
+                        'h5py'],#,'healpy'],
       ext_modules=ext_modules,
       classifiers=[
         "Development Status :: 6 - Mature",
