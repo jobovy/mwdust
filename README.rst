@@ -51,7 +51,9 @@ default, only the most commonly-used dust maps are downloaded; to
 download all maps, use the ``--all-downloads`` installation option
 (you can just re-run the installation with this option to add this
 later).  The installation option ``--no-downloads`` turns all
-downloads off.
+downloads off. By default, downloads are run without showing any 
+progress, but if you want to see the downloads's progression, use 
+``--verbose-downloads``.
 
 The data are put in subdirectories of a directory ``DUST_DIR``, with
 roughly the following lay-out::
