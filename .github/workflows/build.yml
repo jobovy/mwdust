@@ -26,7 +26,7 @@ jobs:
         pip install pyparsing==2.4.7 # For issue with six which requires pyparsing < 3
     - name: Test downloads
       env:
-        DUST_DIR: ${{ GITHUB_WORKSPACE }}/data/
+        DUST_DIR: $env:GITHUB_WORKSPACE/data/
       run: |
         python setup.py install --test-downloads --all-downloads
     - name: Install package
