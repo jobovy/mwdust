@@ -5,6 +5,8 @@ from distutils.core import Extension
 import sys
 import subprocess
 import glob
+import platform
+WIN32= platform.system() == 'Windows'
 
 long_description= ''
 previous_line= ''
@@ -54,6 +56,49 @@ else:
     _DOWNLOAD_GREEN19= False
     _DOWNLOAD_COMBINED= False
     _DOWNLOAD_COMBINED19= False
+    
+try:
+    test_downloads_pos= sys.argv.index('--test-downloads')
+except ValueError:
+    _TEST_DOWNLOADS= False
+else:
+    del sys.argv[test_downloads_pos]
+    _TEST_DOWNLOADS= True    
+
+try:
+    verbose_downloads_pos= sys.argv.index('--verbose-downloads')
+except ValueError:
+    _VERBOSE_DOWNLOADS= False
+else:
+    del sys.argv[test_downloads_pos]
+    _VERBOSE_DOWNLOADS= True    
+
+def download_file(url,output,desc,notest=False):
+    print('\033[1m'+'Downloading {} dust maps ...'.format(desc)+'\033[0m')
+    try:
+        cmd= ['curl','-fL',url]
+        if not _VERBOSE_DOWNLOADS:
+            cmd.append('--silent')
+        if _TEST_DOWNLOADS:
+            if notest: return None
+            cmd.extend(['--output','-','--head'])
+        else:
+            cmd.extend(['-o',output])
+        subprocess.check_call(cmd)
+    except subprocess.CalledProcessError:
+        print('\033[1m'+"Downloading {} dust-map data from {} failed ...".format(desc,url)+'\033[0m')
+        if _TEST_DOWNLOADS:
+            raise
+    return None
+        
+def chown_file(output):
+    if not _TEST_DOWNLOADS:
+        try:
+            subprocess.check_call(['chown',os.getenv('SUDO_USER'),
+                                   output])
+        except (subprocess.CalledProcessError,TypeError):
+            print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+    return None
 
 #Download SFD maps
 _SFD_URL_NGP= 'https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits'
@@ -72,53 +117,37 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                                                     'maps')])
             except (subprocess.CalledProcessError,TypeError):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
-            print('\033[1m'+'Downloading SFD dust maps ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',_SFD_URL_NGP,'-O',
-                                       os.path.join(os.getenv('DUST_DIR'),'maps',
-                                                    'SFD_dust_4096_ngp.fits')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading SFD dust-map data from %s failed ..." % _SFD_URL_NGP +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'maps',
-                                                    'SFD_dust_4096_ngp.fits')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file(_SFD_URL_NGP,
+                          os.path.join(os.getenv('DUST_DIR'),'maps',
+                                       'SFD_dust_4096_ngp.fits'),
+                          'SFD')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),
+                       'maps','SFD_dust_4096_ngp.fits'))
+
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'maps',
                                            'SFD_dust_4096_sgp.fits')):
-            try:
-                subprocess.check_call(['wget',_SFD_URL_SGP,'-O',
-                                       os.path.join(os.getenv('DUST_DIR'),'maps',
-                                                    'SFD_dust_4096_sgp.fits')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading SFD dust-map data from %s failed ..." % _SFD_URL_SGP +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'maps',
-                                                    'SFD_dust_4096_sgp.fits')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file(_SFD_URL_SGP,
+                          os.path.join(os.getenv('DUST_DIR'),'maps',
+                                       'SFD_dust_4096_sgp.fits'),
+                          'SFD')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),
+                       'maps','SFD_dust_4096_sgp.fits'))
 
 #Download Drimmel data
 _DRIMMEL_URL= 'ftp://ftp.oato.inaf.it/astrometria/extinction/data-for.tar.gz'
 if _DOWNLOAD_DRIMMEL \
         and sys.argv[1] in ('build','install','develop','bdist','bdist_egg'):
     if not os.path.exists('mwdust/util/drimmeldata/data-for.tar.gz'):
-        print('\033[1m'+'Downloading Drimmel et al. (2003) dust maps ...'+'\033[0m')
-        try:
-            subprocess.check_call(['wget','%s' % _DRIMMEL_URL,
-                                   '-O','mwdust/util/drimmeldata/data-for.tar.gz'])
-        except subprocess.CalledProcessError:
-            print("Downloading Drimmel dust-map data from %s failed ..." % _DRIMMEL_URL)
-        try:
-            subprocess.check_call(['tar','xvzf',
-                                   'mwdust/util/drimmeldata/data-for.tar.gz',
-                                   '-C','mwdust/util/drimmeldata/'])
-        except subprocess.CalledProcessError:
-            print("Untarring Drimmel dust-map data failed ...")
+        download_file(_DRIMMEL_URL,
+                      'mwdust/util/drimmeldata/data-for.tar.gz',
+                      'Drimmel et al. (2003)')
+        if not _TEST_DOWNLOADS:
+            try:
+                subprocess.check_call(['tar','xvzf',
+                                    'mwdust/util/drimmeldata/data-for.tar.gz',
+                                    '-C','mwdust/util/drimmeldata/'])
+            except subprocess.CalledProcessError:
+                print("Untarring Drimmel dust-map data failed ...")
 
 #Download Marshall data
 _MARSHALL_URL= 'ftp://cdsarc.u-strasbg.fr/pub/cats/J/A%2BA/453/635'
@@ -137,46 +166,28 @@ if _DOWNLOAD_MARSHALL and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'marshall06',
                                                 'table1.dat')):
-            print('\033[1m'+'Downloading Marshall et al. (2006) dust maps ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',
-                                       '%s/table1.dat.gz' % _MARSHALL_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'marshall06',
-                                                    'table1.dat.gz')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading Marshall dust-map data from %s/table1.dat.gz failed ..." % _MARSHALL_URL +'\033[0m')
-            try:
-                subprocess.check_call(['gunzip',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'marshall06',
-                                                    'table1.dat.gz')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Gunzipping Marshall et al. dust-map data failed ..."+'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'marshall06',
-                                                    'table1.dat')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file('{}/table1.dat.gz'.format(_MARSHALL_URL),
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'marshall06','table1.dat.gz'),
+                          'Marshall et al. (2006)')     
+            if not _TEST_DOWNLOADS:
+                try:
+                    subprocess.check_call(['gzip','-d',
+                                        os.path.join(os.getenv('DUST_DIR'),
+                                                        'marshall06',
+                                                        'table1.dat.gz')],
+                                        shell=WIN32)
+                except (subprocess.CalledProcessError,FileNotFoundError):
+                    print('\033[1m'+"Gunzipping Marshall et al. dust-map data failed ..."+'\033[0m')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),'marshall06',
+                       'table1.dat'))
             #Also download the ReadMe file
-            try:
-                subprocess.check_call(['wget','%s/ReadMe' % _MARSHALL_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'marshall06',
-                                                    'ReadMe')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading Marshall dust-map ReadMe from %s/ReadMe failed ..." % _MARSHALL_URL+'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'marshall06',
-                                                    'ReadMe')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file('{}/ReadMe'.format(_MARSHALL_URL),
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'marshall06','ReadMe'),
+                          'Marshall et al. (2006)')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),'marshall06',
+                                    'ReadMe'))
 
 #Download Sale data, currently unavailable from CDS
 _SALE_CDS= False
@@ -201,89 +212,70 @@ if _DOWNLOAD_SALE and sys.argv[1] in ('install','develop'):
                                                 'table1.dat')) 
                 or os.path.exists(os.path.join(os.getenv('DUST_DIR'),'sale14',
                                                 'Amap.dat'))):
-            print('\033[1m'+'Downloading Sale et al. (2014) dust maps ...'+'\033[0m')
             if _SALE_CDS:
-                try:
-                    subprocess.check_call(['wget',
-                                           '%s/table1.dat.gz' % _SALE_URL,
-                                           '-O',
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14',
-                                                        'table1.dat.gz')])
-                except subprocess.CalledProcessError:
-                    print('\033[1m'+"Downloading Sale dust-map data from %s/table1.dat.gz failed ..." % _SALE_URL +'\033[0m')
-                try:
-                    subprocess.check_call(['gunzip',
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14',
-                                                        'table1.dat.gz')])
-                except subprocess.CalledProcessError:
-                    print('\033[1m'+"Gunzipping Sale et al. dust-map data failed ..."+'\033[0m')
-                try:
-                    subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14',
-                                                        'table1.dat')])
-                except (subprocess.CalledProcessError,TypeError):
-                    print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+                download_file('{}/table1.dat.gz'.format(_SALE_URL),
+                              os.path.join(os.getenv('DUST_DIR'),
+                                           'sale14',
+                                           'table1.dat.gz'),
+                              'Sale')
+                if not _TEST_DOWNLOADS:
+                    try:
+                        subprocess.check_call(['gzip','-d',
+                                               os.path.join(os.getenv('DUST_DIR'),
+                                                            'sale14',
+                                                            'table1.dat.gz')])
+                    except subprocess.CalledProcessError:
+                        print('\033[1m'+"Gunzipping Sale et al. dust-map data failed ..."+'\033[0m')
+                    chown_file(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                            'table1.dat'))
                 #Also download the ReadMe file
-                try:
-                    subprocess.check_call(['wget','%s/ReadMe' % _SALE_URL,
-                                           '-O',
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14',
-                                                        'ReadMe')])
-                except subprocess.CalledProcessError:
-                    print('\033[1m'+"Downloading Sale dust-map ReadMe from %s/ReadMe failed ..." % _SALE_URL+'\033[0m')
-                try:
-                    subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14',
-                                                        'ReadMe')])
-                except (subprocess.CalledProcessError,TypeError):
-                    print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+                download_file('{}/ReadMe'.format(_SALE_URL),
+                              os.path.join(os.getenv('DUST_DIR'),
+                                           'sale14',
+                                           'ReadMe'),
+                              'Sale')
+                chown_file(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                        'ReadMe'))
             else:
-                try:
-                    subprocess.check_call(['wget',
-                                           _SALE_URL,
-                                           '-O',
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14',
-                                                        'Amap.tar.gz')])
-                except subprocess.CalledProcessError:
-                    print('\033[1m'+"Downloading Sale dust-map data from %s failed ..." % _SALE_URL +'\033[0m')
-                try:
-                    subprocess.check_call(['tar','xvzf',
-                                           os.path.join(os.getenv('DUST_DIR'),
+                download_file(_SALE_URL,
+                              os.path.join(os.getenv('DUST_DIR'),
                                                         'sale14',
                                                         'Amap.tar.gz'),
-                                           '-C',
-                                           os.path.join(os.getenv('DUST_DIR'),
-                                                        'sale14')])
-                except subprocess.CalledProcessError:
-                    print('\033[1m'+"Untarring/unzipping Sale et al. dust-map data failed ..."+'\033[0m')
-                try:
-                    os.remove(os.path.join(os.getenv('DUST_DIR'),'sale14',
-                                           'Amap.tar.gz'))
-                except subprocess.CalledProcessError:
-                    print('\033[1m'+"Removing Sale et al. dust-map tarred data failed ..."+'\033[0m')
+                              'Sale')
+                if not _TEST_DOWNLOADS:
+                    try:
+                        subprocess.check_call(['tar','xvzf',
+                                            os.path.join(os.getenv('DUST_DIR'),
+                                                            'sale14',
+                                                            'Amap.tar.gz'),
+                                            '-C',
+                                            os.path.join(os.getenv('DUST_DIR'),
+                                                            'sale14')])
+                    except subprocess.CalledProcessError:
+                        print('\033[1m'+"Untarring/unzipping Sale et al. dust-map data failed ..."+'\033[0m')
+                    try:
+                        os.remove(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                            'Amap.tar.gz'))
+                    except subprocess.CalledProcessError:
+                        print('\033[1m'+"Removing Sale et al. dust-map tarred data failed ..."+'\033[0m')
             # Fix one line in the dust map
-            with open("tmp.dat", "w") as fout:
-                with open(os.path.join(os.getenv('DUST_DIR'),'sale14',
-                                           'Amap.dat'),'r') as fin:
-                    for line in fin:
-                        if '15960.40000' in line: # bad line
-                            newline= ''
-                            for ii,word in enumerate(line.split(' ')):
-                                if ii > 0: newline+= ' '
-                                if ii > 6 and len(word) > 9:
-                                    word= '747.91400'
-                                newline+= word
-                            fout.write(newline+'\n')
-                        else:
-                            fout.write(line)
-            shutil.move('tmp.dat',os.path.join(os.getenv('DUST_DIR'),'sale14',
-                                               'Amap.dat'))
+            if not _TEST_DOWNLOADS:
+                with open("tmp.dat", "w") as fout:
+                    with open(os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                            'Amap.dat'),'r') as fin:
+                        for line in fin:
+                            if '15960.40000' in line: # bad line
+                                newline= ''
+                                for ii,word in enumerate(line.split(' ')):
+                                    if ii > 0: newline+= ' '
+                                    if ii > 6 and len(word) > 9:
+                                        word= '747.91400'
+                                    newline+= word
+                                fout.write(newline+'\n')
+                            else:
+                                fout.write(line)
+                shutil.move('tmp.dat',os.path.join(os.getenv('DUST_DIR'),'sale14',
+                                                'Amap.dat'))
 
 #Download Green et al. PanSTARRS data (alt.: http://dx.doi.org/10.7910/DVN/40C44C)
 _GREEN_URL= 'http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5'
@@ -302,23 +294,13 @@ if _DOWNLOAD_GREEN and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green15',
                                            'dust-map-3d.h5')):
-            print('\033[1m'+'Downloading Green et al. (2015) dust maps ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',
-                                       _GREEN_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'green15',
-                                                    'dust-map-3d.h5')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading Green dust-map data from %s failed ..." % _GREEN_URL +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'green15',
-                                                    'dust-map-3d.h5')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file(_GREEN_URL,
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'green15',
+                                       'dust-map-3d.h5'),
+                          'Green et al. (2015)')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),'green15',
+                                    'dust-map-3d.h5'))
 
 #Download Green et al. 2018 PanSTARRS data
 _GREEN_URL= 'https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/LCYHJG/S7MP4P'
@@ -337,23 +319,14 @@ if _DOWNLOAD_GREEN17 and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green17',
                                            'bayestar2017.h5')):
-            print('\033[1m'+'Downloading Green et al. (2018) dust maps ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',
-                                       _GREEN_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'green17',
-                                                    'bayestar2017.h5')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading Green 2018 dust-map data from %s failed ..." % _GREEN_URL +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'green17',
-                                                    'bayestar2017.h5')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file(_GREEN_URL,
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'green17',
+                                       'bayestar2017.h5'),
+                          'Green et al. (2018)',
+                          notest=True)
+            chown_file(os.path.join(os.getenv('DUST_DIR'),'green17',
+                                    'bayestar2017.h5'))
 
 #Download Green et al. 2019 PanSTARRS data
 _GREEN_URL= 'https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/2EJ9TX/1CUGA1'
@@ -372,24 +345,14 @@ if _DOWNLOAD_GREEN19 and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'green19',
                                            'bayestar2019.h5')):
-            print('\033[1m'+'Downloading Green et al. (2019) dust maps ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',
-                                       _GREEN_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'green19',
-                                                    'bayestar2019.h5')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading Green 2019 dust-map data from %s failed ..." % _GREEN_URL +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'green19',
-                                                    'bayestar2019.h5')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
-
+            download_file(_GREEN_URL,
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'green19',
+                                       'bayestar2019.h5'),
+                          'Green et al. (2019)',
+                          notest=True)
+            chown_file(os.path.join(os.getenv('DUST_DIR'),'green19',
+                       'bayestar2019.h5'))
 
 #Download the combined map: Marshall+Green19+Drimmel for full sky coverage
 _COMBINED_URL= 'https://zenodo.org/record/3566060/files/combine19.h5'
@@ -408,25 +371,13 @@ if _DOWNLOAD_COMBINED19 and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'combined19',
                                            'combine19.h5')):
-            print('\033[1m'+'Downloading combined dust map (2019) ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',
-                                       _COMBINED_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'combined19',
-                                                    'combine19.h5')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading combined dust-map data from %s failed ..." % _COMBINED_URL +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'combined19',
-                                                    'combine19.h5')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
-
-
+            download_file(_COMBINED_URL,
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'combined19',
+                                       'combine19.h5'),
+                          'combined 2019')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),'combined19',
+                                    'combine19.h5'))
 
 #Download the combined map of Bovy et al. (2015): Marshall+Green+Drimmel for full sky coverage
 _COMBINED_URL= 'https://zenodo.org/record/31262/files/dust-map-3d.h5'
@@ -445,23 +396,17 @@ if _DOWNLOAD_COMBINED and sys.argv[1] in ('install','develop'):
                 print('\033[1m'+"Problem changing ownership of data directory ..."+'\033[0m')
         if not os.path.exists(os.path.join(os.getenv('DUST_DIR'),'combined15',
                                            'dust-map-3d.h5')):
-            print('\033[1m'+'Downloading combined dust map (2015) ...'+'\033[0m')
-            try:
-                subprocess.check_call(['wget',
-                                       _COMBINED_URL,
-                                       '-O',
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'combined15',
-                                                    'dust-map-3d.h5')])
-            except subprocess.CalledProcessError:
-                print('\033[1m'+"Downloading combined dust-map data from %s failed ..." % _COMBINED_URL +'\033[0m')
-            try:
-                subprocess.check_call(['chown',os.getenv('SUDO_USER'),
-                                       os.path.join(os.getenv('DUST_DIR'),
-                                                    'combined15',
-                                                    'dust-map-3d.h5')])
-            except (subprocess.CalledProcessError,TypeError):
-                print('\033[1m'+"Problem changing ownership of data file..."+'\033[0m')
+            download_file(_COMBINED_URL,
+                          os.path.join(os.getenv('DUST_DIR'),
+                                       'combined15',
+                                       'dust-map-3d.h5'),
+                          'combined 2015')
+            chown_file(os.path.join(os.getenv('DUST_DIR'),
+                                    'combined15',
+                                    'dust-map-3d.h5'))
+
+if _TEST_DOWNLOADS:
+    sys.exit()
 
 #SFD  extension
 sfd_c_src= glob.glob('mwdust/util/SFD_CodeC/*.c')
@@ -473,7 +418,15 @@ sfd_c= Extension('sfd_c',
                  extra_compile_args=['-DLITTLE_ENDIAN'],
                  include_dirs=['mwdust/util/SFD_CodeC'])
 
-ext_modules=[sfd_c]
+if not WIN32:
+    ext_modules=[sfd_c]
+else:
+    ext_modules= None
+
+install_requires= ['numpy','scipy','matplotlib','asciitable',
+                   'h5py']
+if not WIN32:
+    install_requires.append('healpy')
 
 setup(name='mwdust',
       version='1.2.dev',
@@ -489,8 +442,7 @@ setup(name='mwdust',
       package_data={'mwdust/util':['extCurves/extinction.tbl',
                                    'extCurves/apj398709t6_ascii.txt',
                                    'drimmeldata/*.dat']},
-      install_requires=['numpy','scipy','matplotlib','asciitable',
-                        'h5py','healpy'],
+      install_requires=install_requires,
       ext_modules=ext_modules,
       classifiers=[
         "Development Status :: 6 - Mature",

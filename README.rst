@@ -34,6 +34,15 @@ installing with sudo and you might have to use the ``-E`` option when
 you are installing with sudo to transfer your environment variables to
 sudo.
 
+Note that this code currently does not really work on Windows. The 
+installation command should download and otherwise work as long as 
+you have the ``gzip`` utility (e.g., through install ``7zip``), 
+but the SFD code will not be compiled (so the ``SFD`` map will not 
+be available) and because ``healpy`` is unavailable on Windows, all 
+HEALPIx-based maps (e.g., `CombinedXX`, `GreenXX`) will also not 
+work. Thus, the code is only marginally useful on Windows. Install 
+on Linux/Mac OS for full features.
+
 Dust Data
 ---------
 
@@ -42,7 +51,9 @@ default, only the most commonly-used dust maps are downloaded; to
 download all maps, use the ``--all-downloads`` installation option
 (you can just re-run the installation with this option to add this
 later).  The installation option ``--no-downloads`` turns all
-downloads off.
+downloads off. By default, downloads are run without showing any 
+progress, but if you want to see the downloads's progression, use 
+``--verbose-downloads``.
 
 The data are put in subdirectories of a directory ``DUST_DIR``, with
 roughly the following lay-out::
