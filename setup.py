@@ -134,7 +134,7 @@ if _DOWNLOAD_SFD and sys.argv[1] in ('install','develop'):
                        'maps','SFD_dust_4096_sgp.fits'))
 
 #Download Drimmel data
-_DRIMMEL_URL= 'ftp://ftp.oato.inaf.it/astrometria/extinction/data-for.tar.gz'
+_DRIMMEL_URL= 'https://zenodo.org/record/7340108/files/data-for.tar.gz'
 if _DOWNLOAD_DRIMMEL \
         and sys.argv[1] in ('build','install','develop','bdist','bdist_egg'):
     if not os.path.exists('mwdust/util/drimmeldata/data-for.tar.gz'):
