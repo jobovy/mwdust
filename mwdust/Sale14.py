@@ -7,7 +7,7 @@ import os, os.path
 import sys
 import numpy
 from scipy import interpolate
-import asciitable
+from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
 from mwdust.DustMap3D import DustMap3D
@@ -35,12 +35,11 @@ class Sale14(DustMap3D):
         #Read the maps
         sys.stdout.write('\r'+"Reading Sale et al. (2014) data file ...\r")
         sys.stdout.flush()
-        self._saledata= asciitable.read(os.path.join(_saledir,
+        self._saledata= ascii.read(os.path.join(_saledir,
                                                      'Amap.dat'),
                                         readme=os.path.join(_saledir,
                                                             'ReadMe'),
-                                        Reader=asciitable.cds.Cds,
-                                        guess=False,
+                                        guess=False, format='cds',
                                         fill_values=[('', '-999')])
         sys.stdout.write('\r'+_ERASESTR+'\r')
         sys.stdout.flush()

@@ -6,7 +6,7 @@
 ###############################################################################
 import numpy
 try:
-    from galpy.util import bovy_plot
+    from galpy.util import plot as bovy_plot
     _BOVY_PLOT_LOADED= True
 except ImportError:
     _BOVY_PLOT_LOADED= False
@@ -61,7 +61,7 @@ class DustMap3D:
            l,b - Galactic longitude and latitude (degree)
            range= distance range in kpc
            distmod= (False) if True, plot as a function of distance modulus (range is distmod range)
-           bovy_plot.bovy_plot args and kwargs
+           bovy_plot.plot args and kwargs
         OUTPUT:
            plot to output device
         HISTORY:
@@ -91,4 +91,4 @@ class DustMap3D:
             kwargs['ylabel']= r'$A_{%s}\,(\mathrm{mag})$' % (self._filter.split(' ')[-1])
         else:
             kwargs['ylabel']= r'$E(B-V)\,(\mathrm{mag})$'
-        return bovy_plot.bovy_plot(ds,adust,*args,**kwargs)
+        return bovy_plot.plot(ds,adust,*args,**kwargs)
