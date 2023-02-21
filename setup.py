@@ -428,7 +428,7 @@ if not WIN32:
     install_requires.append('healpy')
 
 setup(name='mwdust',
-      version='1.2',
+      version='1.3.dev0',
       description='Dust in the Milky Way',
       author='Jo Bovy',
       author_email='bovy@astro.utoronto.ca',
