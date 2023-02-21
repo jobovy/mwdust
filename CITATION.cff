@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the Bovy et al. (2016) The Astrophysical Journal paper as given below."
+authors:
+- family-names: "Bovy"
+  given-names: "Jo"
+  orcid: "https://orcid.org/0000-0001-6855-442X"
+title: "mwdust"
+version: 1.2.dev0
+url: "https://github.com/jobovy/mwdust"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Bovy"
+    given-names: "Jo"
+    orcid: "https://orcid.org/0000-0001-6855-442X"
+  - family-names: "Rix"
+    given-names: "Hans-Walter"
+    orcid: "https://orcid.org/0000-0003-4996-9069"
+  - family-names: "Green"
+    given-names: "Gregory M."
+    orcid: "https://orcid.org/0000-0001-5417-2260"
+  - family-names: "Schlafly"
+    given-names: "Edward F."
+    orcid: "https://orcid.org/0000-0002-3569-7421"
+  - family-names: "Finkbeiner"
+    given-names: "Douglas P."
+    orcid: "https://orcid.org/0000-0003-2808-275X"
+  doi: "10.3847/0004-637X/818/2/130"
+  journal: "The Astrophysical Journal"
+  month: 2
+  start: 130
+  title: "On Galactic Density Modeling in the Presence of Dust Extinction"
+  issue: 2
+  volume: 818
+  year: 2016
