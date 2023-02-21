@@ -12,6 +12,9 @@ mwdust
 .. image:: http://img.shields.io/badge/license-New%20BSD-brightgreen.svg
    :target: https://github.com/jobovy/mwdust/blob/main/LICENSE
 
+.. image:: http://img.shields.io/badge/DOI-10.3847/0004%2D%2D637X/818/2/130-blue.svg
+   :target: https://doi.org/10.3847/0004-637X/818/2/130
+
 Installation
 -------------
 
