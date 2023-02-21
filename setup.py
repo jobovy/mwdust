@@ -423,8 +423,7 @@ if not WIN32:
 else:
     ext_modules= None
 
-install_requires= ['numpy','scipy','matplotlib','asciitable',
-                   'h5py']
+install_requires= ['numpy','scipy','matplotlib', 'h5py']
 if not WIN32:
     install_requires.append('healpy')
 

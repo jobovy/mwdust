@@ -7,12 +7,12 @@ import os, os.path
 import sys
 import numpy
 from scipy import interpolate
-import asciitable
+from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
 from mwdust.DustMap3D import DustMap3D
 try:
-    from galpy.util import bovy_plot
+    from galpy.util import plot as bovy_plot
     _BOVY_PLOT_LOADED= True
 except ImportError:
     _BOVY_PLOT_LOADED= False
@@ -41,12 +41,11 @@ class Marshall06(DustMap3D):
         #Read the maps
         sys.stdout.write('\r'+"Reading Marshall et al. (2006) data file ...\r")
         sys.stdout.flush()
-        self._marshalldata= asciitable.read(os.path.join(_marshalldir,
+        self._marshalldata= ascii.read(os.path.join(_marshalldir,
                                                          'table1.dat'),
                                             readme=os.path.join(_marshalldir,
                                                                 'ReadMe'),
-                                            Reader=asciitable.cds.Cds,
-                                            guess=False,
+                                            guess=False, format='cds',
                                             fill_values=[('', '-999')])
         sys.stdout.write('\r'+_ERASESTR+'\r')
         sys.stdout.flush()
@@ -208,7 +207,7 @@ class Marshall06(DustMap3D):
            distance
         INPUT:
            l,b - Galactic longitude and latitude (degree)
-           bovy_plot.bovy_plot args and kwargs
+           bovy_plot.plot args and kwargs
         OUTPUT:
            plot to output device
         HISTORY:
@@ -225,7 +224,7 @@ class Marshall06(DustMap3D):
             filterFac= 1./aebv('2MASS Ks',sf10=self._sf10)\
                 *aebv(self._filter,sf10=self._sf10)
         #Plot
-        out= bovy_plot.bovy_plot(tdata['dist'],tdata['aks']*filterFac,
+        out= bovy_plot.plot(tdata['dist'],tdata['aks']*filterFac,
                             *args,**kwargs)
         #uncertainties
         pyplot.errorbar(tdata['dist'],tdata['aks']*filterFac,
