@@ -1,3 +1,17 @@
+v1.2 (2023-02-21)
+==================
+
+- Switched to using cURL for downloading dust maps.
+
+- Updated Drimmel et al. data link to stable zenodo link.
+
+- Replaced asciitable dependency with astropy's ascii module.
+
+- Improved Windows suppoert: code can be installed, but compiled code
+  is not compiled, because it doesn't currently compile on Windows.
+
+- Improvements to GitHub Actions CI runs.
+
 v1.1 (2019-12-10)
 ==================
 

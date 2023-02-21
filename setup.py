@@ -423,12 +423,12 @@ if not WIN32:
 else:
     ext_modules= None
 
-install_requires= ['numpy','scipy','matplotlib', 'h5py']
+install_requires= ['numpy','scipy','matplotlib','astropy','h5py']
 if not WIN32:
     install_requires.append('healpy')
 
 setup(name='mwdust',
-      version='1.3.dev0',
+      version='1.2',
       description='Dust in the Milky Way',
       author='Jo Bovy',
       author_email='bovy@astro.utoronto.ca',
