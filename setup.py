@@ -411,18 +411,18 @@ if _TEST_DOWNLOADS:
 #SFD  extension
 sfd_c_src= glob.glob('mwdust/util/SFD_CodeC/*.c')
 
-sfd_libraries=['m']
+if not WIN32:
+    sfd_libraries=['m']
+else:
+    sfd_libraries=[]
 sfd_c= Extension('sfd_c',
                  sources=sfd_c_src,
                  libraries=sfd_libraries,
                  extra_compile_args=['-DLITTLE_ENDIAN'],
                  include_dirs=['mwdust/util/SFD_CodeC'])
 
-if not WIN32:
-    ext_modules=[sfd_c]
-else:
-    ext_modules= None
 
+ext_modules=[sfd_c]
 install_requires= ['numpy','scipy','matplotlib','astropy','h5py']
 if not WIN32:
     install_requires.append('healpy')

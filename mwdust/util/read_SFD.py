@@ -6,6 +6,8 @@ from numpy.ctypeslib import ndpointer
 import os, os.path
 import numpy
 import platform
+import tqdm
+
 WIN32= platform.system() == 'Windows'
 #Find and load the library
 _lib = None
@@ -25,7 +27,7 @@ if _lib is None:
             _lib = None
         else:
             break
-if _lib is None and not WIN32:
+if _lib is None:
     raise IOError('SFD/C module not found')
 
 #MAP path names
@@ -33,7 +35,7 @@ dust_dir= os.getenv('DUST_DIR')
 ebvFileN= os.path.join(dust_dir,'maps','SFD_dust_4096_ngp.fits')
 ebvFileS= os.path.join(dust_dir,'maps','SFD_dust_4096_sgp.fits')
 
-def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
+def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False,pbar=True):
     """
     NAME:
        read_SFD_EBV
@@ -45,6 +47,7 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
        interp= (True) if True, interpolate using the nearest pixels
        noloop= (False) if True, don't loop through the glons
        verbose= (False) if True, be verbose
+       pbar= (True) if True, show progress bar
     OUTPUT:
        array of E(B-V) from Schlegel, Finkbeiner, & Davis (1998)
     HISTORY:
@@ -55,7 +58,15 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
         glon= numpy.array([glon])
     if isinstance(glat,(int,float,numpy.float32,numpy.float64)):
         glat= numpy.array([glat])
-        
+
+    nstar = len(glon)
+    if nstar > 1 and pbar:
+        pbar= tqdm.tqdm(total=nstar, leave=False)
+        pbar_func_ctype= ctypes.CFUNCTYPE(None)
+        pbar_c= pbar_func_ctype(pbar.update)
+    else: # pragma: no cover
+        pbar_c= None
+
     #Set up the C code
     ndarrayFlags= ('C_CONTIGUOUS','WRITEABLE')
     evalFunc= _lib.lambert_getval
@@ -66,7 +77,9 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
                         ndpointer(dtype=numpy.float32,flags=ndarrayFlags),
                         ctypes.c_int,
                         ctypes.c_int,
-                        ctypes.c_int]
+                        ctypes.c_int, 
+                        ndpointer(dtype=numpy.int32,flags=ndarrayFlags),
+                        ctypes.c_void_p]
     evalFunc.restype= ctypes.POINTER(ctypes.c_float)
 
     #Array requirements, first store old order
@@ -74,23 +87,27 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False):
              glat.flags['F_CONTIGUOUS']]
     glon= numpy.require(glon,dtype=numpy.float64,requirements=['C','W'])
     glat= numpy.require(glat,dtype=numpy.float64,requirements=['C','W'])
+    err= numpy.require(0,dtype=numpy.int32,requirements=['C','W'])
 
     # Check that the filename isn't too long for the SFD code
-    print(len(ebvFileN.encode('ascii')))
     if len(ebvFileN.encode('ascii')) >= 120 \
             or len(ebvFileS.encode('ascii')) >= 120:
-        raise RuntimeError('The path of the file that contains the SFD dust maps is too long; please shorten the path of DUST_DIR')
+        raise RuntimeError(f"The path of the file that contains the SFD dust maps is too long ({len(ebvFileN.encode('ascii'))}); please shorten the path of DUST_DIR")
 
     res= evalFunc(ctypes.c_char_p(ebvFileN.encode('ascii')),
                      ctypes.c_char_p(ebvFileS.encode('ascii')),
-                     ctypes.c_long(len(glon)),
+                     ctypes.c_long(nstar),
                      glon.astype(numpy.float32,order='C',copy=False),
                      glat.astype(numpy.float32,order='C',copy=False),
                      ctypes.c_int(interp),
                      ctypes.c_int(noloop),
-                     ctypes.c_int(verbose))
-
-    result= numpy.fromiter(res,dtype=float,count=len(glon))
+                     ctypes.c_int(verbose), 
+                     err,
+                     pbar_c
+                     )
+    if numpy.any(err == -10):
+        raise KeyboardInterrupt("Interrupted by CTRL-C (SIGINT)")
+    result= numpy.fromiter(res,dtype=float,count=nstar)
 
     #Reset input arrays
     if f_cont[0]: glon= numpy.asfortranarray(glon)

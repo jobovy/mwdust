@@ -1,8 +1,11 @@
-
+#ifdef _WIN32
+#include <io.h>
+#define F_OK    0
+#else
 #include <unistd.h> /* For access() */
+#endif
 #include <string.h>
 #include "subs_inoutput.h"
-
 /* Initialize file pointers to NULL -- this is done automatically since
  * this is an external variable.
  * Files are numbered 0 to IO_FOPEN_MAX-1.

@@ -1,7 +1,16 @@
 
 #ifndef __INCsubs_lambert_h
 #define __INCsubs_lambert_h
+#include "signal.h"
+#ifdef _WIN32
+#include <Python.h>
+PyMODINIT_FUNC PyInit_sfd_c(void);
+#endif
 
+typedef void (*tqdm_callback_type)();
+
+// msvc unhappy about this section
+#ifndef _WIN32
 void DECLARE(fort_lambert_getval)
   (char  *  pFileN,
    char  *  pFileS,
@@ -12,15 +21,8 @@ void DECLARE(fort_lambert_getval)
    void  *  pQNoloop,
    void  *  pQVerbose,
    float *  pOutput);
-float * lambert_getval
-  (char  *  pFileN,
-   char  *  pFileS,
-   long     nGal,
-   float *  pGall,
-   float *  pGalb,
-   int      qInterp,
-   int      qNoloop,
-   int      qVerbose);
+#endif
+
 void lambert_lb2fpix
   (float    gall,   /* Galactic longitude */
    float    galb,   /* Galactic latitude */
@@ -52,5 +54,11 @@ int ivector_maximum
 
 extern uchar * label_lam_nsgp;
 extern uchar * label_lam_scal;
-
+extern volatile sig_atomic_t interrupted;
+#ifndef _WIN32
+void handle_sigint(int);
+#else
+#include "windows.h"
+BOOL WINAPI CtrlHandler(DWORD fdwCtrlType);
+#endif
 #endif /* __INCsubs_lambert_h */
