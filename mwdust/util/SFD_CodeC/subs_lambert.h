@@ -10,19 +10,30 @@ PyMODINIT_FUNC PyInit_sfd_c(void);
 typedef void (*tqdm_callback_type)();
 
 // msvc unhappy about this section
-// #ifndef _WIN32
-// void DECLARE(fort_lambert_getval)
-//   (char  *  pFileN,
-//    char  *  pFileS,
-//    void  *  pNGal,
-//    float *  pGall,
-//    float *  pGalb,
-//    void  *  pQInterp,
-//    void  *  pQNoloop,
-//    void  *  pQVerbose,
-//    float *  pOutput);
-// #endif
+#ifndef _WIN32
+void DECLARE(fort_lambert_getval)
+  (char  *  pFileN,
+   char  *  pFileS,
+   void  *  pNGal,
+   float *  pGall,
+   float *  pGalb,
+   void  *  pQInterp,
+   void  *  pQNoloop,
+   void  *  pQVerbose,
+   float *  pOutput);
 
+float * lambert_getval
+  (char  *  pFileN,
+   char  *  pFileS,
+   long     nGal,
+   float *  pGall,
+   float *  pGalb,
+   int      qInterp,
+   int      qNoloop,
+   int      qVerbose,
+   int   *  err,
+   tqdm_callback_type cb);
+#endif
 void lambert_lb2fpix
   (float    gall,   /* Galactic longitude */
    float    galb,   /* Galactic latitude */
