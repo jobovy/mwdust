@@ -57,61 +57,61 @@ uchar *  label_lam_nsgp  = (uchar*)Label_lam_nsgp;
 uchar *  label_lam_scal  = (uchar*)Label_lam_scal;
 
 // msvc unhappy about this section
-#ifndef _WIN32
-/******************************************************************************/
-/* Fortran wrapper for reading Lambert FITS files */
-void DECLARE(fort_lambert_getval)
-  (char  *  pFileN,
-   char  *  pFileS,
-   void  *  pNGal,
-   float *  pGall,
-   float *  pGalb,
-   void  *  pQInterp,
-   void  *  pQNoloop,
-   void  *  pQVerbose,
-   float *  pOutput)
-{
-   int      iChar;
-   int      qInterp;
-   int      qNoloop;
-   int      qVerbose;
-   long     iGal;
-   long     nGal;
-   float *  pTemp;
+// #ifndef _WIN32
+// /******************************************************************************/
+// /* Fortran wrapper for reading Lambert FITS files */
+// void DECLARE(fort_lambert_getval)
+//   (char  *  pFileN,
+//    char  *  pFileS,
+//    void  *  pNGal,
+//    float *  pGall,
+//    float *  pGalb,
+//    void  *  pQInterp,
+//    void  *  pQNoloop,
+//    void  *  pQVerbose,
+//    float *  pOutput)
+// {
+//    int      iChar;
+//    int      qInterp;
+//    int      qNoloop;
+//    int      qVerbose;
+//    long     iGal;
+//    long     nGal;
+//    float *  pTemp;
 
-   /* Truncate the Fortran-passed strings with a null,
-    * in case they are padded with spaces */
-   for (iChar=0; iChar < 80; iChar++)
-    if (pFileN[iChar] == ' ') pFileN[iChar] = '\0';
-   for (iChar=0; iChar < 80; iChar++)
-    if (pFileS[iChar] == ' ') pFileS[iChar] = '\0';
+//    /* Truncate the Fortran-passed strings with a null,
+//     * in case they are padded with spaces */
+//    for (iChar=0; iChar < 80; iChar++)
+//     if (pFileN[iChar] == ' ') pFileN[iChar] = '\0';
+//    for (iChar=0; iChar < 80; iChar++)
+//     if (pFileS[iChar] == ' ') pFileS[iChar] = '\0';
 
-   /* Select the 4-byte words passed by a Fortran call */
-   if (sizeof(short) == 4) {
-      nGal = *((short *)pNGal);
-      qInterp = *((short *)pQInterp);
-      qNoloop = *((short *)pQNoloop);
-      qVerbose = *((short *)pQVerbose);
-   } else if (sizeof(int) == 4) {
-      nGal = *((int *)pNGal);
-      qInterp = *((int *)pQInterp);
-      qNoloop = *((int *)pQNoloop);
-      qVerbose = *((int *)pQVerbose);
-   } else if (sizeof(long) == 4) {
-      nGal = *((long *)pNGal);
-      qInterp = *((long *)pQInterp);
-      qNoloop = *((long *)pQNoloop);
-      qVerbose = *((long *)pQVerbose);
-   }
+//    /* Select the 4-byte words passed by a Fortran call */
+//    if (sizeof(short) == 4) {
+//       nGal = *((short *)pNGal);
+//       qInterp = *((short *)pQInterp);
+//       qNoloop = *((short *)pQNoloop);
+//       qVerbose = *((short *)pQVerbose);
+//    } else if (sizeof(int) == 4) {
+//       nGal = *((int *)pNGal);
+//       qInterp = *((int *)pQInterp);
+//       qNoloop = *((int *)pQNoloop);
+//       qVerbose = *((int *)pQVerbose);
+//    } else if (sizeof(long) == 4) {
+//       nGal = *((long *)pNGal);
+//       qInterp = *((long *)pQInterp);
+//       qNoloop = *((long *)pQNoloop);
+//       qVerbose = *((long *)pQVerbose);
+//    }
 
-   pTemp = lambert_getval(pFileN, pFileS, nGal, pGall, pGalb,
-    qInterp, qNoloop, qVerbose);
+//    pTemp = lambert_getval(pFileN, pFileS, nGal, pGall, pGalb,
+//     qInterp, qNoloop, qVerbose);
 
-   /* Copy results into Fortran-passed location for "pOutput",
-    * assuming that memory has already been allocated */
-   for (iGal=0; iGal < nGal; iGal++) pOutput[iGal] = pTemp[iGal];
-}
-#endif
+//    /* Copy results into Fortran-passed location for "pOutput",
+//     * assuming that memory has already been allocated */
+//    for (iGal=0; iGal < nGal; iGal++) pOutput[iGal] = pTemp[iGal];
+// }
+// #endif
 
 /******************************************************************************/
 /* Read one value at a time from NGP+SGP polar projections.
