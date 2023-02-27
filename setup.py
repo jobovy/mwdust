@@ -439,7 +439,7 @@ sfd_c= Extension('sfd_c',
 
 
 ext_modules=[sfd_c]
-install_requires= ['numpy','scipy','matplotlib','astropy','h5py']
+install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm']
 if not WIN32:
     install_requires.append('healpy')
 
