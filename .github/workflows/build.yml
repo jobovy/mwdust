@@ -17,6 +17,11 @@ jobs:
         numpy-version: ["1.22","1.23","1.24"]
     steps:
     - uses: actions/checkout@v3
+    - name: Cache dust maps
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/data/
+        key: sfd-${{ runner.os }}-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -24,18 +29,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip wheel setuptools
-        pip install numpy==${{ matrix.numpy-version }}
+        pip install numpy==${{ matrix.numpy-version }} scipy matplotlib astropy h5py
         pip install pyparsing==2.4.7 # For issue with six which requires pyparsing < 3
     - name: Create data directory
       if: runner.os == 'Windows'
       env:
         DUST_DIR: ${{github.workspace}}/data/
-      run: New-Item -ItemType directory -Path $env:DUST_DIR
+      run: New-Item -ItemType directory -Force -Path $env:DUST_DIR
     - name: Create data directory
       if: runner.os != 'Windows'
       env:
         DUST_DIR: ${{github.workspace}}/data/
-      run: mkdir $DUST_DIR  
+      run: mkdir -p $DUST_DIR  
     - name: Test downloads
       env:
         DUST_DIR: ${{github.workspace}}/data/
@@ -45,4 +50,10 @@ jobs:
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        pip install .
+        python setup.py develop --just-sfd
+    - name: Test package
+      env:
+        DUST_DIR: ${{github.workspace}}/data/
+      run: |
+        pip install pytest hypothesis
+        pytest -v tests/

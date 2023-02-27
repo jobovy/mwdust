@@ -58,6 +58,22 @@ else:
     _DOWNLOAD_COMBINED19= False
     
 try:
+    just_sfd_pos = sys.argv.index('--just-sfd')
+except ValueError:
+    pass
+else:
+    del sys.argv[just_sfd_pos]
+    _DOWNLOAD_SFD= True
+    _DOWNLOAD_DRIMMEL= False
+    _DOWNLOAD_MARSHALL= False
+    _DOWNLOAD_SALE= False
+    _DOWNLOAD_GREEN= False
+    _DOWNLOAD_GREEN17= False
+    _DOWNLOAD_GREEN19= False
+    _DOWNLOAD_COMBINED= False
+    _DOWNLOAD_COMBINED19= False
+
+try:
     test_downloads_pos= sys.argv.index('--test-downloads')
 except ValueError:
     _TEST_DOWNLOADS= False
