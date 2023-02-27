@@ -13,8 +13,8 @@ import numpy
 def test_avebv(ll,bb,dist):
     # Simple test of the extinction curve, using Drimmel03 as an example
     # Test that A_V/E(B-V) = 3.1 for the CTIO V filter
-    from mwdust import Drimmel03
-    drim_av= Drimmel03(filter='CTIO V')
-    drim_ebv= Drimmel03()
-    assert numpy.fabs(drim_av(ll,bb,dist)/drim_ebv(ll,bb,dist)/0.86-3.1) < 0.02
+    from mwdust import SFD
+    sfd_av= SFD(filter='CTIO V')
+    sfd_ebv= SFD()
+    assert numpy.fabs(sfd_av(ll,bb,dist)/sfd_ebv(ll,bb,dist)/0.86-3.1) < 0.02
     return None
