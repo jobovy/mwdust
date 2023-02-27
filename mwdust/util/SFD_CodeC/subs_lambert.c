@@ -10,12 +10,54 @@
 #include "subs_lambert.h"
 #include <math.h>
 
+#ifdef _WIN32
+#define EXPORT __declspec(dllexport)
+#elif defined __GNUC__
+#define EXPORT __attribute__((visibility("default")))
+#else
+#define EXPORT
+#endif
+
+#ifdef _WIN32
+#include <Python.h>
+PyMODINIT_FUNC PyInit_sfd_c(void)
+{ // Python 3
+   return NULL;
+};
+#endif
+
+volatile sig_atomic_t interrupted = 0;
+// handle CTRL-C
+#ifndef _WIN32
+void handle_sigint(int signum)
+{
+   interrupted = 1;
+}
+#else
+#include <windows.h>
+BOOL WINAPI CtrlHandler(DWORD fdwCtrlType)
+{
+   switch (fdwCtrlType)
+   {
+   // Handle the CTRL-C signal.
+   case CTRL_C_EVENT:
+      interrupted = 1;
+      // needed to avoid other control handlers like python from being called before us
+      return TRUE;
+   default:
+      return FALSE;
+   }
+}
+#endif
+
 char Label_lam_nsgp[]  = "LAM_NSGP";
 char Label_lam_scal[]  = "LAM_SCAL";
 
 uchar *  label_lam_nsgp  = (uchar*)Label_lam_nsgp;
 uchar *  label_lam_scal  = (uchar*)Label_lam_scal;
 
+// msvc unhappy about this section
+#ifndef _WIN32
 /******************************************************************************/
 /* Fortran wrapper for reading Lambert FITS files */
 void DECLARE(fort_lambert_getval)
@@ -36,6 +78,8 @@ void DECLARE(fort_lambert_getval)
    long     iGal;
    long     nGal;
    float *  pTemp;
+   int * err;
+   tqdm_callback_type cb;
 
    /* Truncate the Fortran-passed strings with a null,
     * in case they are padded with spaces */
@@ -63,19 +107,20 @@ void DECLARE(fort_lambert_getval)
    }
 
    pTemp = lambert_getval(pFileN, pFileS, nGal, pGall, pGalb,
-    qInterp, qNoloop, qVerbose);
+    qInterp, qNoloop, qVerbose, err, cb);
 
    /* Copy results into Fortran-passed location for "pOutput",
     * assuming that memory has already been allocated */
    for (iGal=0; iGal < nGal; iGal++) pOutput[iGal] = pTemp[iGal];
 }
+#endif
 
 /******************************************************************************/
 /* Read one value at a time from NGP+SGP polar projections.
  * Set qInterp=1 to interpolate, or =0 otherwise.
  * Set qVerbose=1 to for verbose output, or =0 otherwise.
  */
-float * lambert_getval
+EXPORT float * lambert_getval
   (char  *  pFileN,
    char  *  pFileS,
    long     nGal,
@@ -83,7 +128,9 @@ float * lambert_getval
    float *  pGalb,
    int      qInterp,
    int      qNoloop,
-   int      qVerbose)
+   int      qVerbose,
+   int *err,
+   tqdm_callback_type cb)
 {
    int      iloop;
    int      iGal;
@@ -119,6 +166,17 @@ float * lambert_getval
    HSIZE    nHead;
    uchar *  pHead;
 
+   // Handle KeyboardInterrupt gracefully
+   #ifndef _WIN32
+      struct sigaction action;
+      memset(&action, 0, sizeof(struct sigaction));
+      action.sa_handler = handle_sigint;
+      sigaction(SIGINT, &action, NULL);
+   #else
+      if (SetConsoleCtrlHandler(CtrlHandler, TRUE))
+      {}
+   #endif
+
    /* Allocate output data array */
    pNS = ccivector_build_(nGal);
    pOutput = ccvector_build_(nGal);
@@ -135,8 +193,13 @@ float * lambert_getval
 
          /* Loop through each data point */
          for (iGal=0; iGal < nGal; iGal++) {
+                        if (interrupted)
+            {
+               *err = -10;
+               break;
+            }
             if (pNS[iGal] == iloop) {
-
+               if ( cb ) cb(1);  // tqdm update for 1 star
                /* Read FITS header for this projection if not yet read */
                if (qRead == 0) {
                   if (iloop == 0) pFileIn = pFileN; else pFileIn = pFileS;
@@ -214,6 +277,11 @@ float * lambert_getval
 
                }  /* -- END NEAREST PIXEL OR INTERPOLATE -- */
             }
+         // Back to default handler
+         #ifndef _WIN32
+                     action.sa_handler = SIG_DFL;
+                     sigaction(SIGINT, &action, NULL);
+         #endif
          }
       }
 
