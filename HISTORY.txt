@@ -5,10 +5,14 @@ v1.2 (2023-02-21)
 
 - Updated Drimmel et al. data link to stable zenodo link.
 
-- Replaced asciitable dependency with astropy's ascii module.
+- Improved Windows support: SFD code can now be fully compiled and 
+  installed on Windows.
 
-- Improved Windows suppoert: code can be installed, but compiled code
-  is not compiled, because it doesn't currently compile on Windows.
+- Add tqdm progress bar when evaluating SFD with multiple values.
+
+- Allow SFD C code to be KeyboardInterrupted.
+  
+- Replaced asciitable dependency with astropy's ascii module.
 
 - Improvements to GitHub Actions CI runs.
 
