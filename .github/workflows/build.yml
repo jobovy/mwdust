@@ -46,3 +46,9 @@ jobs:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
         pip install .
+    - name: Test package
+      env:
+        DUST_DIR: ${{github.workspace}}/data/
+      run: |
+        pip install pytest hypothesis
+        pytest -v tests/
