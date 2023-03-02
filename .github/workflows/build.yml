@@ -55,5 +55,5 @@ jobs:
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        pip install pytest hypothesis
+        pip install pytest
         pytest -v tests/
