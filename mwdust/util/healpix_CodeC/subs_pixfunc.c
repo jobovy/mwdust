@@ -41,12 +41,12 @@ double sigma(double z)
     }
 }
 
-// double distance2(double a, double b) {
+// double distance2(double *a, double *b) {
 //     return sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2) + pow(a[2] - b[2], 2) * 1.0);
 
 // }
 
-// double angle(double a, double b) {
+// double angle(double *a, double *b) {
 //     return 2 * asin(sqrt(distance2(a, b)) / 2);
 // }
 

@@ -6,9 +6,8 @@
 #
 ###############################################################################
 import numpy
-import pylab as plt
 from scipy import interpolate
-from mwdust.util.healpix import ang2vec, ang2pix, nside2pixarea, UNSEEN, nside2npix, ud_grade, pix2ang, query_disc
+from mwdust.util.healpix import ang2pix
 from mwdust.util.extCurves import aebv
 from mwdust.DustMap3D import DustMap3D
 _DEGTORAD= numpy.pi/180.
@@ -81,15 +80,19 @@ class HierarchicalHealpixMap(DustMap3D):
         HISTORY:
            2015-03-06 - Written - Bovy (IAS)
         """
+        try:
+            import healpy
+        except ImportError:
+            raise ModuleNotFoundError("This function requires healpy to be installed")
         # Convert the disk center to a HEALPIX vector
-        vec= ang2vec((90.-bcen)*_DEGTORAD,lcen*_DEGTORAD)
+        vec= healpy.pixelfunc.ang2vec((90.-bcen)*_DEGTORAD,lcen*_DEGTORAD)
         distmod= 5.*numpy.log10(dist)+10.
         # Query the HEALPIX map for pixels that lie within the disk
         pixarea= []
         extinction= []
         for nside in self._nsides:
             # Find the pixels at this resolution that fall within the disk
-            ipixs= query_disc(nside,vec,radius*_DEGTORAD,
+            ipixs= healpy.query_disc(nside,vec,radius*_DEGTORAD,
                                     inclusive=False,nest=True)
             # Get indices of all pixels within the disk at current nside level
             nsideindx= self._pix_info['nside'] == nside
@@ -109,7 +112,7 @@ class HierarchicalHealpixMap(DustMap3D):
                                                                  k=self._interpk)
                     tout.append(interpData(distmod))
                     self._intps[lbIndx]= interpData
-            tarea= nside2pixarea(nside)
+            tarea= healpy.pixelfunc.nside2pixarea(nside)
             tarea= [tarea for ii in range(len(tout))]
             pixarea.extend(tarea)
             extinction.extend(tout)
@@ -148,6 +151,10 @@ class HierarchicalHealpixMap(DustMap3D):
         HISTORY:
            2019-12-06 - Written - Bovy (UofT)
         """
+        try:
+            import healpy
+        except ImportError:
+            raise ModuleNotFoundError("This function requires healpy to be installed")
         # Distance modulus
         dm= 5.*numpy.log10(d)+10.
         # Get factor to apply to map to obtain extinction in object's filter
@@ -157,9 +164,9 @@ class HierarchicalHealpixMap(DustMap3D):
         tpix= numpy.argmin(numpy.fabs(dm-self._distmods))
         # Construct an empty map at the highest HEALPix resolution present in the map; code snippets adapted from http://argonaut.skymaps.info/usage
         nside_max= numpy.max(self._pix_info['nside'])
-        npix= nside2npix(nside_max)
+        npix= healpy.pixelfunc.nside2npix(nside_max)
         pix_val= numpy.empty(npix,dtype='f8')
-        pix_val[:] = UNSEEN
+        pix_val[:] = healpy.UNSEEN
         # Fill the upsampled map
         for nside in numpy.unique(self._pix_info['nside']):
             # Get indices of all pixels at current nside level
@@ -175,29 +182,23 @@ class HierarchicalHealpixMap(DustMap3D):
         # If the desired nside is less than the maximum nside in the map, degrade
         nside_plot= kwargs.get('nside_plot',2048)
         if not nside_plot is None and nside_plot < nside_max:
-            pix_val= ud_grade(pix_val, nside_plot, pess=False, order_in='NEST', order_out='NEST')
-        pix_val[pix_val == UNSEEN]= -1.
+            pix_val= healpy.pixelfunc.ud_grade(pix_val,
+                                               nside_plot,pess=False,
+                                               order_in='NEST', 
+                                               order_out='NEST')
+        pix_val[pix_val == healpy.UNSEEN]= -1.
+
         if not self._filter is None:
             kwargs['unit']= r'$A_{%s}\,(\mathrm{mag})$' % (self._filter.split(' ')[-1])
         else:
             kwargs['unit']= r'$E(B-V)\,(\mathrm{mag})$'
         kwargs['title']= kwargs.get('title',"")
-        theta, phi = pix2ang(nside_plot, numpy.arange(len(pix_val)), nest=True)
-        ra, dec = - numpy.degrees(theta - numpy.pi / 2.), numpy.degrees(numpy.pi * 2. - phi)
-        fig = plt.figure(figsize=(12, 6))
-        ax = fig.add_subplot(111, projection="mollweide")
-        # TODO: work in progress
-
-        # ax.scatter(theta, phi, c=pix_val, s=1, rasterized=True)
-        #  X=numpy.arange(-179, 179), Y=numpy.arange(-89, 89)
-        im = ax.pcolormesh(numpy.random.rand(358, 178), rasterized=True)
-        # healpy.visufunc.mollview(pix_val,
-        #                          nest=True,
-        #                          xsize=4000,
-        #                          min=0.,
-        #                          max=numpy.quantile(pix_val,0.99),
-        #                          format=r'$%g$',
-        #                          cmap='gist_yarg',
-        #                          **kwargs)
+        healpy.visufunc.mollview(pix_val,
+                                 nest=True,
+                                 xsize=4000,
+                                 min=0.,
+                                 max=numpy.quantile(pix_val,0.99),
+                                 format=r'$%g$',
+                                 cmap='gist_yarg',
+                                 **kwargs)
         return None
-        

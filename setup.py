@@ -450,7 +450,8 @@ healpix_c= Extension('healpix_c',
 ext_modules=[sfd_c, healpix_c]
 
 install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm']
-
+if not WIN32:
+    install_requires.append('healpy')
 setup(name='mwdust',
       version='1.3.dev0',
       description='Dust in the Milky Way',

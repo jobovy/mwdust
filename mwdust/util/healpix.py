@@ -362,19 +362,6 @@ def nside2npix(nside):
     return 12 * nside * nside
 
 
-def query_disc(nside, vec, radius, inclusive=False, fact=4, nest=False):
-    check_nside(nside)
-    NotImplementedError("query_disc is not implemented for now")
-    if inclusive:
-        ang2pix_c = _lib.query_disc_inclusive_nest
-        if nest is False:
-            NotImplementedError("RING scheme is not implemented for now")
-    else:
-        ang2pix_c = _lib.query_disc_nest
-        if nest is False:
-            NotImplementedError("RING scheme is not implemented for now")
-
-
 def ud_grade(map_in, nside_plot, pess=False, order_in="RING", order_out=None, power=None, dtype=None):
     """
     NAME:
