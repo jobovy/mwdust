@@ -7,9 +7,7 @@
 ###############################################################################
 import numpy
 from scipy import interpolate
-try:
-    import healpy
-except ImportError: pass
+from mwdust.util.healpix import ang2pix
 from mwdust.util.extCurves import aebv
 from mwdust.DustMap3D import DustMap3D
 _DEGTORAD= numpy.pi/180.
@@ -82,6 +80,10 @@ class HierarchicalHealpixMap(DustMap3D):
         HISTORY:
            2015-03-06 - Written - Bovy (IAS)
         """
+        try:
+            import healpy
+        except ImportError:
+            raise ModuleNotFoundError("This function requires healpy to be installed")
         # Convert the disk center to a HEALPIX vector
         vec= healpy.pixelfunc.ang2vec((90.-bcen)*_DEGTORAD,lcen*_DEGTORAD)
         distmod= 5.*numpy.log10(dist)+10.
@@ -124,7 +126,7 @@ class HierarchicalHealpixMap(DustMap3D):
         """Return the index in the _combineddata array corresponding to this (l,b)"""
         for nside in self._nsides:
             # Search for the pixel in this Nside level
-            tpix= healpy.pixelfunc.ang2pix(nside,(90.-b)*_DEGTORAD,
+            tpix= ang2pix(nside,(90.-b)*_DEGTORAD,
                                            l*_DEGTORAD,nest=True)
             indx= (self._pix_info['healpix_index'] == tpix)\
                 *(self._pix_info['nside'] == nside)
@@ -149,6 +151,10 @@ class HierarchicalHealpixMap(DustMap3D):
         HISTORY:
            2019-12-06 - Written - Bovy (UofT)
         """
+        try:
+            import healpy
+        except ImportError:
+            raise ModuleNotFoundError("This function requires healpy to be installed")
         # Distance modulus
         dm= 5.*numpy.log10(d)+10.
         # Get factor to apply to map to obtain extinction in object's filter
@@ -196,4 +202,3 @@ class HierarchicalHealpixMap(DustMap3D):
                                  cmap='gist_yarg',
                                  **kwargs)
         return None
-        

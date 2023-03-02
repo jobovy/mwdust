@@ -21,7 +21,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/data/
-        key: sfd-${{ runner.os }}-
+        key: sfd-green19-${{ runner.os }}-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -50,10 +50,10 @@ jobs:
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        python setup.py develop --just-sfd
+        python setup.py develop --no-downloads --download-sfd --download-green19 --verbose-downloads
     - name: Test package
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        pip install pytest hypothesis
+        pip install pytest
         pytest -v tests/

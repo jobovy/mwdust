@@ -39,9 +39,11 @@ sudo.
 
 Note that on Windows, you need to have the ``gzip`` utility 
 (e.g., by installing ``7zip``) to use the installation script. 
-Because ``healpy`` is unavailable on Windows, all 
-HEALPIx-based maps (e.g., `CombinedXX`, `GreenXX`) will not 
-work on Windows. Install on Linux/Mac OS for full features.
+Using custom implementations of necessary HEALPIx functions, basic 
+evaluation of extinction is available on all platforms (Linux, Mac OS,
+Windows) for all dust maps. However, some HEALPIx-based features like 
+plotting require ``healpy``, which is unavailable on Windows.
+Install on Linux/Mac OS for full functionality.
 
 Dust Data
 ---------
@@ -85,38 +87,46 @@ directory, because it is not very large.
 Usage
 ------
 
-All of the maps can be initialized similar to::
+All of the maps can be initialized similar to
 
-    import mwdust
-    drimmel= mwdust.Drimmel03(filter='2MASS H')
-    combined= mwdust.Combined15(filter='2MASS H')
-    combined19= mwdust.Combined19(filter='2MASS H')
-    sfd= mwdust.SFD(filter='2MASS H')
+..  code-block:: python
+
+   import mwdust
+   drimmel= mwdust.Drimmel03(filter='2MASS H')
+   combined= mwdust.Combined15(filter='2MASS H')
+   combined19= mwdust.Combined19(filter='2MASS H')
+   sfd= mwdust.SFD(filter='2MASS H')
 
 which sets up the Drimmel et al. (2003) map, the combined Bovy et
 al. (2016) map, an updated version of the combined map using the Green
 et al. (2019) Bayestar19 map, and the SFD map for the *H*-band
 filter. The maps can be evaluate for a given Galactic longitude *l*,
-Galactic latitude *b*, and an array (or scalar) of distances *D*::
+Galactic latitude *b*, and an array (or scalar) of distances *D*
 
-	 drimmel(60.,0.,3.) # inputs are (l,b,D)
-	 array([ 0.38813341])
-	 combined(30.,3.,numpy.array([1.,2.,3.,10.]))
-	 array([ 0.22304147,  0.55687252,  0.86694602,  1.18779507])
-	 # SFD is just the constant SFD extinction
-	 sfd(30.,3.,numpy.array([1.,2.,3.]))
-	 array([ 1.19977335,  1.19977335,  1.19977335])
+..  code-block:: python
 
-and they can be plotted as a function of distance at a given (l,b)::
+   drimmel(60.,0.,3.) # inputs are (l,b,D)
+   array([ 0.38813341])
+   combined(30.,3.,numpy.array([1.,2.,3.,10.]))
+   array([ 0.22304147,  0.55687252,  0.86694602,  1.18779507])
+   # SFD is just the constant SFD extinction
+   sfd(30.,3.,numpy.array([1.,2.,3.]))
+   array([ 1.19977335,  1.19977335,  1.19977335])
 
-    combined.plot(55.,0.5) # inputs are (l,b)
+and they can be plotted as a function of distance at a given (l,b)
+
+..  code-block:: python
+
+   combined.plot(55.,0.5) # inputs are (l,b)
 
 (plot not shown). Maps that are derived from the
 ``HierarchicalHealpixMap.py`` class (currently all Green-type maps and
 the combined maps) can also be plotted on the sky using a Mollweide
-projection at a given distance using::
+projection at a given distance using
 
-    combined.plot_mollweide(5.) # input is distance in kpc
+..  code-block:: python
+
+   combined.plot_mollweide(5.) # input is distance in kpc
 
 Supported bandpasses
 ---------------------
@@ -134,34 +144,41 @@ situation, so using ``sf10=False`` is never recommended.
 
 To check what bandpasses are supported on the ``sf10=True`` scale do
 (these are all the bandpasses from Table 6 in `Schlafly & Finkbeiner
-2011 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__)::
+2011 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__)
+
+..  code-block:: python
 
    from mwdust.util import extCurves  
    extCurves.avebvsf.keys()
 
-which gives::
+which gives
 
-      ['Stromgren u',
-       'Stromgren v',
-       'ACS clear',
-       'CTIO R',
-       'CTIO V',
-       'CTIO U',
-       'CTIO I',
-       ...]
+..  code-block:: python
 
-To check the bandpasses that are supported on the old SFD scale (``sf10=False``), do::
+   ['Stromgren u',
+      'Stromgren v',
+      'ACS clear',
+      'CTIO R',
+      'CTIO V',
+      'CTIO U',
+      'CTIO I',
+      ...]
+
+To check the bandpasses that are supported on the old SFD scale (``sf10=False``), do
+
+..  code-block:: python
 
    numpy.array(extCurves.avebv.keys())[True-numpy.isnan(extCurves.avebv.values())]
 
-which gives::
+which gives
 
-      array(['CTIO R', 'CTIO V', 'CTIO U', 'CTIO I', 'CTIO B', 'DSS-II i',
-       'DSS-II g', 'WISE-1', 'WISE-2', 'DSS-II r', 'UKIRT H', 'UKIRT J',
-       'UKIRT K', 'IRAC-1', 'IRAC-2', 'IRAC-3', 'IRAC-4', '2MASS H',
-       'SDSS r', 'SDSS u', 'SDSS z', 'SDSS g', 'SDSS i', '2MASS Ks',
-       '2MASS J'], 
-      dtype='|S14'
+..  code-block:: python
+
+   array(['CTIO R', 'CTIO V', 'CTIO U', 'CTIO I', 'CTIO B', 'DSS-II i',
+      'DSS-II g', 'WISE-1', 'WISE-2', 'DSS-II r', 'UKIRT H', 'UKIRT J',
+      'UKIRT K', 'IRAC-1', 'IRAC-2', 'IRAC-3', 'IRAC-4', '2MASS H',
+      'SDSS r', 'SDSS u', 'SDSS z', 'SDSS g', 'SDSS i', '2MASS Ks',
+      '2MASS J'], dtype='|S14')
 
 Acknowledgements
 -----------------

@@ -58,20 +58,20 @@ else:
     _DOWNLOAD_COMBINED19= False
     
 try:
-    just_sfd_pos = sys.argv.index('--just-sfd')
+    download_sfd_pos = sys.argv.index('--download-sfd')
 except ValueError:
     pass
 else:
-    del sys.argv[just_sfd_pos]
+    del sys.argv[download_sfd_pos]
     _DOWNLOAD_SFD= True
-    _DOWNLOAD_DRIMMEL= False
-    _DOWNLOAD_MARSHALL= False
-    _DOWNLOAD_SALE= False
-    _DOWNLOAD_GREEN= False
-    _DOWNLOAD_GREEN17= False
-    _DOWNLOAD_GREEN19= False
-    _DOWNLOAD_COMBINED= False
-    _DOWNLOAD_COMBINED19= False
+
+try:
+    download_green19_pos = sys.argv.index('--download-green19')
+except ValueError:
+    pass
+else:
+    del sys.argv[download_green19_pos]
+    _DOWNLOAD_GREEN19= True
 
 try:
     test_downloads_pos= sys.argv.index('--test-downloads')
@@ -86,7 +86,7 @@ try:
 except ValueError:
     _VERBOSE_DOWNLOADS= False
 else:
-    del sys.argv[test_downloads_pos]
+    del sys.argv[verbose_downloads_pos]
     _VERBOSE_DOWNLOADS= True    
 
 def download_file(url,output,desc,notest=False):
@@ -438,11 +438,20 @@ sfd_c= Extension('sfd_c',
                  include_dirs=['mwdust/util/SFD_CodeC'])
 
 
-ext_modules=[sfd_c]
+#healpix  extension
+healpix_c_src= glob.glob('mwdust/util/healpix_CodeC/*.c')
+
+healpix_c= Extension('healpix_c',
+                 sources=healpix_c_src,
+                 libraries=sfd_libraries,
+                 extra_compile_args=['-DLITTLE_ENDIAN'],
+                 include_dirs=['mwdust/util/healpix_CodeC'])
+
+ext_modules=[sfd_c, healpix_c]
+
 install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm']
 if not WIN32:
     install_requires.append('healpy')
-
 setup(name='mwdust',
       version='1.3.dev0',
       description='Dust in the Milky Way',

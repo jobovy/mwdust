@@ -169,7 +169,7 @@ void fits_read_file_fits_header_only_
    uchar ** ppHead)
 {
    int      fileNum;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
 
    inoutput_open_file(&fileNum, pFileName, pPrivR);
 
@@ -196,7 +196,7 @@ int fits_read_file_ascii_header_
    int      fileNum;
    int      maxLen = 80;
    int      qExist;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
    uchar    pCard[80];
 
    qExist = inoutput_open_file(&fileNum, pFileName, pPrivR);
@@ -329,7 +329,7 @@ DSIZE fits_read_subimg_
    uchar *  pData;
 
    int      fileNum;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
 
    inoutput_open_file(&fileNum, pFileName, pPrivR);
 
@@ -467,7 +467,7 @@ DSIZE fits_read_point_
 
    int      fileNum;
    int      ipos;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
    FILE  *  pFILEin;
 
    inoutput_open_file(&fileNum, pFileName, pPrivR);
@@ -547,7 +547,7 @@ DSIZE fits_read_file_fits_noscale_
 {
    int      fileNum;
    DSIZE    retval;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
 
    inoutput_open_file(&fileNum, pFileName, pPrivR);
 
@@ -596,7 +596,7 @@ DSIZE fits_read_file_xfits_noscale_
    DSIZE    retval;
    uchar    pExtend[40];
    uchar *  pTempHead;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
 
    inoutput_open_file(&fileNum, pFileName, pPrivR);
 
