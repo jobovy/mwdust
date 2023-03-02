@@ -74,6 +74,22 @@ else:
     _DOWNLOAD_COMBINED19= False
 
 try:
+    just_sfd_pos = sys.argv.index('--just-green19')
+except ValueError:
+    pass
+else:
+    del sys.argv[just_sfd_pos]
+    _DOWNLOAD_SFD= False
+    _DOWNLOAD_DRIMMEL= False
+    _DOWNLOAD_MARSHALL= False
+    _DOWNLOAD_SALE= False
+    _DOWNLOAD_GREEN= False
+    _DOWNLOAD_GREEN17= False
+    _DOWNLOAD_GREEN19= True
+    _DOWNLOAD_COMBINED= False
+    _DOWNLOAD_COMBINED19= False
+
+try:
     test_downloads_pos= sys.argv.index('--test-downloads')
 except ValueError:
     _TEST_DOWNLOADS= False
@@ -438,10 +454,18 @@ sfd_c= Extension('sfd_c',
                  include_dirs=['mwdust/util/SFD_CodeC'])
 
 
-ext_modules=[sfd_c]
+#healpix  extension
+healpix_c_src= glob.glob('mwdust/util/healpix_CodeC/*.c')
+
+healpix_c= Extension('healpix_c',
+                 sources=healpix_c_src,
+                 libraries=sfd_libraries,
+                 extra_compile_args=['-DLITTLE_ENDIAN'],
+                 include_dirs=['mwdust/util/healpix_CodeC'])
+
+ext_modules=[sfd_c, healpix_c]
+
 install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm']
-if not WIN32:
-    install_requires.append('healpy')
 
 setup(name='mwdust',
       version='1.3.dev0',

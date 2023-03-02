@@ -50,7 +50,7 @@ jobs:
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        python setup.py develop --just-sfd
+        python setup.py develop --just-sfd --just-green19
     - name: Test package
       env:
         DUST_DIR: ${{github.workspace}}/data/
