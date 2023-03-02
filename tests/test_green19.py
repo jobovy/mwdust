@@ -5,8 +5,8 @@ rng= default_rng()
 
 
 def test_distance_dependent():
-    # Test that Green19 map is monotonic increase with distance
-    # for a given line of sight.
+    # Test that extinction from the Green19 map monotonicaly increases 
+    # with distance for a given line of sight.
     from mwdust import Green19
     green19= Green19()
     glons= rng.uniform(50.,220.,size=20)
@@ -16,14 +16,14 @@ def test_distance_dependent():
                             for ii in range(len(glons))]
                             for jj in range(len(dists))]).T     
     assert numpy.all(numpy.fabs(ebvs-ebvs[0])>=0), \
-        'Green19 extinction is not monotonic increase with distance for at lease one given line of sight'
+        'Green19 extinction does not monotonically increase with distance for at lease one given line of sight'
     return None
 
 
 def test_against_known_values():
     # Test that the SFD extinction agrees with a table of known values
     # These were computed using mwdust on Linux using mwdust 1.2
-    # before custom healpix functions are implemented (thus computed using healpy)
+    # before custom healpix functions were implemented (thus computed using healpy)
     from mwdust import Green19
     green19= Green19()
     known= numpy.loadtxt(pathlib.Path(__file__).parent / 'green19_benchmark.dat',delimiter=',')

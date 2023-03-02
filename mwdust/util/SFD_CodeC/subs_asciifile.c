@@ -83,7 +83,7 @@ int asciifile_read_rowmajor
    char  *  iq;
    float *  pValues;
    float *  pData;
-   char     pPrivR[] = "r\0";
+   char     pPrivR[] = "rb";
 
    *pNCols = 0;
    *pNRows = 0;
