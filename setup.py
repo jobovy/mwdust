@@ -58,36 +58,20 @@ else:
     _DOWNLOAD_COMBINED19= False
     
 try:
-    just_sfd_pos = sys.argv.index('--just-sfd')
+    download_sfd_pos = sys.argv.index('--download-sfd')
 except ValueError:
     pass
 else:
-    del sys.argv[just_sfd_pos]
+    del sys.argv[download_sfd_pos]
     _DOWNLOAD_SFD= True
-    _DOWNLOAD_DRIMMEL= False
-    _DOWNLOAD_MARSHALL= False
-    _DOWNLOAD_SALE= False
-    _DOWNLOAD_GREEN= False
-    _DOWNLOAD_GREEN17= False
-    _DOWNLOAD_GREEN19= False
-    _DOWNLOAD_COMBINED= False
-    _DOWNLOAD_COMBINED19= False
 
 try:
-    just_sfd_pos = sys.argv.index('--just-green19')
+    download_green19_pos = sys.argv.index('--download-green19')
 except ValueError:
     pass
 else:
-    del sys.argv[just_sfd_pos]
-    _DOWNLOAD_SFD= False
-    _DOWNLOAD_DRIMMEL= False
-    _DOWNLOAD_MARSHALL= False
-    _DOWNLOAD_SALE= False
-    _DOWNLOAD_GREEN= False
-    _DOWNLOAD_GREEN17= False
+    del sys.argv[download_green19_pos]
     _DOWNLOAD_GREEN19= True
-    _DOWNLOAD_COMBINED= False
-    _DOWNLOAD_COMBINED19= False
 
 try:
     test_downloads_pos= sys.argv.index('--test-downloads')
@@ -102,7 +86,7 @@ try:
 except ValueError:
     _VERBOSE_DOWNLOADS= False
 else:
-    del sys.argv[test_downloads_pos]
+    del sys.argv[verbose_downloads_pos]
     _VERBOSE_DOWNLOADS= True    
 
 def download_file(url,output,desc,notest=False):

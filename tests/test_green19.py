@@ -22,7 +22,7 @@ def test_distance_dependent():
 
 def test_against_known_values():
     # Test that the SFD extinction agrees with a table of known values
-    # These were computed using mwdust on Linux using mwdust 0.12.0
+    # These were computed using mwdust on Linux using mwdust 1.2
     # before custom healpix functions are implemented (thus computed using healpy)
     from mwdust import Green19
     green19= Green19()
