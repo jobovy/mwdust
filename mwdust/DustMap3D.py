@@ -110,18 +110,21 @@ class DustMap3D:
     
     @staticmethod
     def __downloader(url, fullfilename, name, test=False):
+        user_agent = "Mozilla/5.0"
         if test:  # only for testing respond
             # import requests here to avoid including requests as a requirment in mwdust
             import requests
-            r = requests.head(url, allow_redirects=True, verify=False)
-            if r.status_code != 200:
-                raise ConnectionError(f"Cannot find {name} data dile at {url}")
+            # do not redirect, harvard dataverse redirect us to amazon cloud which won't respond to requests get get header
+            # only making sure not 404, and site like harvard dataverse is directing us to somewhere
+            r = requests.head(url, allow_redirects=False, verify=False)
+            if r.status_code > 399: # allow HTTP code 2xx (Successful) and 3xx (Redirection) 
+                raise ConnectionError(f"Cannot find {name} data file at {url}")
             r.close()
         else:
             with TqdmUpTo(unit="B", unit_scale=True, miniters=1, desc=name) as t:
                 try:
                     opener=urllib.request.build_opener()
-                    opener.addheaders=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+                    opener.addheaders=[("User-Agent", user_agent)]
                     urllib.request.install_opener(opener)
                     urllib.request.urlretrieve(url, fullfilename, reporthook=t.update_to)
                     print(f"Downloaded {name} successfully to {fullfilename}")
@@ -168,14 +171,14 @@ class DustMap3D:
             if not os.path.exists(marshall_path[:-3]):
                 if not os.path.exists(marshall_folder_path):
                     os.mkdir(marshall_folder_path)
-                _MARSHALL_URL= "ftp://cdsarc.u-strasbg.fr/pub/cats/J/A%2BA/453/635/table1.dat.gz"
+                _MARSHALL_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/table1.dat.gz"
                 cls.__downloader(_MARSHALL_URL, marshall_path, "MARSHALL06", test=test)
                 if not test:
                     with open(marshall_path, "rb") as inf, open(os.path.join(marshall_folder_path, "table1.dat"), "w", encoding="utf8") as tof:
                         decom_str = gzip.decompress(inf.read()).decode("utf-8")
                         tof.write(decom_str)
             if not os.path.exists(marshall_readme_path):
-                _MARSHALL_README_URL= "ftp://cdsarc.u-strasbg.fr/pub/cats/J/A%2BA/453/635/ReadMe"
+                _MARSHALL_README_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/ReadMe"
                 cls.__downloader(_MARSHALL_README_URL, marshall_readme_path, "MARSHALL06 README", test=test)
 
         elif cls.__name__ == "Sale14":
