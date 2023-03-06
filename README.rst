@@ -26,20 +26,12 @@ Standard python setup.py build/install
 
 Either
 
-``sudo python setup.py install``
+``python setup.py install``
 
 or 
 
 ``python setup.py install --prefix=/some/directory/``
 
-The installation automatically downloads the relevant dust data. You
-might have to define an environment variable ``SUDO_USER`` if not
-installing with sudo and you might have to use the ``-E`` option when
-you are installing with sudo to transfer your environment variables to
-sudo.
-
-Note that on Windows, you need to have the ``gzip`` utility 
-(e.g., by installing ``7zip``) to use the installation script. 
 Using custom implementations of necessary HEALPIx functions, basic 
 evaluation of extinction is available on all platforms (Linux, Mac OS,
 Windows) for all dust maps. However, some HEALPIx-based features like 
