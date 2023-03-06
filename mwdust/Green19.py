@@ -6,9 +6,10 @@
 import os, os.path
 import numpy
 import h5py
+from mwdust.DustMap3D import dust_dir
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
-_greendir= os.path.join(os.getenv('DUST_DIR'),'green19')
+_greendir= os.path.join(dust_dir, 'green19')
 class Green19(HierarchicalHealpixMap):
     """extinction model from Green et al. (2019)"""
     def __init__(self,filter=None,sf10=True,load_samples=False,

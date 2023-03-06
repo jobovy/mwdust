@@ -18,8 +18,9 @@ mwdust
 Installation
 -------------
 
-Please define an environment variable ``DUST_DIR`` before installing
-the code; this is a directory that will contain the dust data.
+You can define environment variable ``DUST_DIR`` before installing
+the code; this is a directory that will contain the dust data. 
+Otherwise ``mwdust`` will use ``~/.mwdust`` by default
 
 Standard python setup.py build/install
 
@@ -48,16 +49,19 @@ Install on Linux/Mac OS for full functionality.
 Dust Data
 ---------
 
-The code can automatically download all of the necessary data. By
-default, only the most commonly-used dust maps are downloaded; to
-download all maps, use the ``--all-downloads`` installation option
-(you can just re-run the installation with this option to add this
-later).  The installation option ``--no-downloads`` turns all
-downloads off. By default, downloads are run without showing any 
-progress, but if you want to see the downloads's progression, use 
-``--verbose-downloads``.
+By default, dust maps are download when you use them for the first time.
+The code can download all of the necessary data at by running
 
-The data are put in subdirectories of a directory ``DUST_DIR``, with
+..  code-block:: python
+
+   from mwdust import download_all
+   download_all()
+
+
+; to
+download all maps, use the ``--all-downloads`` 
+
+The data are put in subdirectories of a directory ``DUST_DIR`` or ``~/.mwdust``, with
 roughly the following lay-out::
 
     $DUST_DIR/

@@ -8,4 +8,18 @@ from mwdust.Green19 import Green19
 from mwdust.Combined15 import Combined15
 from mwdust.Combined19 import Combined19
 from mwdust.Zero import Zero
+
 __version__ = "1.3.dev0"
+
+
+def download_all(test=False):
+    SFD.download(test=test)
+    Marshall06.download(test=test)
+    Drimmel03.download(test=test)
+    Sale14.download(test=test)
+    Green15.download(test=test)
+    Green17.download(test=test)
+    Green19.download(test=test)
+    Combined15.download(test=test)
+    Combined19.download(test=test)
+    # Zero.download(test=test)

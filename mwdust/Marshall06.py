@@ -10,7 +10,7 @@ from scipy import interpolate
 from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D, dust_dir
 try:
     from galpy.util import plot as bovy_plot
     _BOVY_PLOT_LOADED= True
@@ -18,7 +18,7 @@ except ImportError:
     _BOVY_PLOT_LOADED= False
 from matplotlib import pyplot
 _DEGTORAD= numpy.pi/180.
-_marshalldir= os.path.join(os.getenv('DUST_DIR'),'marshall06')
+_marshalldir= os.path.join(dust_dir,'marshall06')
 _ERASESTR= "                                                                                "
 class Marshall06(DustMap3D):
     """extinction model from Marshall et al. 2006 2006A&A...453..635M"""

@@ -10,9 +10,9 @@ from scipy import interpolate
 from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D, dust_dir
 _DEGTORAD= numpy.pi/180.
-_saledir= os.path.join(os.getenv('DUST_DIR'),'sale14')
+_saledir= os.path.join(dust_dir,'sale14')
 _ERASESTR= "                                                                                "
 class Sale14(DustMap3D):
     """extinction model from Sale et al. 2014 2014MNRAS.443.2907S"""
