@@ -5,12 +5,13 @@
 ###############################################################################
 import os, os.path
 import sys
+import gzip
 import numpy
 from scipy import interpolate
 from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D, dust_dir
+from mwdust.DustMap3D import DustMap3D, dust_dir, downloader
 try:
     from galpy.util import plot as bovy_plot
     _BOVY_PLOT_LOADED= True
@@ -240,3 +241,21 @@ class Marshall06(DustMap3D):
         lIndx= int(round((l+100.)/self._dl))
         bIndx= int(round((b+10.)/self._db))
         return lIndx*81+bIndx
+
+    @classmethod
+    def download(cls, test=False):
+       marshall_folder_path = os.path.join(dust_dir, "marshall06")
+       marshall_path = os.path.join(marshall_folder_path, "table1.dat.gz")
+       marshall_readme_path = os.path.join(dust_dir, "marshall06", "ReadMe")
+       if not os.path.exists(marshall_path[:-3]):
+             if not os.path.exists(marshall_folder_path):
+                os.mkdir(marshall_folder_path)
+             _MARSHALL_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/table1.dat.gz"
+             downloader(_MARSHALL_URL, marshall_path, "MARSHALL06", test=test)
+             if not test:
+                with open(marshall_path, "rb") as inf, open(os.path.join(marshall_folder_path, "table1.dat"), "w", encoding="utf8") as tof:
+                   decom_str = gzip.decompress(inf.read()).decode("utf-8")
+                   tof.write(decom_str)
+       if not os.path.exists(marshall_readme_path):
+             _MARSHALL_README_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/ReadMe"
+             downloader(_MARSHALL_README_URL, marshall_readme_path, "MARSHALL06 README", test=test)

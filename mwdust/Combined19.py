@@ -7,7 +7,7 @@
 import os, os.path
 import numpy
 import h5py
-from mwdust.DustMap3D import dust_dir
+from mwdust.DustMap3D import dust_dir, downloader
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
 _combineddir= os.path.join(dust_dir,'combined19')
@@ -49,3 +49,13 @@ class Combined19(HierarchicalHealpixMap):
                                  dtype='object') #array to cache interpolated extinctions
         self._interpk= interpk
         return None
+
+    @classmethod
+    def download(cls, test=False):
+       # Download the combined map: Marshall+Green19+Drimmel for full sky coverage
+       combined19_path = os.path.join(dust_dir, "combined19", "combine19.h5")
+       if not os.path.exists(combined19_path):
+             if not os.path.exists(os.path.join(dust_dir, "combined19")):
+                os.mkdir(os.path.join(dust_dir, "combined19"))
+             _COMBINED19_URL = "https://zenodo.org/record/3566060/files/combine19.h5"
+             downloader(_COMBINED19_URL, combined19_path, "COMBINED19", test=test)

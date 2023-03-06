@@ -44,7 +44,7 @@ healpix_c= Extension('healpix_c',
 
 ext_modules=[sfd_c, healpix_c]
 
-install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm']
+install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm', 'requests']
 if not WIN32:
     install_requires.append('healpy')
 setup(name='mwdust',
@@ -68,7 +68,7 @@ setup(name='mwdust',
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: C",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Astronomy",
         "Topic :: Scientific/Engineering :: Physics"]
       )

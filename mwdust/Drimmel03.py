@@ -3,8 +3,11 @@
 #   Drimmel03: extinction model from Drimmel et al. 2003 2003A&A...409..205D
 #
 ###############################################################################
+import os
 import copy
 import numpy
+import tarfile
+import inspect
 from scipy.ndimage import map_coordinates
 from scipy import optimize
 try:
@@ -13,7 +16,8 @@ except ImportError: pass
 from mwdust.util.extCurves import aebv
 from mwdust.util import read_Drimmel
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D, dust_dir, downloader
+
 _DEGTORAD= numpy.pi/180.
 class Drimmel03(DustMap3D):
     """extinction model from Drimmel et al. 2003 2003A&A...409..205D"""
@@ -262,7 +266,22 @@ class Drimmel03(DustMap3D):
         fs= amp*numpy.exp(pars[2])
         fo= amp*(1.-fd-fs)
         return (fd,fs,fo,numpy.exp(pars[3]))
-        
+
+    @classmethod
+    def download(cls, test=False):
+       drimmel_folder_path = os.path.abspath(os.path.join(inspect.getfile(cls), "..", "util", "drimmeldata"))
+       drimmel_path = os.path.join(drimmel_folder_path, "data-for.tar.gz")
+       if not os.path.exists(drimmel_path):
+             if not os.path.exists(drimmel_folder_path):
+                os.mkdir(drimmel_folder_path)
+             _DRIMMEL_URL= "https://zenodo.org/record/7340108/files/data-for.tar.gz"
+             downloader(_DRIMMEL_URL, drimmel_path, "DRIMMEL03", test=test)
+             if not test:
+                file = tarfile.open(drimmel_path)
+                file.extractall(drimmel_folder_path)
+                file.close()
+
+
 def _fitFunc(pars,drim,l,b,dist,ext,e_ext):
     amp= numpy.exp(pars[0])
     fd= amp*numpy.exp(pars[1])
@@ -271,4 +290,3 @@ def _fitFunc(pars,drim,l,b,dist,ext,e_ext):
     dist_stretch= numpy.exp(pars[3])
     model_ext= drim(l,b,dist*dist_stretch,_fd=fd,_fs=fs,_fo=fo)
     return 0.5*numpy.sum((model_ext-ext)**2./e_ext**2.)
-    

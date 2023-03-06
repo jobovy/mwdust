@@ -3,10 +3,14 @@
 #   SFD: Schlegel, Finkbeiner, & Davis (1998) dust map (2D)
 #
 ###############################################################################
+import os
 import numpy
+from mwdust.util.download import downloader
 from mwdust.util.read_SFD import read_SFD_EBV
 from mwdust.util.extCurves import aebv
-from mwdust.DustMap3D import DustMap3D
+from mwdust.DustMap3D import DustMap3D, dust_dir, downloader
+
+
 class SFD(DustMap3D):
     """Schlegel, Finkbeiner, & Davis (1998) dust map (2D)"""
     def __init__(self,filter=None,sf10=True,interp=True,noloop=False):
@@ -52,3 +56,16 @@ class SFD(DustMap3D):
             return tebv*numpy.ones_like(d)
         else:
             return tebv*aebv(self._filter,sf10=self._sf10)*numpy.ones_like(d)
+
+    @classmethod
+    def download(cls, test=False):
+          sfd_ngp_path = os.path.join(dust_dir, "maps", "SFD_dust_4096_ngp.fits")
+          if not os.path.exists(sfd_ngp_path):
+                if not os.path.exists(os.path.join(dust_dir, "maps")):
+                   os.mkdir(os.path.join(dust_dir, "maps"))
+                _SFD_URL_NGP= "https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_ngp.fits"
+                downloader(_SFD_URL_NGP, sfd_ngp_path, "SFD_NGP", test=test)
+          sfd_sgp_path = os.path.join(dust_dir, "maps", "SFD_dust_4096_sgp.fits")
+          if not os.path.exists(sfd_ngp_path):
+                _SFD_URL_SGP= "https://svn.sdss.org/public/data/sdss/catalogs/dust/trunk/maps/SFD_dust_4096_sgp.fits"
+                downloader(_SFD_URL_SGP, sfd_sgp_path, "SFD_SGP", test=test)

@@ -5,12 +5,15 @@
 ###############################################################################
 import os, os.path
 import sys
+import tarfile
+import shutil
 import numpy
 from scipy import interpolate
 from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D, dust_dir
+from mwdust.DustMap3D import DustMap3D, dust_dir, downloader
+
 _DEGTORAD= numpy.pi/180.
 _saledir= os.path.join(dust_dir,'sale14')
 _ERASESTR= "                                                                                "
@@ -180,3 +183,32 @@ class Sale14(DustMap3D):
             raise IndexError("Given (l,b) pair not within the region covered by the Sale et al. (2014) dust map")
         return numpy.argmin((l-self._saledata['GLON'])**2./self._dl**2.\
                                 +(b-self._saledata['GLAT'])**2./self._db**2.)
+
+    @classmethod
+    def download(cls, test=False):
+       sale_folder_path = os.path.join(dust_dir, "sale14")
+       sale_path = os.path.join(sale_folder_path, "Amap.tar.gz")
+       if not os.path.exists(sale_path[:-6] + "dat"):
+             if not os.path.exists(sale_folder_path):
+                os.mkdir(sale_folder_path)
+             _SALE_URL= "http://www.iphas.org/data/extinction/Amap.tar.gz"
+             downloader(_SALE_URL, sale_path, "SALE14", test=test)
+             if not test:
+                file = tarfile.open(sale_path)
+                file.extractall(sale_folder_path)
+                file.close()
+                # Fix one line in the dust map
+                with open(os.path.join(sale_folder_path, "tmp.dat"), "w") as fout:
+                   with open(os.path.join(sale_folder_path, "Amap.dat"), "r") as fin:
+                         for line in fin:
+                            if "15960.40000" in line: # bad line
+                               newline= ''
+                               for ii,word in enumerate(line.split(' ')):
+                                     if ii > 0: newline+= ' '
+                                     if ii > 6 and len(word) > 9:
+                                        word= "747.91400"
+                                     newline+= word
+                               fout.write(newline+'\n')
+                            else:
+                               fout.write(line)
+                shutil.move(os.path.join(sale_folder_path, "tmp.dat"), os.path.join(sale_folder_path, "Amap.dat"))

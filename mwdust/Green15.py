@@ -6,7 +6,7 @@
 import os, os.path
 import numpy
 import h5py
-from mwdust.DustMap3D import dust_dir
+from mwdust.DustMap3D import dust_dir, downloader
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
 _greendir= os.path.join(dust_dir, 'green15')
@@ -71,3 +71,12 @@ class Green15(HierarchicalHealpixMap):
                                  dtype='object') #array to cache interpolated extinctions
         return None
 
+    @classmethod
+    def download(cls, test=False):
+       # Download Green et al. PanSTARRS data (alt.: http://dx.doi.org/10.7910/DVN/40C44C)
+       green15_path = os.path.join(dust_dir, "green15", "dust-map-3d.h5")
+       if not os.path.exists(green15_path):
+             if not os.path.exists(os.path.join(dust_dir, "green15")):
+                os.mkdir(os.path.join(dust_dir, "green15"))
+             _GREEN15_URL = "http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5"
+             downloader(_GREEN15_URL, green15_path, "GREEN15", test=test)
