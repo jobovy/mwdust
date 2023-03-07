@@ -258,6 +258,7 @@ class Marshall06(DustMap3D):
                 with open(marshall_path, "rb") as inf, open(os.path.join(marshall_folder_path, "table1.dat"), "w", encoding="utf8") as tof:
                     decom_str = gzip.decompress(inf.read()).decode("utf-8")
                     tof.write(decom_str)
+                os.remove(marshall_path)
         if not os.path.exists(marshall_readme_path):
             _MARSHALL_README_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/ReadMe"
             downloader(_MARSHALL_README_URL, marshall_readme_path, f"{cls.__name__} (ReadMe)", test=test)

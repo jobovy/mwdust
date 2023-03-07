@@ -198,6 +198,7 @@ class Sale14(DustMap3D):
                 sale_file = tarfile.open(sale_path)
                 sale_file.extractall(sale_folder_path)
                 sale_file.close()
+                os.remove(sale_path)
                 # Fix one line in the dust map
                 with open(os.path.join(sale_folder_path, "tmp.dat"), "w") as fout:
                     with open(os.path.join(sale_folder_path, "Amap.dat"), "r") as fin:
