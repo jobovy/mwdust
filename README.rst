@@ -18,10 +18,6 @@ mwdust
 Installation
 -------------
 
-You can define environment variable ``DUST_DIR`` before installing
-the code; this is a directory that will contain the dust data. 
-Otherwise ``mwdust`` will use ``~/.mwdust`` by default
-
 Standard python setup.py build/install
 
 Either
@@ -30,7 +26,7 @@ Either
 
 or 
 
-``python setup.py install --prefix=/some/directory/``
+``python setup.py install --user``
 
 Using custom implementations of necessary HEALPIx functions, basic 
 evaluation of extinction is available on all platforms (Linux, Mac OS,
@@ -41,7 +37,11 @@ Install on Linux/Mac OS for full functionality.
 Dust Data
 ---------
 
-By default, dust maps are download when you use them for the first time.
+By default, dust maps are download when you use them for the first time. 
+If you define an environment variable ``DUST_DIR``, then all dust data
+downloaded by the code will be downloaded to this directory. If you do not
+set the ``DUST_DIR`` variable, then ``mwdust`` will download data to ``~/.mwdust``. 
+
 The code can download all of the necessary data at by running
 
 ..  code-block:: python
@@ -49,9 +49,8 @@ The code can download all of the necessary data at by running
    from mwdust import download_all
    download_all()
 
-
-; to
-download all maps, use the ``--all-downloads`` 
+Note that some of the maps are very large (multiple GB) and some of the downloads 
+are slow, so this may take a while.
 
 The data are put in subdirectories of a directory ``DUST_DIR`` or ``~/.mwdust``, with
 roughly the following lay-out::
@@ -69,10 +68,10 @@ roughly the following lay-out::
           bayestar2019.h5
        maps/
           SFD_dust_4096_ngp.fits
-	  SFD_dust_4096_sgp.fits
+	       SFD_dust_4096_sgp.fits
        marshall06/
           ReadMe
-	  table1.dat
+	       table1.dat
        sale14/
           Amap.dat
           ReadMe
