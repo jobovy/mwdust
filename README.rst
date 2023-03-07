@@ -18,27 +18,16 @@ mwdust
 Installation
 -------------
 
-Please define an environment variable ``DUST_DIR`` before installing
-the code; this is a directory that will contain the dust data.
-
 Standard python setup.py build/install
 
 Either
 
-``sudo python setup.py install``
+``python setup.py install``
 
 or 
 
-``python setup.py install --prefix=/some/directory/``
+``python setup.py install --user``
 
-The installation automatically downloads the relevant dust data. You
-might have to define an environment variable ``SUDO_USER`` if not
-installing with sudo and you might have to use the ``-E`` option when
-you are installing with sudo to transfer your environment variables to
-sudo.
-
-Note that on Windows, you need to have the ``gzip`` utility 
-(e.g., by installing ``7zip``) to use the installation script. 
 Using custom implementations of necessary HEALPIx functions, basic 
 evaluation of extinction is available on all platforms (Linux, Mac OS,
 Windows) for all dust maps. However, some HEALPIx-based features like 
@@ -48,16 +37,22 @@ Install on Linux/Mac OS for full functionality.
 Dust Data
 ---------
 
-The code can automatically download all of the necessary data. By
-default, only the most commonly-used dust maps are downloaded; to
-download all maps, use the ``--all-downloads`` installation option
-(you can just re-run the installation with this option to add this
-later).  The installation option ``--no-downloads`` turns all
-downloads off. By default, downloads are run without showing any 
-progress, but if you want to see the downloads's progression, use 
-``--verbose-downloads``.
+By default, dust maps are download when you use them for the first time. 
+If you define an environment variable ``DUST_DIR``, then all dust data
+downloaded by the code will be downloaded to this directory. If you do not
+set the ``DUST_DIR`` variable, then ``mwdust`` will download data to ``~/.mwdust``. 
 
-The data are put in subdirectories of a directory ``DUST_DIR``, with
+The code can download all of the necessary data at by running
+
+..  code-block:: python
+
+   from mwdust import download_all
+   download_all()
+
+Note that some of the maps are very large (multiple GB) and some of the downloads 
+are slow, so this may take a while.
+
+The data are put in subdirectories of a directory ``DUST_DIR`` or ``~/.mwdust``, with
 roughly the following lay-out::
 
     $DUST_DIR/
@@ -73,10 +68,10 @@ roughly the following lay-out::
           bayestar2019.h5
        maps/
           SFD_dust_4096_ngp.fits
-	  SFD_dust_4096_sgp.fits
+	       SFD_dust_4096_sgp.fits
        marshall06/
           ReadMe
-	  table1.dat
+	       table1.dat
        sale14/
           Amap.dat
           ReadMe

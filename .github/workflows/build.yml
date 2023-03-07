@@ -40,17 +40,12 @@ jobs:
       if: runner.os != 'Windows'
       env:
         DUST_DIR: ${{github.workspace}}/data/
-      run: mkdir -p $DUST_DIR  
-    - name: Test downloads
-      env:
-        DUST_DIR: ${{github.workspace}}/data/
-      run: |
-        python setup.py install --test-downloads --all-downloads
+      run: mkdir -p $DUST_DIR
     - name: Install package
       env:
         DUST_DIR: ${{github.workspace}}/data/
       run: |
-        python setup.py develop --no-downloads --download-sfd --download-green19 --verbose-downloads
+        python setup.py develop
     - name: Test package
       env:
         DUST_DIR: ${{github.workspace}}/data/

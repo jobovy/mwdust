@@ -1,3 +1,10 @@
+v1.2 (XXXX-XX-XX)
+==================
+
+- Re-jiggered the way dust maps are downloaded. They are now downloaded
+  upon first use of a dust map rather than at install time. This makes 
+  it possible to create installable wheels for mwdust.
+
 v1.2 (2023-02-21)
 ==================
 

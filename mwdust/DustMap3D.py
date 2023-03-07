@@ -10,6 +10,7 @@ try:
     _BOVY_PLOT_LOADED= True
 except ImportError:
     _BOVY_PLOT_LOADED= False
+
 class DustMap3D:
     """top-level class for a 3D dust map; all other dust maps inherit from this"""
     def __init__(self,filter=None):
@@ -25,7 +26,7 @@ class DustMap3D:
            2013-11-24 - Started - Bovy (IAS)
         """
         self._filter= filter
-        return None
+        self.download()  # download the map
 
     def __call__(self,*args,**kwargs):
         """
@@ -47,7 +48,6 @@ class DustMap3D:
             try:
                 return self._evaluate(l,b,d,**kwargs)
             except AttributeError:
-                raise
                 raise NotImplementedError("'_evaluate' for this DustMap3D not implemented yet")
 
     def plot(self,l,b,*args,**kwargs):
@@ -92,3 +92,7 @@ class DustMap3D:
         else:
             kwargs['ylabel']= r'$E(B-V)\,(\mathrm{mag})$'
         return bovy_plot.plot(ds,adust,*args,**kwargs)
+
+    @classmethod
+    def download(cls, test=False):
+        pass

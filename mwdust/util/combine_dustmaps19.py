@@ -13,6 +13,8 @@ import numpy
 import h5py
 import healpy
 import mwdust
+from mwdust.util.download import dust_dir
+
 from galpy.util import save_pickles
 
 
@@ -20,7 +22,7 @@ def distmod2dist(distmod):
     """distance modulus to distance in kpc"""
     return 10.**(distmod/5.-2.)
 
-_greendir= os.path.join(os.getenv('DUST_DIR'),'green19')
+_greendir= os.path.join(dust_dir,'green19')
 #_GREEN15DISTMODS= numpy.linspace(4.,19.,31) # distance spacing for green15 and green17
 _GREEN19DISTMODS= numpy.linspace(4,18.875,120) # distance spacing for green19
 _GREEN19DISTS= distmod2dist(_GREEN19DISTMODS)

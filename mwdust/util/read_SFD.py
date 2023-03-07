@@ -7,6 +7,7 @@ import os, os.path
 import numpy
 import platform
 import tqdm
+from mwdust.util.download import dust_dir
 
 WIN32= platform.system() == 'Windows'
 #Find and load the library
@@ -31,7 +32,6 @@ if _lib is None:
     raise IOError('SFD/C module not found')
 
 #MAP path names
-dust_dir= os.getenv('DUST_DIR')
 ebvFileN= os.path.join(dust_dir,'maps','SFD_dust_4096_ngp.fits')
 ebvFileS= os.path.join(dust_dir,'maps','SFD_dust_4096_sgp.fits')
 

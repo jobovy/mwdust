@@ -6,9 +6,10 @@
 import os, os.path
 import numpy
 import h5py
+from mwdust.util.download import dust_dir, downloader
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
-_greendir= os.path.join(os.getenv('DUST_DIR'),'green17')
+_greendir= os.path.join(dust_dir, 'green17')
 class Green17(HierarchicalHealpixMap):
     """extinction model from Green et al. (2018)"""
     def __init__(self,filter=None,sf10=True,load_samples=False,
@@ -72,3 +73,13 @@ class Green17(HierarchicalHealpixMap):
                                  dtype='object') #array to cache interpolated extinctions
         return None
 
+    @classmethod
+    def download(cls, test=False):
+        # Download Green et al. 2018 PanSTARRS data
+        green17_path = os.path.join(dust_dir, "green17", "bayestar2017.h5")
+        if not os.path.exists(green17_path):
+            if not os.path.exists(os.path.join(dust_dir, "green17")):
+                os.mkdir(os.path.join(dust_dir, "green17"))
+            _GREEN17_URL = "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/LCYHJG/S7MP4P"
+            downloader(_GREEN17_URL, green17_path, cls.__name__, test=test)
+        return None
