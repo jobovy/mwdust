@@ -15,18 +15,29 @@ mwdust
 .. image:: http://img.shields.io/badge/DOI-10.3847/0004%2D%2D637X/818/2/130-blue.svg
    :target: https://doi.org/10.3847/0004-637X/818/2/130
 
+.. contents:: **Contents**
+    :depth: 3
+
 Installation
 -------------
 
-Standard python setup.py build/install
+Install the latest released version using ``pip``:
 
-Either
+..  code-block::
 
-``python setup.py install``
+   pip install mwdust
+
+To install the latest development version, clone the repository and do
+
+..  code-block::
+
+   python setup.py install
 
 or 
 
-``python setup.py install --user``
+..  code-block::
+
+   python setup.py install --user
 
 Using custom implementations of necessary HEALPIx functions, basic 
 evaluation of extinction is available on all platforms (Linux, Mac OS,
@@ -123,6 +134,8 @@ projection at a given distance using
 
    combined.plot_mollweide(5.) # input is distance in kpc
 
+Note that this requires ``healpy`` to be installed, so this does not work on Windows.
+
 Supported bandpasses
 ---------------------
 
@@ -175,8 +188,8 @@ which gives
       'SDSS r', 'SDSS u', 'SDSS z', 'SDSS g', 'SDSS i', '2MASS Ks',
       '2MASS J'], dtype='|S14')
 
-Acknowledgements
------------------
+Acknowledging ``mwdust`` and its data
+---------------------------------------
 
 When making use of this code in a publication, please cite `Bovy et
 al. (2015a) <http://arxiv.org/abs/1509.06751>`__. Also cite the relevant papers for the dust
@@ -196,7 +209,13 @@ map that you use:
 
 * **mwdust.Green19**: `Green et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019arXiv190502734G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
-* **mwdust.Combined15**: Combination of `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__ (**mwdust.Marshall06**), `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__ (**mwdust.Green15**), and `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__ (**mwdust.Green15**); see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__
+* **mwdust.Combined15**: Combination of 
+  
+  * `Marshall et al. (2006) <http://adsabs.harvard.edu/abs/2006A%26A...453..635M>`__ (**mwdust.Marshall06**),
+  * `Green et al. (2015) <http://adsabs.harvard.edu/abs/2015arXiv150701005G>`__ (**mwdust.Green15**), and 
+  * `Drimmel et al. (2003) <http://adsabs.harvard.edu/abs/2003A%26A...409..205D>`__ (**mwdust.Drimmel03**); 
+  
+  see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__.
 
 * **mwdust.Combined19**: Similar to **mwdust.Combined15**, but using **mwdust.Green19** instead of **mwdust.Green15**; see `Bovy et al. (2015a) <http://adsabs.harvard.edu/abs/2015arXiv150906751B>`__ for details on the combination (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
