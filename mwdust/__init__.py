@@ -9,7 +9,7 @@ from mwdust.Combined15 import Combined15
 from mwdust.Combined19 import Combined19
 from mwdust.Zero import Zero
 
-__version__ = "1.3.dev0"
+__version__ = "1.3"
 
 
 def download_all(test=False):
