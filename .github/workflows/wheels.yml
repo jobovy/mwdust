@@ -1,0 +1,89 @@
+name: Wheel builder and uploader
+
+# Update on every push and PR to main, and upon release creation
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**'
+      - '!*'
+      - '*.py'
+      - '!tests/**'
+      - '!.github/**'
+      - '.github/workflows/wheels.yml'
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [created]
+
+jobs:
+  build_wheels:
+    name: Build wheel for ${{ matrix.python }}-${{ matrix.buildplat[1] }}-${{ matrix.buildplat[2] }}
+    runs-on: ${{ matrix.buildplat[0] }}
+    strategy:
+      # Ensure that a wheel builder finishes even if another fails
+      fail-fast: false
+      matrix:
+        # Following numpy's setup
+        buildplat:
+        - [ubuntu-latest, manylinux, x86_64]
+        - [macos-latest, macosx, x86_64]
+        - [macos-latest, macosx, arm64]
+        - [windows-2019, win, amd64]
+        python: ["cp38", "cp39", "cp310", "cp311"]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.0
+        env:
+          CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
+          CIBW_ARCHS_MACOS: ${{ matrix.buildplat[2] }}
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: >
+            DYLD_LIBRARY_PATH=$REPAIR_LIBRARY_PATH delocate-listdeps {wheel} &&
+            DYLD_LIBRARY_PATH=$REPAIR_LIBRARY_PATH delocate-wheel -v --require-archs {delocate_archs} -w {dest_dir} {wheel}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.python }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
+          path: ./wheelhouse/*.whl
+  build_sdist:
+    name: Build source directory for release
+    if: github.event_name == 'release' && github.event.action == 'created'
+    runs-on: ubuntu-latest
+    steps:
+      # check-out this repository
+      - uses: actions/checkout@v3
+      # Setup python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - name: Build sdist
+        run: |
+          pip install build
+          python -m build --sdist
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sdist
+          path: ./dist/*.tar.gz
+# Deploy wheels and sdist to PyPI (upon release creation)
+  deploy_pypi:
+    name: Deploy to PyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'created'
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          mkdir tmp_wheelhouse
+          mkdir wheelhouse
+      - uses: actions/download-artifact@v3
+        with:
+          path: tmp_wheelhouse/
+      - run: find tmp_wheelhouse/ -mindepth 2 -type f -exec mv -i '{}' wheelhouse/ ';'
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.pypi_token }}
+          packages_dir: wheelhouse/

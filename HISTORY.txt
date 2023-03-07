@@ -7,7 +7,9 @@ v1.3 (XXXX-XX-XX)
 
 - Added custom implementation of most of the necessary healpy functions
   to avoid the need for healpy as a dependency. This makes it possible
-  to compile and use mwdust on Windows (where healpy is unavailable)
+  to compile and use mwdust on Windows (where healpy is unavailable).
+
+- Added binary wheels for all major platforms (Linux, MacOS, Windows).
 
 v1.2 (2023-02-21)
 ==================
