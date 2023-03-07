@@ -4,5 +4,5 @@ Jo Bovy <bovy@astro.utoronto.ca>
 
 Direct contributions to the code base:
 
-Henry Leung (Windows support for SFD; some dependency maintenance)
+Henry Leung (Windows support for SFD; custom HEALPIx implementation allowing use on Windows; dust map downloads during use rather than installation; some dependency maintenance)
 Surhud More (fix SFD links in 122343153eca80dc2dae433ed46062e828fc90c1)
