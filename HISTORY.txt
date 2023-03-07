@@ -1,9 +1,13 @@
-v1.2 (XXXX-XX-XX)
+v1.3 (XXXX-XX-XX)
 ==================
 
 - Re-jiggered the way dust maps are downloaded. They are now downloaded
   upon first use of a dust map rather than at install time. This makes 
   it possible to create installable wheels for mwdust.
+
+- Added custom implementation of most of the necessary healpy functions
+  to avoid the need for healpy as a dependency. This makes it possible
+  to compile and use mwdust on Windows (where healpy is unavailable)
 
 v1.2 (2023-02-21)
 ==================
