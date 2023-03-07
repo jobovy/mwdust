@@ -6,7 +6,7 @@
 import os, os.path
 import numpy
 import h5py
-from mwdust.DustMap3D import dust_dir, downloader
+from mwdust.util.download import dust_dir, downloader
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 _DEGTORAD= numpy.pi/180.
 _greendir= os.path.join(dust_dir, 'green19')
@@ -74,10 +74,11 @@ class Green19(HierarchicalHealpixMap):
 
     @classmethod
     def download(cls, test=False):
-       # Download Green et al. 2019 PanSTARRS data
-       green19_path = os.path.join(dust_dir, "green19", "bayestar2019.h5")
-       if not os.path.exists(green19_path):
-             if not os.path.exists(os.path.join(dust_dir, "green19")):
+        # Download Green et al. 2019 PanSTARRS data
+        green19_path = os.path.join(dust_dir, "green19", "bayestar2019.h5")
+        if not os.path.exists(green19_path):
+            if not os.path.exists(os.path.join(dust_dir, "green19")):
                 os.mkdir(os.path.join(dust_dir, "green19"))
-             _GREEN19_URL = "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/2EJ9TX/1CUGA1"
-             downloader(_GREEN19_URL, green19_path, "GREEN19", test=test)
+            _GREEN19_URL = "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/2EJ9TX/1CUGA1"
+            downloader(_GREEN19_URL, green19_path, cls.__name__, test=test)
+        return None

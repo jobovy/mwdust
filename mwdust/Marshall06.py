@@ -11,7 +11,9 @@ from scipy import interpolate
 from astropy.io import ascii
 from mwdust.util.extCurves import aebv
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D, dust_dir, downloader
+from mwdust.util.download import dust_dir, downloader
+from mwdust.DustMap3D import DustMap3D
+
 try:
     from galpy.util import plot as bovy_plot
     _BOVY_PLOT_LOADED= True
@@ -244,18 +246,19 @@ class Marshall06(DustMap3D):
 
     @classmethod
     def download(cls, test=False):
-       marshall_folder_path = os.path.join(dust_dir, "marshall06")
-       marshall_path = os.path.join(marshall_folder_path, "table1.dat.gz")
-       marshall_readme_path = os.path.join(dust_dir, "marshall06", "ReadMe")
-       if not os.path.exists(marshall_path[:-3]):
-             if not os.path.exists(marshall_folder_path):
+        marshall_folder_path = os.path.join(dust_dir, "marshall06")
+        marshall_path = os.path.join(marshall_folder_path, "table1.dat.gz")
+        marshall_readme_path = os.path.join(dust_dir, "marshall06", "ReadMe")
+        if not os.path.exists(marshall_path[:-3]):
+            if not os.path.exists(marshall_folder_path):
                 os.mkdir(marshall_folder_path)
-             _MARSHALL_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/table1.dat.gz"
-             downloader(_MARSHALL_URL, marshall_path, "MARSHALL06", test=test)
-             if not test:
+            _MARSHALL_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/table1.dat.gz"
+            downloader(_MARSHALL_URL, marshall_path, cls.__name__, test=test)
+            if not test:
                 with open(marshall_path, "rb") as inf, open(os.path.join(marshall_folder_path, "table1.dat"), "w", encoding="utf8") as tof:
-                   decom_str = gzip.decompress(inf.read()).decode("utf-8")
-                   tof.write(decom_str)
-       if not os.path.exists(marshall_readme_path):
-             _MARSHALL_README_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/ReadMe"
-             downloader(_MARSHALL_README_URL, marshall_readme_path, "MARSHALL06 README", test=test)
+                    decom_str = gzip.decompress(inf.read()).decode("utf-8")
+                    tof.write(decom_str)
+        if not os.path.exists(marshall_readme_path):
+            _MARSHALL_README_URL= "https://cdsarc.cds.unistra.fr/ftp/J/A+A/453/635/ReadMe"
+            downloader(_MARSHALL_README_URL, marshall_readme_path, f"{cls.__name__} (ReadMe)", test=test)
+        return None

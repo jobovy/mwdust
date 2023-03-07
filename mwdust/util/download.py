@@ -1,8 +1,14 @@
-import tqdm
+import os
 import pathlib
 import shutil
 import requests
+import tqdm
 
+dust_dir = os.environ.get("DUST_DIR")
+if dust_dir is None:
+    dust_dir = os.path.expanduser(os.path.join("~", ".mwdust"))
+if not os.path.exists(dust_dir):
+    os.mkdir(dust_dir)
 
 def downloader(url, fullfilename, name, test=False):
     """
@@ -21,6 +27,6 @@ def downloader(url, fullfilename, name, test=False):
         path.parent.mkdir(parents=True, exist_ok=True)
 
         # r.raw.read
-        with tqdm.tqdm.wrapattr(r.raw, "read", total=file_size, desc=name) as r_raw:
+        with tqdm.tqdm.wrapattr(r.raw, "read", total=file_size, desc=f"Download {name}") as r_raw:
             with path.open("wb") as f:
                 shutil.copyfileobj(r_raw, f)

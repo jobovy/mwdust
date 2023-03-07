@@ -22,4 +22,3 @@ def download_all(test=False):
     Green19.download(test=test)
     Combined15.download(test=test)
     Combined19.download(test=test)
-    # Zero.download(test=test)

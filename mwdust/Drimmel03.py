@@ -16,7 +16,8 @@ except ImportError: pass
 from mwdust.util.extCurves import aebv
 from mwdust.util import read_Drimmel
 from mwdust.util.tools import cos_sphere_dist
-from mwdust.DustMap3D import DustMap3D, dust_dir, downloader
+from mwdust.util.download import  dust_dir, downloader
+from mwdust.DustMap3D import DustMap3D
 
 _DEGTORAD= numpy.pi/180.
 class Drimmel03(DustMap3D):
@@ -269,18 +270,18 @@ class Drimmel03(DustMap3D):
 
     @classmethod
     def download(cls, test=False):
-       drimmel_folder_path = os.path.abspath(os.path.join(inspect.getfile(cls), "..", "util", "drimmeldata"))
-       drimmel_path = os.path.join(drimmel_folder_path, "data-for.tar.gz")
-       if not os.path.exists(drimmel_path):
-             if not os.path.exists(drimmel_folder_path):
+        drimmel_folder_path = os.path.abspath(os.path.join(inspect.getfile(cls), "..", "util", "drimmeldata"))
+        drimmel_path = os.path.join(drimmel_folder_path, "data-for.tar.gz")
+        if not os.path.exists(drimmel_path):
+            if not os.path.exists(drimmel_folder_path):
                 os.mkdir(drimmel_folder_path)
-             _DRIMMEL_URL= "https://zenodo.org/record/7340108/files/data-for.tar.gz"
-             downloader(_DRIMMEL_URL, drimmel_path, "DRIMMEL03", test=test)
-             if not test:
-                file = tarfile.open(drimmel_path)
-                file.extractall(drimmel_folder_path)
-                file.close()
-
+            _DRIMMEL_URL= "https://zenodo.org/record/7340108/files/data-for.tar.gz"
+            downloader(_DRIMMEL_URL, drimmel_path, cls.__name__, test=test)
+            if not test:
+                drim_file = tarfile.open(drimmel_path)
+                drim_file.extractall(drimmel_folder_path)
+                drim_file.close()
+        return None
 
 def _fitFunc(pars,drim,l,b,dist,ext,e_ext):
     amp= numpy.exp(pars[0])

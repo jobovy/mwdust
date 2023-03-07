@@ -5,19 +5,11 @@
 #
 ###############################################################################
 import numpy
-import os
-from .util.download import downloader
 try:
     from galpy.util import plot as bovy_plot
     _BOVY_PLOT_LOADED= True
 except ImportError:
     _BOVY_PLOT_LOADED= False
-
-dust_dir = os.environ.get("DUST_DIR")
-if dust_dir is None:
-    dust_dir = os.path.expanduser(os.path.join("~", ".mwdust"))
-if not os.path.exists(dust_dir):
-    os.mkdir(dust_dir)
 
 class DustMap3D:
     """top-level class for a 3D dust map; all other dust maps inherit from this"""

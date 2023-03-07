@@ -7,7 +7,7 @@ import os, os.path
 import numpy
 import platform
 import tqdm
-from mwdust.DustMap3D import dust_dir
+from mwdust.util.download import dust_dir
 
 WIN32= platform.system() == 'Windows'
 #Find and load the library

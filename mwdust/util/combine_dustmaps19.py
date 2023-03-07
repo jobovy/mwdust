@@ -13,7 +13,7 @@ import numpy
 import h5py
 import healpy
 import mwdust
-from mwdust.DustMap3D import dust_dir
+from mwdust.util.download import dust_dir
 
 from galpy.util import save_pickles
 
