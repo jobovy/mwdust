@@ -78,6 +78,6 @@ class Green15(HierarchicalHealpixMap):
         if not os.path.exists(green15_path):
             if not os.path.exists(os.path.join(dust_dir, "green15")):
                 os.mkdir(os.path.join(dust_dir, "green15"))
-            _GREEN15_URL = "http://faun.rc.fas.harvard.edu/pan1/ggreen/argonaut/data/dust-map-3d.h5"
+            _GREEN15_URL = "https://dataverse.harvard.edu/api/access/datafile/:persistentId?persistentId=doi:10.7910/DVN/40C44C/TERL5A"
             downloader(_GREEN15_URL, green15_path, cls.__name__, test=test)
         return None
