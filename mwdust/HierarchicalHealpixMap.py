@@ -32,45 +32,11 @@ class HierarchicalHealpixMap(DustMap3D):
         self._sf10= sf10
         return None
 
-    def _evaluate(self,l,b,d):
+
+    def _evaluate(self, ls, bs, ds):
         """
         NAME:
            _evaluate
-        PURPOSE:
-           evaluate the dust-map
-        INPUT:
-           l- Galactic longitude (deg) can be array
-           b- Galactic latitude (deg) can be array
-           d- distance (kpc) can be array
-        OUTPUT:
-           extinction E(B-V)
-        HISTORY:
-           2015-03-02 - Started - Bovy (IAS)
-        """
-        if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
-            return self._evaluate_vectorized(l, b, d)
-        else:
-            distmod= 5.*numpy.log10(d)+10.
-            lbIndx= self._lbIndx(l,b)
-            if self._intps[lbIndx] != 0:
-                out= self._intps[lbIndx][0](distmod)
-            else:
-                interpData=\
-                    interpolate.InterpolatedUnivariateSpline(self._distmods,
-                                                            self._best_fit[lbIndx],
-                                                            k=self._interpk)
-                out= interpData(distmod)
-                self._intps[lbIndx]= interpData
-            if self._filter is None:
-                return out
-            else:
-                return out*aebv(self._filter,sf10=self._sf10)
-
-
-    def _evaluate_vectorized(self, ls, bs, ds):
-        """
-        NAME:
-           _evaluate_vectorized
         PURPOSE:
            evaluate the dust-map for array input
         INPUT:
@@ -80,16 +46,19 @@ class HierarchicalHealpixMap(DustMap3D):
         OUTPUT:
            extinction E(B-V)
         HISTORY:
-           2023-07-05 - Written - Henry Leung (UofT)
+           2015-03-02 - Started - Bovy (IAS)
+           2023-07-05 - Vectorized - Henry Leung (UofT)
         """
         ls = numpy.atleast_1d(ls)
         bs = numpy.atleast_1d(bs)
         ds = numpy.atleast_1d(ds)
 
         distmod= 5.*numpy.log10(ds)+10.
-        lbIndx= self._lbIndx_vectorized(ls, bs)
+        lbIndx= self._lbIndx(ls, bs)
+        if len(ls) == 1 and len(ds) > 1:
+            lbIndx = numpy.tile(lbIndx, len(ds))
 
-        result = numpy.zeros_like(ls)
+        result = numpy.zeros_like(ds)
         for counter, i, d in zip(numpy.arange(len(result)), lbIndx, distmod):
             if self._intps[i] != 0:
                 out= self._intps[i](d)
@@ -100,10 +69,9 @@ class HierarchicalHealpixMap(DustMap3D):
                                                             k=self._interpk)
                 out= interpData(d)
                 self._intps[i]= interpData
-            if self._filter is None:
-                result[counter] = out
-            else:
-                result[counter] =  out*aebv(self._filter,sf10=self._sf10)
+            result[counter] = out
+        if self._filter is not None:
+            result =  result * aebv(self._filter,sf10=self._sf10)
         # set nan for invalid indices
         result[lbIndx==-1] = numpy.nan
         return result
@@ -166,26 +134,12 @@ class HierarchicalHealpixMap(DustMap3D):
             extinction= extinction*aebv(self._filter,sf10=self._sf10)        
         return (pixarea,extinction)
 
-    def _lbIndx(self,l,b):
-        """Return the index in the _combineddata array corresponding to this (l,b)"""
-        for nside in self._nsides:
-            # Search for the pixel in this Nside level
-            tpix= ang2pix(nside,(90.-b)*_DEGTORAD,
-                                           l*_DEGTORAD,nest=True)
-            indx= (self._pix_info['healpix_index'] == tpix)\
-                *(self._pix_info['nside'] == nside)
-            if numpy.sum(indx) == 1:
-                return self._indexArray[indx]
-            elif numpy.sum(indx) > 1:
-                raise IndexError("Given (l,b) pair has multiple matches!")
-        raise IndexError("Given (l,b) pair not within the region covered by the extinction map")
-
-    def _lbIndx_vectorized(self, l, b):
+    def _lbIndx(self, ls, bs):
         """Return the indices in the _combineddata array corresponding to arrays of (l, b)"""
-        stop_mask = numpy.zeros(len(l), dtype=bool)  # mask to be accumulated when looping through nside
-        indx_result = numpy.ones(len(l), dtype=int) * -1  # -1 for bad star, int array has no nan
+        stop_mask = numpy.zeros(len(ls), dtype=bool)  # mask to be accumulated when looping through nside
+        indx_result = numpy.ones(len(ls), dtype=int) * -1  # -1 for bad star, int array has no nan
         for nside in self._nsides:
-            tpix = ang2pix(nside, (90.-b)*_DEGTORAD, l*_DEGTORAD, nest=True)
+            tpix = ang2pix(nside, (90.-bs)*_DEGTORAD, ls*_DEGTORAD, nest=True)
             nside_idx = numpy.where(self._pix_info['nside'] == nside)[0]
             healpix_index_nside = self._pix_info['healpix_index'][nside_idx]
             sorted_order = numpy.argsort(healpix_index_nside)

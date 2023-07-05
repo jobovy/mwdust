@@ -81,7 +81,7 @@ roughly the following lay-out::
           bayestar2019.h5
        maps/
           SFD_dust_4096_ngp.fits
-	       SFD_dust_4096_sgp.fits
+          SFD_dust_4096_sgp.fits
        marshall06/
           ReadMe
 	       table1.dat
