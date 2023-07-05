@@ -39,31 +39,75 @@ class HierarchicalHealpixMap(DustMap3D):
         PURPOSE:
            evaluate the dust-map
         INPUT:
-           l- Galactic longitude (deg)
-           b- Galactic latitude (deg)
+           l- Galactic longitude (deg) can be array
+           b- Galactic latitude (deg) can be array
            d- distance (kpc) can be array
         OUTPUT:
            extinction E(B-V)
         HISTORY:
            2015-03-02 - Started - Bovy (IAS)
         """
-        distmod= 5.*numpy.log10(d)+10.
         if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
-            raise NotImplementedError("array input for l and b for combined dust map not implemented")
-        lbIndx= self._lbIndx(l,b)
-        if self._intps[lbIndx] != 0:
-            out= self._intps[lbIndx][0](distmod)
+            return self._evaluate_vectorized(l, b, d)
         else:
-            interpData=\
-                interpolate.InterpolatedUnivariateSpline(self._distmods,
-                                                         self._best_fit[lbIndx],
-                                                         k=self._interpk)
-            out= interpData(distmod)
-            self._intps[lbIndx]= interpData
-        if self._filter is None:
-            return out
-        else:
-            return out*aebv(self._filter,sf10=self._sf10)
+            distmod= 5.*numpy.log10(d)+10.
+            lbIndx= self._lbIndx(l,b)
+            if self._intps[lbIndx] != 0:
+                out= self._intps[lbIndx][0](distmod)
+            else:
+                interpData=\
+                    interpolate.InterpolatedUnivariateSpline(self._distmods,
+                                                            self._best_fit[lbIndx],
+                                                            k=self._interpk)
+                out= interpData(distmod)
+                self._intps[lbIndx]= interpData
+            if self._filter is None:
+                return out
+            else:
+                return out*aebv(self._filter,sf10=self._sf10)
+
+
+    def _evaluate_vectorized(self, ls, bs, ds):
+        """
+        NAME:
+           _evaluate_vectorized
+        PURPOSE:
+           evaluate the dust-map for array input
+        INPUT:
+           l- Galactic longitude (deg) can be array
+           b- Galactic latitude (deg) can be array
+           d- distance (kpc) can be array
+        OUTPUT:
+           extinction E(B-V)
+        HISTORY:
+           2023-07-05 - Written - Henry Leung (UofT)
+        """
+        ls = numpy.atleast_1d(ls)
+        bs = numpy.atleast_1d(bs)
+        ds = numpy.atleast_1d(ds)
+
+        distmod= 5.*numpy.log10(ds)+10.
+        lbIndx= self._lbIndx_vectorized(ls, bs)
+
+        result = numpy.zeros_like(ls)
+        for counter, i, d in zip(numpy.arange(len(result)), lbIndx, distmod):
+            if self._intps[i] != 0:
+                out= self._intps[i](d)
+            else:
+                interpData=\
+                    interpolate.InterpolatedUnivariateSpline(self._distmods,
+                                                            self._best_fit[i],
+                                                            k=self._interpk)
+                out= interpData(d)
+                self._intps[i]= interpData
+            if self._filter is None:
+                result[counter] = out
+            else:
+                result[counter] =  out*aebv(self._filter,sf10=self._sf10)
+        # set nan for invalid indices
+        result[lbIndx==-1] = numpy.nan
+        return result
+
 
     def dust_vals_disk(self,lcen,bcen,dist,radius):
         """
@@ -135,6 +179,28 @@ class HierarchicalHealpixMap(DustMap3D):
             elif numpy.sum(indx) > 1:
                 raise IndexError("Given (l,b) pair has multiple matches!")
         raise IndexError("Given (l,b) pair not within the region covered by the extinction map")
+
+    def _lbIndx_vectorized(self, l, b):
+        """Return the indices in the _combineddata array corresponding to arrays of (l, b)"""
+        stop_mask = numpy.zeros(len(l), dtype=bool)  # mask to be accumulated when looping through nside
+        indx_result = numpy.ones(len(l), dtype=int) * -1  # -1 for bad star, int array has no nan
+        for nside in self._nsides:
+            tpix = ang2pix(nside, (90.-b)*_DEGTORAD, l*_DEGTORAD, nest=True)
+            nside_idx = numpy.where(self._pix_info['nside'] == nside)[0]
+            healpix_index_nside = self._pix_info['healpix_index'][nside_idx]
+            sorted_order = numpy.argsort(healpix_index_nside)
+            # use searchsorted to find the index of tpix in healpix_index_nside efficiently
+            result = numpy.searchsorted(healpix_index_nside, tpix, sorter=sorted_order)
+            # need to deal with indices where they are larger than the largest healpix_index_nside
+            known_bad_idx = (result == len(nside_idx))
+            result[known_bad_idx] = 0  # wrap around
+            result = sorted_order[result]  # reverse the sorting before indexing
+            result = nside_idx[result]
+            good_result_idx = ((self._pix_info['healpix_index'][result] == tpix) & (self._pix_info['nside'][result] == nside) & (~known_bad_idx))
+            indx_result = numpy.where(~stop_mask & good_result_idx, result, indx_result)
+            indx_result = numpy.where(known_bad_idx & ~stop_mask, -1, indx_result)  # set bad star to -1
+            stop_mask = stop_mask | good_result_idx  # update mask for the next nside
+        return indx_result
 
     def plot_mollweide(self,d,**kwargs):
         """

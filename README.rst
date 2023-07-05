@@ -127,10 +127,15 @@ and they can be plotted as a function of distance at a given (l,b)
 
    combined.plot(55.,0.5) # inputs are (l,b)
 
-(plot not shown). Maps that are derived from the
-``HierarchicalHealpixMap.py`` class (currently all Green-type maps and
-the combined maps) can also be plotted on the sky using a Mollweide
-projection at a given distance using
+(plot not shown). Maps that are derived from the ``HierarchicalHealpixMap.py`` class (currently all Green-type maps and
+the combined maps) can be vectorized to evaluate on array inputs of *l*, *b*, *D*
+
+..  code-block:: python
+
+   combined(numpy.array([30.,40.,50.,60.]),numpy.array([3.,4.,3.,6.]),numpy.array([1.,2.,3.,10.]))
+   array([0.22304147, 0.3780736 , 0.42528571, 0.22258065])
+
+They can also be plotted on the sky using a Mollweide projection at a given distance using
 
 ..  code-block:: python
 
