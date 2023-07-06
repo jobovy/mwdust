@@ -38,7 +38,7 @@ def check_nside(nside, nest=False):
     # nside can only be a power of 2 for nest, but generally less than 2**29
     nside_arr = np.array(nside).astype(np.int64)
     is_ok = True
-    if nside == nside_arr and 0 < nside and nside <= 2**29:
+    if np.all(np.logical_and(np.logical_and(nside == nside_arr, np.all(np.less(0, nside))), nside_arr <= 2**29)):
         if nest:
             is_ok = (nside_arr & (nside_arr - 1)) == 0
     else:
