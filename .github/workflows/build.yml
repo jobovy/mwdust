@@ -21,7 +21,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/data/
-        key: sfd-green19-${{ runner.os }}-
+        key: sfd-green19-marshall06-combined15-${{ runner.os }}-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
