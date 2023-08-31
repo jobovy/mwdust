@@ -147,7 +147,7 @@ Supported bandpasses
 ---------------------
 
 Currently only a few filters are supported. 
-To obtain E(B-V), specify ``filter=E(B-V)``.
+To obtain E(B-V), specify ``filter='E(B-V)'``.
 To check what bandpasses are supported on the ``sf10=True`` scale
 (these are all the bandpasses from Table 6 in `Schlafly & Finkbeiner
 2011 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__), do
