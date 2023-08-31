@@ -33,21 +33,33 @@ def test_Marshall06():
     return None
 
 def test_Green19():
-    green_ebv= mwdust.Green19(filter='E(B-V)')
-    green_b= mwdust.Green19(filter='Landolt B')
-    green_v= mwdust.Green19(filter='Landolt V')
+    # Need to preserve memory
     l,b,d= 10., 1., 2.
-    assert numpy.fabs(green_ebv(l,b,d)-(green_b(l,b,d)-green_v(l,b,d))) \
+    green_ebv= mwdust.Green19(filter='E(B-V)')
+    ebv= green_ebv(l,b,d)
+    del green_ebv
+    green_b= mwdust.Green19(filter='Landolt B')
+    ab= green_b(l,b,d)
+    del green_b
+    green_v= mwdust.Green19(filter='Landolt V')
+    av= green_v(l,b,d)
+    assert numpy.fabs(ebv-(ab-av)) \
          < 10.**-12., \
         'Green19 E(B-V) does not agree with A(B)-A(V)'
     return None
 
 def test_Combined15():
-    combined_ebv= mwdust.Combined15(filter='E(B-V)')
-    combined_b= mwdust.Combined15(filter='Landolt B')
-    combined_v= mwdust.Combined15(filter='Landolt V')
+    # Need to preserve memory
     l,b,d= 10., 1., 2.
-    assert numpy.fabs(combined_ebv(l,b,d)-(combined_b(l,b,d)-combined_v(l,b,d))) \
+    combined_ebv= mwdust.Combined15(filter='E(B-V)')
+    ebv= combined_ebv(l,b,d)
+    del combined_ebv
+    combined_b= mwdust.Combined15(filter='Landolt B')
+    ab= combined_b(l,b,d)
+    del combined_b
+    combined_v= mwdust.Combined15(filter='Landolt V')
+    av= combined_v(l,b,d)
+    assert numpy.fabs(ebv-(ab-av)) \
          < 10.**-12., \
         'Combined15 E(B-V) does not agree with A(B)-A(V)'
     return None
