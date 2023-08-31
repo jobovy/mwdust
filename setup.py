@@ -48,7 +48,7 @@ install_requires= ['numpy','scipy','matplotlib','astropy','h5py','tqdm', 'reques
 if not WIN32:
     install_requires.append('healpy')
 setup(name='mwdust',
-      version='1.4.dev0',
+      version='1.4',
       description='Dust in the Milky Way',
       author='Jo Bovy',
       author_email='bovy@astro.utoronto.ca',
