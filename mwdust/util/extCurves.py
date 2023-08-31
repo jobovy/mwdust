@@ -52,10 +52,13 @@ def aebv(filter,sf10=True):
     HISTORY:
        2013-11-24 - Written - Bovy (IAS)
     """
+    if filter.lower() == 'e(b-v)':
+        return 0.884
     if sf10:
         if not filter in avebvsf:
             raise ValueError("Requested filter is not supported")
-        return avebvsf[filter]
+        else:
+            return avebvsf[filter]
     else:
         if not filter in avebv:
             raise ValueError("Requested filter is not supported")

@@ -4,6 +4,8 @@ v1.4 (XXXX-XX-XX)
 - Allowed array inputs to dust maps derived from HierarchicalHealpixMap
   (GreenX and CombinedX maps) and use vectorization to speed these up signficantly.
 
+- Allow filter=E(B-V) to get the true color excess E(B-V).
+
 v1.3 (2023-03-07)
 ==================
 

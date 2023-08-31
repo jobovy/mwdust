@@ -146,20 +146,11 @@ Note that this requires ``healpy`` to be installed, so this does not work on Win
 Supported bandpasses
 ---------------------
 
-Currently only a few filters are supported; if no filter is supplied,
-*E(B-V)* is returned on the SFD scale if the object is initialized
-with ``sf10=True`` (which tells the code to use re-scalings from
-`Schlafly & Finkbeiner 2011
-<http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__). ``sf10=True``
-is the default initialization for every map, so be careful in
-interpreting the raw *E(B-V)* that come out of the code. *Only use*
-``sf10=False`` *when you have an extinction map in true E(B-V)*, **not**
-*SFD E(B-V)*. No map currently included in this package is in this
-situation, so using ``sf10=False`` is never recommended.
-
-To check what bandpasses are supported on the ``sf10=True`` scale do
+Currently only a few filters are supported. 
+To obtain E(B-V), specify ``filter=E(B-V)``.
+To check what bandpasses are supported on the ``sf10=True`` scale
 (these are all the bandpasses from Table 6 in `Schlafly & Finkbeiner
-2011 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__)
+2011 <http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__), do
 
 ..  code-block:: python
 
@@ -194,6 +185,18 @@ which gives
       'UKIRT K', 'IRAC-1', 'IRAC-2', 'IRAC-3', 'IRAC-4', '2MASS H',
       'SDSS r', 'SDSS u', 'SDSS z', 'SDSS g', 'SDSS i', '2MASS Ks',
       '2MASS J'], dtype='|S14')
+
+
+If no filter is supplied, *E(B-V)* is returned on the SFD scale if the object is initialized
+with ``sf10=True`` (which tells the code to use re-scalings from
+`Schlafly & Finkbeiner 2011
+<http://adsabs.harvard.edu/abs/2011ApJ...737..103S>`__). ``sf10=True``
+is the default initialization for every map, so be careful in
+interpreting the raw *E(B-V)* that come out of the code when 
+not setting ``filter`` or when setting ``filter=None``. *Only use*
+``sf10=False`` *when you have an extinction map in true E(B-V)*, **not**
+*SFD E(B-V)*. No map currently included in this package is in this
+situation, so using ``sf10=False`` is never recommended.
 
 Acknowledging ``mwdust`` and its data
 ---------------------------------------
