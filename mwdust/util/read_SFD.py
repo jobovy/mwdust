@@ -4,6 +4,7 @@ import ctypes
 import ctypes.util
 from numpy.ctypeslib import ndpointer
 import os, os.path
+from pathlib import Path
 import numpy
 import platform
 import tqdm
@@ -21,9 +22,15 @@ else:
 if _libname:
     _lib = ctypes.CDLL(_libname)
 if _lib is None:
-    for path in sys.path:
+    # Add top-level mwdust repository directory for pip install (-e) .,
+    # just becomes site-packages for regular install
+    paths = sys.path
+    paths.append(str(Path(__file__).parent.parent.parent.absolute()))
+    for path in [Path(p) for p in paths]:
+        if not path.is_dir():
+            continue
         try:
-            _lib = ctypes.CDLL(os.path.join(path,'sfd_c%s' % _ext_suffix))
+            _lib = ctypes.CDLL(str(path / f"sfd_c{_ext_suffix}"))
         except OSError:
             _lib = None
         else:
