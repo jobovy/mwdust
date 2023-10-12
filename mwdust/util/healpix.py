@@ -3,9 +3,8 @@ import distutils.sysconfig as sysconfig
 import ctypes
 import ctypes.util
 from numpy.ctypeslib import ndpointer
-import os
 import numpy as np
-
+from pathlib import Path
 
 # healpy number to represent bad numbers
 UNSEEN = -1.6375e+30
@@ -17,9 +16,15 @@ _ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
 if _libname:
     _lib = ctypes.CDLL(_libname)
 if _lib is None:
-    for path in sys.path:
+    # Add top-level mwdust repository directory for pip install (-e) .,
+    # just becomes site-packages for regular install
+    paths = sys.path
+    paths.append(str(Path(__file__).parent.parent.parent.absolute()))
+    for path in [Path(p) for p in paths]:
+        if not path.is_dir():
+            continue
         try:
-            _lib = ctypes.CDLL(os.path.join(path, "healpix_c%s" % _ext_suffix))
+            _lib = ctypes.CDLL(str(path / f"healpix_c{_ext_suffix}"))
         except OSError:
             _lib = None
         else:
