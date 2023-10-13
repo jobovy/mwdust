@@ -1,11 +1,11 @@
-cff-version: 1.5.dev0.0
+cff-version: 1.5.0
 message: "If you use this software, please cite the Bovy et al. (2016) The Astrophysical Journal paper as given below."
 authors:
 - family-names: "Bovy"
   given-names: "Jo"
   orcid: "https://orcid.org/0000-0001-6855-442X"
 title: "mwdust"
-version: 1.5.dev0
+version: 1.5
 url: "https://github.com/jobovy/mwdust"
 preferred-citation:
   type: article
