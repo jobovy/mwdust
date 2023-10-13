@@ -1,4 +1,11 @@
-v1.4 (XXXX-XX-XX)
+v1.5 (2023-10-13)
+==================
+
+- Add pyproject.toml file to allow modern pip installation.
+
+- Fix PyPI source distribution to include all necessary files.
+
+v1.4 (2023-08-30)
 ==================
 
 - Allowed array inputs to dust maps derived from HierarchicalHealpixMap
