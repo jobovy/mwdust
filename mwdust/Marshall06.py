@@ -80,7 +80,7 @@ class Marshall06(DustMap3D):
            2013-12-12 - Started - Bovy (IAS)
         """
         if isinstance(l,numpy.ndarray) or isinstance(b,numpy.ndarray):
-            raise NotImplementedError("array input for l and b for Drimmel dust map not implemented")
+            raise NotImplementedError("array input for l and b for Marshall06 dust map not implemented")
         lbIndx= self._lbIndx(l,b)
         if self._intps[lbIndx] != 0:
             out= self._intps[lbIndx](d)
