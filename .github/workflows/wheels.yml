@@ -31,7 +31,7 @@ jobs:
         - [ubuntu-latest, manylinux, x86_64]
         - [macos-latest, macosx, x86_64]
         - [macos-latest, macosx, arm64]
-        - [windows-2019, win, amd64]
+        - [windows-latest, win, amd64]
         python: ["cp38", "cp39", "cp310", "cp311", "cp312"]
     steps:
       - uses: actions/checkout@v4
