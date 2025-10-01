@@ -1,3 +1,8 @@
+###############################################################################
+#
+#   DECaPS25: extinction model from Zucker et al. (2025)
+#
+###############################################################################
 from __future__ import division, print_function
 import os, os.path
 import numpy
@@ -27,6 +32,7 @@ class Decaps25(HierarchicalHealpixMap):
            2025-10-01 - Adopted
         """
         HierarchicalHealpixMap.__init__(self, filter=filter, sf10=sf10)
+        #Read the map
         with h5py.File(os.path.join(_decapsdir, 'decaps_mean.h5'), 'r') as f:
             mean = f['/mean'][:]
             self._best_fit = mean[:, 0, :].astype(numpy.float32)
@@ -65,10 +71,11 @@ class Decaps25(HierarchicalHealpixMap):
         HISTORY:
            2025-10-01 - Adopted
         """
-        if not hasattr(self, '_samples') or self._samples is None:
-            raise RuntimeError('No samples present in DECaPS file')
+        # Substitute the sample
         self._best_fit = self._samples[:, samplenum, :]
+        # Reset the cache
         self._intps = numpy.zeros(len(self._pix_info['healpix_index']), dtype='object')
+        
         return None
 
     @classmethod
