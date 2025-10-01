@@ -7,7 +7,7 @@ from mwdust.Green17 import Green17
 from mwdust.Green19 import Green19
 from mwdust.Combined15 import Combined15
 from mwdust.Combined19 import Combined19
-from .Decaps25 import Decaps25
+from mwdust.Decaps25 import Decaps25
 from mwdust.Zero import Zero
 
 __version__ = "1.6.dev0"
