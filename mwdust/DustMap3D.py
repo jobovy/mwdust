@@ -11,9 +11,9 @@ try:
 except ImportError:
     _BOVY_PLOT_LOADED= False
 
-class DustMap3D:
+class DustMap3D(object):
     """top-level class for a 3D dust map; all other dust maps inherit from this"""
-    def __init__(self,filter=None):
+    def __init__(self, filter=None, **download_kwargs):
         """
         NAME:
            __init__
@@ -26,7 +26,8 @@ class DustMap3D:
            2013-11-24 - Started - Bovy (IAS)
         """
         self._filter= filter
-        self.download()  # download the map
+        if hasattr(self, "download"):
+            self.download(**download_kwargs) # download the map
 
     def __call__(self,*args,**kwargs):
         """
