@@ -24,3 +24,5 @@ def download_all(test=False):
     Combined15.download(test=test)
     Combined19.download(test=test)
     Zucker25.download(test=test)
+
+from .Zucker25 import Zucker25
