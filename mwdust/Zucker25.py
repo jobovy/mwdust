@@ -10,7 +10,7 @@ from mwdust.util.download import dust_dir, downloader
 from mwdust.HierarchicalHealpixMap import HierarchicalHealpixMap
 
 _DEGTORAD = numpy.pi/180.
-_decapsdir = os.path.join(dust_dir, 'decaps25')
+_decapsdir = os.path.join(dust_dir, 'zucer25')
 
 class Zucker25(HierarchicalHealpixMap):
     """DECaPS 3D dust-reddening map (Zucker et al. 2025)"""
