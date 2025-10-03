@@ -14,7 +14,7 @@ _DEGTORAD= numpy.pi/180.
 class HierarchicalHealpixMap(DustMap3D):
     """General class for extinction maps given as a hierarchical HEALPix 
     pixelation (e.g., Green et al. 2015) """
-    def __init__(self,filter=None,sf10=True):
+    def __init__(self,filter=None,sf10=True, **download_kwargs):
         """
         NAME:
            __init__
@@ -28,8 +28,8 @@ class HierarchicalHealpixMap(DustMap3D):
         HISTORY:
            2015-07-28 - Started - Bovy (UofT)
         """
-        DustMap3D.__init__(self,filter=filter)
-        self._sf10= sf10
+        super(HierarchicalHealpixMap, self).__init__(filter=filter, **download_kwargs)
+        self._sf10 = sf10
         return None
 
 

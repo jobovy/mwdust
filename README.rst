@@ -79,6 +79,9 @@ roughly the following lay-out::
           bayestar2017.h5
        green19/
           bayestar2019.h5
+       zucker25/
+      	  decaps_mean.h5
+          decaps_mean_and_samples.h5
        maps/
           SFD_dust_4096_ngp.fits
           SFD_dust_4096_sgp.fits
@@ -218,6 +221,8 @@ map that you use:
 * **mwdust.Green17**: `Green et al. (2018) <https://ui.adsabs.harvard.edu/abs/2018MNRAS.478..651G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
 
 * **mwdust.Green19**: `Green et al. (2019) <https://ui.adsabs.harvard.edu/abs/2019arXiv190502734G>`__ (added by `@jan-rybizki <https://github.com/jan-rybizki>`__)
+
+* **mwdust.Zucker25**: `Zucker et al. (2025) <https://ui.adsabs.harvard.edu/abs/2025arXiv250302657Z>`__
 
 * **mwdust.Combined15**: Combination of 
   

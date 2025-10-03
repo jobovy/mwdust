@@ -7,6 +7,7 @@ from mwdust.Green17 import Green17
 from mwdust.Green19 import Green19
 from mwdust.Combined15 import Combined15
 from mwdust.Combined19 import Combined19
+from mwdust.Zucker25 import Zucker25
 from mwdust.Zero import Zero
 
 __version__ = "1.6.dev0"
@@ -22,3 +23,4 @@ def download_all(test=False):
     Green19.download(test=test)
     Combined15.download(test=test)
     Combined19.download(test=test)
+    Zucker25.download(test=test)
