@@ -1,6 +1,9 @@
-v1.6 (XXXX-XX-XX)
+v1.6 (2025-10-06)
 ==================
 
+- Added DECaPS dust map from Zucker et al. (2025).
+
+- Upgraded to Python 3.8-3.14 support.
 
 v1.5 (2023-10-13)
 ==================
