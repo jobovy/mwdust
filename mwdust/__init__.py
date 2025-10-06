@@ -17,7 +17,8 @@ def download_all(test=False):
     SFD.download(test=test)
     Marshall06.download(test=test)
     Drimmel03.download(test=test)
-    Sale14.download(test=test)
+    if not test:
+        Sale14.download(test=test)
     Green15.download(test=test)
     Green17.download(test=test)
     Green19.download(test=test)
