@@ -138,9 +138,10 @@ class FortranFile(file):
             data += read_data
 
     def _read_check(self):
-        return numpy.fromstring(self._read_exactly(self._header_length),
-                                dtype=self.ENDIAN+self.HEADER_PREC
-                               )[0]
+        return numpy.frombuffer(
+            self._read_exactly(self._header_length),
+            dtype=self.ENDIAN + self.HEADER_PREC,
+        )[0]
 
     def _write_check(self, number_of_bytes):
         """Write the header for the given number of bytes"""
@@ -205,7 +206,7 @@ class FortranFile(file):
             raise ValueError('Not an appropriate precision')
             
         data_str = self.readRecord()
-        return numpy.fromstring(data_str, dtype=self.ENDIAN+prec)
+        return numpy.frombuffer(data_str, dtype=self.ENDIAN + prec)
 
     def writeReals(self, reals, prec='f'):
         """Write an array of floats in given precision
@@ -240,7 +241,7 @@ class FortranFile(file):
             raise ValueError('Not an appropriate precision')
             
         data_str = self.readRecord()
-        return numpy.fromstring(data_str, dtype=self.ENDIAN+prec)
+        return numpy.frombuffer(data_str, dtype=self.ENDIAN + prec)
 
     def writeInts(self, ints, prec='i'):
         """Write an array of integers in given precision
