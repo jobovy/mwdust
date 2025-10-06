@@ -1,5 +1,5 @@
 import sys
-import distutils.sysconfig as sysconfig
+import sysconfig
 import ctypes
 import ctypes.util
 from numpy.ctypeslib import ndpointer
@@ -10,15 +10,15 @@ import platform
 import tqdm
 from mwdust.util.download import dust_dir
 
-WIN32= platform.system() == 'Windows'
-#Find and load the library
+WIN32 = platform.system() == "Windows"
+# Find and load the library
 _lib = None
-_libname = ctypes.util.find_library('sfd_c')
-PY3= sys.version > '3'
-if PY3: #pragma: no cover
-    _ext_suffix= sysconfig.get_config_var('EXT_SUFFIX')
+_libname = ctypes.util.find_library("sfd_c")
+PY3 = sys.version > "3"
+if PY3:  # pragma: no cover
+    _ext_suffix = sysconfig.get_config_var("EXT_SUFFIX")
 else:
-    _ext_suffix= sysconfig.get_config_var('SO')
+    _ext_suffix = sysconfig.get_config_var("SO")
 if _libname:
     _lib = ctypes.CDLL(_libname)
 if _lib is None:
@@ -36,13 +36,14 @@ if _lib is None:
         else:
             break
 if _lib is None:
-    raise IOError('SFD/C module not found')
+    raise IOError("SFD/C module not found")
 
-#MAP path names
-ebvFileN= os.path.join(dust_dir,'maps','SFD_dust_4096_ngp.fits')
-ebvFileS= os.path.join(dust_dir,'maps','SFD_dust_4096_sgp.fits')
+# MAP path names
+ebvFileN = os.path.join(dust_dir, "maps", "SFD_dust_4096_ngp.fits")
+ebvFileS = os.path.join(dust_dir, "maps", "SFD_dust_4096_sgp.fits")
 
-def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False,pbar=True):
+
+def read_SFD_EBV(glon, glat, interp=True, noloop=False, verbose=False, pbar=True):
     """
     NAME:
        read_SFD_EBV
@@ -60,64 +61,69 @@ def read_SFD_EBV(glon,glat,interp=True,noloop=False,verbose=False,pbar=True):
     HISTORY:
        2013-11-23 - Written - Bovy (IAS)
     """
-    #Parse input
-    if isinstance(glon,(int,float,numpy.float32,numpy.float64)):
-        glon= numpy.array([glon])
-    if isinstance(glat,(int,float,numpy.float32,numpy.float64)):
-        glat= numpy.array([glat])
+    # Parse input
+    if isinstance(glon, (int, float, numpy.float32, numpy.float64)):
+        glon = numpy.array([glon])
+    if isinstance(glat, (int, float, numpy.float32, numpy.float64)):
+        glat = numpy.array([glat])
 
     nstar = len(glon)
     if nstar > 1 and pbar:
-        pbar= tqdm.tqdm(total=nstar, leave=False)
-        pbar_func_ctype= ctypes.CFUNCTYPE(None)
-        pbar_c= pbar_func_ctype(pbar.update)
-    else: # pragma: no cover
-        pbar_c= None
+        pbar = tqdm.tqdm(total=nstar, leave=False)
+        pbar_func_ctype = ctypes.CFUNCTYPE(None)
+        pbar_c = pbar_func_ctype(pbar.update)
+    else:  # pragma: no cover
+        pbar_c = None
 
-    #Set up the C code
-    ndarrayFlags= ('C_CONTIGUOUS','WRITEABLE')
-    evalFunc= _lib.lambert_getval
-    evalFunc.argtypes= [ctypes.c_char_p,
-                        ctypes.c_char_p,
-                        ctypes.c_long,
-                        ndpointer(dtype=numpy.float32,flags=ndarrayFlags),
-                        ndpointer(dtype=numpy.float32,flags=ndarrayFlags),
-                        ctypes.c_int,
-                        ctypes.c_int,
-                        ctypes.c_int, 
-                        ndpointer(dtype=numpy.int32,flags=ndarrayFlags),
-                        ctypes.c_void_p]
-    evalFunc.restype= ctypes.POINTER(ctypes.c_float)
+    # Set up the C code
+    ndarrayFlags = ("C_CONTIGUOUS", "WRITEABLE")
+    evalFunc = _lib.lambert_getval
+    evalFunc.argtypes = [
+        ctypes.c_char_p,
+        ctypes.c_char_p,
+        ctypes.c_long,
+        ndpointer(dtype=numpy.float32, flags=ndarrayFlags),
+        ndpointer(dtype=numpy.float32, flags=ndarrayFlags),
+        ctypes.c_int,
+        ctypes.c_int,
+        ctypes.c_int,
+        ndpointer(dtype=numpy.int32, flags=ndarrayFlags),
+        ctypes.c_void_p,
+    ]
+    evalFunc.restype = ctypes.POINTER(ctypes.c_float)
 
-    #Array requirements, first store old order
-    f_cont= [glon.flags['F_CONTIGUOUS'],
-             glat.flags['F_CONTIGUOUS']]
-    glon= numpy.require(glon,dtype=numpy.float64,requirements=['C','W'])
-    glat= numpy.require(glat,dtype=numpy.float64,requirements=['C','W'])
-    err= numpy.require(0,dtype=numpy.int32,requirements=['C','W'])
+    # Array requirements, first store old order
+    f_cont = [glon.flags["F_CONTIGUOUS"], glat.flags["F_CONTIGUOUS"]]
+    glon = numpy.require(glon, dtype=numpy.float64, requirements=["C", "W"])
+    glat = numpy.require(glat, dtype=numpy.float64, requirements=["C", "W"])
+    err = numpy.require(0, dtype=numpy.int32, requirements=["C", "W"])
 
     # Check that the filename isn't too long for the SFD code
-    if len(ebvFileN.encode('ascii')) >= 120 \
-            or len(ebvFileS.encode('ascii')) >= 120:
-        raise RuntimeError(f"The path of the file that contains the SFD dust maps is too long ({len(ebvFileN.encode('ascii'))}); please shorten the path of DUST_DIR")
+    if len(ebvFileN.encode("ascii")) >= 120 or len(ebvFileS.encode("ascii")) >= 120:
+        raise RuntimeError(
+            f"The path of the file that contains the SFD dust maps is too long ({len(ebvFileN.encode('ascii'))}); please shorten the path of DUST_DIR"
+        )
 
-    res= evalFunc(ctypes.c_char_p(ebvFileN.encode('ascii')),
-                     ctypes.c_char_p(ebvFileS.encode('ascii')),
-                     ctypes.c_long(nstar),
-                     glon.astype(numpy.float32,order='C',copy=False),
-                     glat.astype(numpy.float32,order='C',copy=False),
-                     ctypes.c_int(interp),
-                     ctypes.c_int(noloop),
-                     ctypes.c_int(verbose), 
-                     err,
-                     pbar_c
-                     )
+    res = evalFunc(
+        ctypes.c_char_p(ebvFileN.encode("ascii")),
+        ctypes.c_char_p(ebvFileS.encode("ascii")),
+        ctypes.c_long(nstar),
+        glon.astype(numpy.float32, order="C", copy=False),
+        glat.astype(numpy.float32, order="C", copy=False),
+        ctypes.c_int(interp),
+        ctypes.c_int(noloop),
+        ctypes.c_int(verbose),
+        err,
+        pbar_c,
+    )
     if numpy.any(err == -10):
         raise KeyboardInterrupt("Interrupted by CTRL-C (SIGINT)")
-    result= numpy.fromiter(res,dtype=float,count=nstar)
+    result = numpy.fromiter(res, dtype=float, count=nstar)
 
-    #Reset input arrays
-    if f_cont[0]: glon= numpy.asfortranarray(glon)
-    if f_cont[1]: glat= numpy.asfortranarray(glat)
+    # Reset input arrays
+    if f_cont[0]:
+        glon = numpy.asfortranarray(glon)
+    if f_cont[1]:
+        glat = numpy.asfortranarray(glat)
 
     return result
