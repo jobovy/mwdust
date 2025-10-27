@@ -78,7 +78,7 @@ jobs:
       - run: |
           mkdir tmp_wheelhouse
           mkdir wheelhouse
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           path: tmp_wheelhouse/
       - run: find tmp_wheelhouse/ -mindepth 2 -type f -exec mv -i '{}' wheelhouse/ ';'
