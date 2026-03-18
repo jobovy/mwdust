@@ -1,7 +1,11 @@
-v1.8 (XXXX-XX-XX)
+v1.9 (XXXX-XX-XX)
 ==================
 
 
+v1.8 (2026-03-18)
+==================
+
+- Fixed User-Agent issue with downloader again by removing User-Agent header entirely!
 
 v1.7 (2026-01-21)
 ==================
