@@ -22,8 +22,7 @@ def downloader(url, fullfilename, name, test=False):
         url,
         stream=True,
         allow_redirects=True,
-        verify=True,
-        headers={"User-Agent": user_agent},
+        verify=True
     )
     if r.status_code == 404:
         raise ConnectionError(f"Cannot find {name} data file at {url}")
