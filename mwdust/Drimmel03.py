@@ -275,7 +275,7 @@ class Drimmel03(DustMap3D):
         if not os.path.exists(drimmel_path):
             if not os.path.exists(drimmel_folder_path):
                 os.mkdir(drimmel_folder_path)
-            _DRIMMEL_URL= "https://zenodo.org/record/7340108/files/data-for.tar.gz"
+            _DRIMMEL_URL= "https://zenodo.org/api/records/7340108/files/data-for.tar.gz/content"
             downloader(_DRIMMEL_URL, drimmel_path, cls.__name__, test=test)
             if not test:
                 drim_file = tarfile.open(drimmel_path)
