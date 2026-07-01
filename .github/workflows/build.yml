@@ -16,9 +16,9 @@ jobs:
         python-version: ["3.14"]
         numpy-version: ["2.4.6","2.5.0"]
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Cache dust maps
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ${{github.workspace}}/data/
         key: sfd-green19-marshall06-combined15-${{ runner.os }}-
