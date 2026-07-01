@@ -34,9 +34,9 @@ jobs:
         - [windows-latest, win, amd64]
         python: ["cp39", "cp310", "cp311", "cp312", "cp313", "cp314"]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.4
+        uses: pypa/cibuildwheel@v4.1
         env:
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}_${{ matrix.buildplat[2] }}
           CIBW_ARCHS_MACOS: ${{ matrix.buildplat[2] }}
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # check-out this repository
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       # Setup python
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: |
           mkdir tmp_wheelhouse
           mkdir wheelhouse
